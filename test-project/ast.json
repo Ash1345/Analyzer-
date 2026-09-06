@@ -1,0 +1,1060 @@
+{
+  "id": "0x1d160663690",
+  "kind": "TranslationUnitDecl",
+  "loc": {},
+  "range": {
+    "begin": {},
+    "end": {}
+  },
+  "inner": [
+    {
+      "id": "0x1d160663f10",
+      "kind": "CXXRecordDecl",
+      "loc": {},
+      "range": {
+        "begin": {},
+        "end": {}
+      },
+      "isImplicit": true,
+      "name": "_GUID",
+      "tagUsed": "struct",
+      "inner": [
+        {
+          "id": "0x1d160663fa0",
+          "kind": "TypeVisibilityAttr",
+          "range": {
+            "begin": {},
+            "end": {}
+          },
+          "implicit": true
+        }
+      ]
+    },
+    {
+      "id": "0x1d160664138",
+      "kind": "TypedefDecl",
+      "loc": {},
+      "range": {
+        "begin": {},
+        "end": {}
+      },
+      "isImplicit": true,
+      "name": "__int128_t",
+      "type": {
+        "qualType": "__int128"
+      },
+      "inner": [
+        {
+          "id": "0x1d160663c60",
+          "kind": "BuiltinType",
+          "type": {
+            "qualType": "__int128"
+          }
+        }
+      ]
+    },
+    {
+      "id": "0x1d1606641a8",
+      "kind": "TypedefDecl",
+      "loc": {},
+      "range": {
+        "begin": {},
+        "end": {}
+      },
+      "isImplicit": true,
+      "name": "__uint128_t",
+      "type": {
+        "qualType": "unsigned __int128"
+      },
+      "inner": [
+        {
+          "id": "0x1d160663c80",
+          "kind": "BuiltinType",
+          "type": {
+            "qualType": "unsigned __int128"
+          }
+        }
+      ]
+    },
+    {
+      "id": "0x1d160664568",
+      "kind": "TypedefDecl",
+      "loc": {},
+      "range": {
+        "begin": {},
+        "end": {}
+      },
+      "isImplicit": true,
+      "name": "__NSConstantString",
+      "type": {
+        "qualType": "__NSConstantString_tag"
+      },
+      "inner": [
+        {
+          "id": "0x1d160664520",
+          "kind": "RecordType",
+          "type": {
+            "qualType": "__NSConstantString_tag"
+          },
+          "decl": {
+            "id": "0x1d160664200",
+            "kind": "CXXRecordDecl",
+            "name": "__NSConstantString_tag"
+          }
+        }
+      ]
+    },
+    {
+      "id": "0x1d1606645c0",
+      "kind": "CXXRecordDecl",
+      "loc": {},
+      "range": {
+        "begin": {},
+        "end": {}
+      },
+      "isImplicit": true,
+      "name": "type_info",
+      "tagUsed": "class",
+      "inner": [
+        {
+          "id": "0x1d160664650",
+          "kind": "TypeVisibilityAttr",
+          "range": {
+            "begin": {},
+            "end": {}
+          },
+          "implicit": true
+        }
+      ]
+    },
+    {
+      "id": "0x1d1606c6cf0",
+      "kind": "TypedefDecl",
+      "loc": {},
+      "range": {
+        "begin": {},
+        "end": {}
+      },
+      "isImplicit": true,
+      "name": "size_t",
+      "type": {
+        "desugaredQualType": "unsigned long long",
+        "qualType": "__size_t"
+      },
+      "inner": [
+        {
+          "id": "0x1d1606c6cc0",
+          "kind": "PredefinedSugarType",
+          "type": {
+            "qualType": "__size_t"
+          },
+          "inner": [
+            {
+              "id": "0x1d160663880",
+              "kind": "BuiltinType",
+              "type": {
+                "qualType": "unsigned long long"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0x1d160664058",
+      "kind": "TypedefDecl",
+      "loc": {},
+      "range": {
+        "begin": {},
+        "end": {}
+      },
+      "isImplicit": true,
+      "name": "__builtin_ms_va_list",
+      "type": {
+        "qualType": "char *"
+      },
+      "inner": [
+        {
+          "id": "0x1d160664010",
+          "kind": "PointerType",
+          "type": {
+            "qualType": "char *"
+          },
+          "inner": [
+            {
+              "id": "0x1d160663740",
+              "kind": "BuiltinType",
+              "type": {
+                "qualType": "char"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0x1d1606640c8",
+      "kind": "TypedefDecl",
+      "loc": {},
+      "range": {
+        "begin": {},
+        "end": {}
+      },
+      "isImplicit": true,
+      "name": "__builtin_va_list",
+      "type": {
+        "qualType": "char *"
+      },
+      "inner": [
+        {
+          "id": "0x1d160664010",
+          "kind": "PointerType",
+          "type": {
+            "qualType": "char *"
+          },
+          "inner": [
+            {
+              "id": "0x1d160663740",
+              "kind": "BuiltinType",
+              "type": {
+                "qualType": "char"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0x1d1606c6d48",
+      "kind": "CXXRecordDecl",
+      "loc": {
+        "offset": 22,
+        "file": ".\\Calculator.h",
+        "line": 3,
+        "col": 7,
+        "tokLen": 10,
+        "includedFrom": {
+          "file": "main.cpp"
+        }
+      },
+      "range": {
+        "begin": {
+          "offset": 16,
+          "col": 1,
+          "tokLen": 5,
+          "includedFrom": {
+            "file": "main.cpp"
+          }
+        },
+        "end": {
+          "offset": 74,
+          "line": 7,
+          "col": 1,
+          "tokLen": 1,
+          "includedFrom": {
+            "file": "main.cpp"
+          }
+        }
+      },
+      "isReferenced": true,
+      "name": "Calculator",
+      "tagUsed": "class",
+      "completeDefinition": true,
+      "definitionData": {
+        "canConstDefaultInit": true,
+        "canPassInRegisters": true,
+        "copyAssign": {
+          "hasConstParam": true,
+          "implicitHasConstParam": true,
+          "needsImplicit": true,
+          "simple": true,
+          "trivial": true
+        },
+        "copyCtor": {
+          "hasConstParam": true,
+          "implicitHasConstParam": true,
+          "simple": true,
+          "trivial": true
+        },
+        "defaultCtor": {
+          "defaultedIsConstexpr": true,
+          "exists": true,
+          "isConstexpr": true,
+          "trivial": true
+        },
+        "dtor": {
+          "irrelevant": true,
+          "needsImplicit": true,
+          "simple": true,
+          "trivial": true
+        },
+        "hasConstexprNonCopyMoveConstructor": true,
+        "isAggregate": true,
+        "isEmpty": true,
+        "isLiteral": true,
+        "isPOD": true,
+        "isStandardLayout": true,
+        "isTrivial": true,
+        "isTriviallyCopyable": true,
+        "moveAssign": {
+          "exists": true,
+          "needsImplicit": true,
+          "simple": true,
+          "trivial": true
+        },
+        "moveCtor": {
+          "exists": true,
+          "simple": true,
+          "trivial": true
+        }
+      },
+      "inner": [
+        {
+          "id": "0x1d1606c6e40",
+          "kind": "CXXRecordDecl",
+          "loc": {
+            "offset": 22,
+            "line": 3,
+            "col": 7,
+            "tokLen": 10,
+            "includedFrom": {
+              "file": "main.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 16,
+              "col": 1,
+              "tokLen": 5,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            },
+            "end": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 10,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "Calculator",
+          "tagUsed": "class"
+        },
+        {
+          "id": "0x1d1606c6ed0",
+          "kind": "AccessSpecDecl",
+          "loc": {
+            "offset": 37,
+            "line": 5,
+            "col": 1,
+            "tokLen": 6,
+            "includedFrom": {
+              "file": "main.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 37,
+              "col": 1,
+              "tokLen": 6,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            },
+            "end": {
+              "offset": 43,
+              "col": 7,
+              "tokLen": 1,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            }
+          },
+          "access": "public"
+        },
+        {
+          "id": "0x1d1606c70e8",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 54,
+            "line": 6,
+            "col": 9,
+            "tokLen": 3,
+            "includedFrom": {
+              "file": "main.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 50,
+              "col": 5,
+              "tokLen": 3,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            },
+            "end": {
+              "offset": 70,
+              "col": 25,
+              "tokLen": 1,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            }
+          },
+          "isUsed": true,
+          "name": "add",
+          "mangledName": "?add@Calculator@@QEAAHHH@Z",
+          "type": {
+            "qualType": "int (int, int)"
+          },
+          "inner": [
+            {
+              "id": "0x1d1606c6f18",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 62,
+                "col": 17,
+                "tokLen": 1,
+                "includedFrom": {
+                  "file": "main.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 58,
+                  "col": 13,
+                  "tokLen": 3,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 62,
+                  "col": 17,
+                  "tokLen": 1,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                }
+              },
+              "name": "a",
+              "type": {
+                "qualType": "int"
+              }
+            },
+            {
+              "id": "0x1d1606c6fa0",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 69,
+                "col": 24,
+                "tokLen": 1,
+                "includedFrom": {
+                  "file": "main.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 65,
+                  "col": 20,
+                  "tokLen": 3,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 69,
+                  "col": 24,
+                  "tokLen": 1,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                }
+              },
+              "name": "b",
+              "type": {
+                "qualType": "int"
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1d1606c7420",
+          "kind": "CXXConstructorDecl",
+          "loc": {
+            "offset": 22,
+            "line": 3,
+            "col": 7,
+            "tokLen": 10,
+            "includedFrom": {
+              "file": "main.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 10,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            },
+            "end": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 10,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "isUsed": true,
+          "name": "Calculator",
+          "mangledName": "??0Calculator@@QEAA@XZ",
+          "type": {
+            "qualType": "void () noexcept"
+          },
+          "inline": true,
+          "constexpr": true,
+          "explicitlyDefaulted": "default",
+          "inner": [
+            {
+              "id": "0x1d1606c79b0",
+              "kind": "CompoundStmt",
+              "range": {
+                "begin": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 10,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 10,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1d1606c75a0",
+          "kind": "CXXConstructorDecl",
+          "loc": {
+            "offset": 22,
+            "col": 7,
+            "tokLen": 10,
+            "includedFrom": {
+              "file": "main.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 10,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            },
+            "end": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 10,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "Calculator",
+          "mangledName": "??0Calculator@@QEAA@AEBV0@@Z",
+          "type": {
+            "qualType": "void (const Calculator &)"
+          },
+          "inline": true,
+          "constexpr": true,
+          "explicitlyDefaulted": "default",
+          "inner": [
+            {
+              "id": "0x1d1606c76d0",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 22,
+                "col": 7,
+                "tokLen": 10,
+                "includedFrom": {
+                  "file": "main.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 10,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 10,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                }
+              },
+              "type": {
+                "qualType": "const Calculator &"
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1d1606c77c0",
+          "kind": "CXXConstructorDecl",
+          "loc": {
+            "offset": 22,
+            "col": 7,
+            "tokLen": 10,
+            "includedFrom": {
+              "file": "main.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 10,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            },
+            "end": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 10,
+              "includedFrom": {
+                "file": "main.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "Calculator",
+          "mangledName": "??0Calculator@@QEAA@$$QEAV0@@Z",
+          "type": {
+            "qualType": "void (Calculator &&)"
+          },
+          "inline": true,
+          "constexpr": true,
+          "explicitlyDefaulted": "default",
+          "inner": [
+            {
+              "id": "0x1d1606c78f0",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 22,
+                "col": 7,
+                "tokLen": 10,
+                "includedFrom": {
+                  "file": "main.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 10,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 10,
+                  "includedFrom": {
+                    "file": "main.cpp"
+                  }
+                }
+              },
+              "type": {
+                "qualType": "Calculator &&"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "0x1d1606c7218",
+      "kind": "FunctionDecl",
+      "loc": {
+        "offset": 31,
+        "file": "main.cpp",
+        "line": 3,
+        "col": 5,
+        "tokLen": 4
+      },
+      "range": {
+        "begin": {
+          "offset": 27,
+          "col": 1,
+          "tokLen": 3
+        },
+        "end": {
+          "offset": 136,
+          "line": 10,
+          "col": 1,
+          "tokLen": 1
+        }
+      },
+      "name": "main",
+      "mangledName": "main",
+      "type": {
+        "qualType": "int ()"
+      },
+      "inner": [
+        {
+          "id": "0x1d1606cb4e8",
+          "kind": "CompoundStmt",
+          "range": {
+            "begin": {
+              "offset": 39,
+              "line": 4,
+              "col": 1,
+              "tokLen": 1
+            },
+            "end": {
+              "offset": 136,
+              "line": 10,
+              "col": 1,
+              "tokLen": 1
+            }
+          },
+          "inner": [
+            {
+              "id": "0x1d1606c7b08",
+              "kind": "DeclStmt",
+              "range": {
+                "begin": {
+                  "offset": 46,
+                  "line": 5,
+                  "col": 5,
+                  "tokLen": 10
+                },
+                "end": {
+                  "offset": 67,
+                  "col": 26,
+                  "tokLen": 1
+                }
+              },
+              "inner": [
+                {
+                  "id": "0x1d1606c73a0",
+                  "kind": "VarDecl",
+                  "loc": {
+                    "offset": 57,
+                    "col": 16,
+                    "tokLen": 10
+                  },
+                  "range": {
+                    "begin": {
+                      "offset": 46,
+                      "col": 5,
+                      "tokLen": 10
+                    },
+                    "end": {
+                      "offset": 57,
+                      "col": 16,
+                      "tokLen": 10
+                    }
+                  },
+                  "isUsed": true,
+                  "name": "calculator",
+                  "type": {
+                    "qualType": "Calculator"
+                  },
+                  "init": "call",
+                  "inner": [
+                    {
+                      "id": "0x1d1606c7ae0",
+                      "kind": "CXXConstructExpr",
+                      "range": {
+                        "begin": {
+                          "offset": 57,
+                          "col": 16,
+                          "tokLen": 10
+                        },
+                        "end": {
+                          "offset": 57,
+                          "col": 16,
+                          "tokLen": 10
+                        }
+                      },
+                      "type": {
+                        "qualType": "Calculator"
+                      },
+                      "valueCategory": "prvalue",
+                      "ctorType": {
+                        "qualType": "void () noexcept"
+                      },
+                      "hadMultipleCandidates": true,
+                      "constructionKind": "complete"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "0x1d1606cb488",
+              "kind": "DeclStmt",
+              "range": {
+                "begin": {
+                  "offset": 76,
+                  "line": 7,
+                  "col": 5,
+                  "tokLen": 3
+                },
+                "end": {
+                  "offset": 111,
+                  "col": 40,
+                  "tokLen": 1
+                }
+              },
+              "inner": [
+                {
+                  "id": "0x1d1606c7b38",
+                  "kind": "VarDecl",
+                  "loc": {
+                    "offset": 80,
+                    "col": 9,
+                    "tokLen": 6
+                  },
+                  "range": {
+                    "begin": {
+                      "offset": 76,
+                      "col": 5,
+                      "tokLen": 3
+                    },
+                    "end": {
+                      "offset": 110,
+                      "col": 39,
+                      "tokLen": 1
+                    }
+                  },
+                  "isUsed": true,
+                  "name": "result",
+                  "type": {
+                    "qualType": "int"
+                  },
+                  "init": "c",
+                  "inner": [
+                    {
+                      "id": "0x1d1606c7c40",
+                      "kind": "CXXMemberCallExpr",
+                      "range": {
+                        "begin": {
+                          "offset": 89,
+                          "col": 18,
+                          "tokLen": 10
+                        },
+                        "end": {
+                          "offset": 110,
+                          "col": 39,
+                          "tokLen": 1
+                        }
+                      },
+                      "type": {
+                        "qualType": "int"
+                      },
+                      "valueCategory": "prvalue",
+                      "inner": [
+                        {
+                          "id": "0x1d1606c7bc0",
+                          "kind": "MemberExpr",
+                          "range": {
+                            "begin": {
+                              "offset": 89,
+                              "col": 18,
+                              "tokLen": 10
+                            },
+                            "end": {
+                              "offset": 100,
+                              "col": 29,
+                              "tokLen": 3
+                            }
+                          },
+                          "type": {
+                            "qualType": "<bound member function type>"
+                          },
+                          "valueCategory": "prvalue",
+                          "name": "add",
+                          "isArrow": false,
+                          "referencedMemberDecl": "0x1d1606c70e8",
+                          "inner": [
+                            {
+                              "id": "0x1d1606c7ba0",
+                              "kind": "DeclRefExpr",
+                              "range": {
+                                "begin": {
+                                  "offset": 89,
+                                  "col": 18,
+                                  "tokLen": 10
+                                },
+                                "end": {
+                                  "offset": 89,
+                                  "col": 18,
+                                  "tokLen": 10
+                                }
+                              },
+                              "type": {
+                                "qualType": "Calculator"
+                              },
+                              "valueCategory": "lvalue",
+                              "referencedDecl": {
+                                "id": "0x1d1606c73a0",
+                                "kind": "VarDecl",
+                                "name": "calculator",
+                                "type": {
+                                  "qualType": "Calculator"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "id": "0x1d1606c7bf0",
+                          "kind": "IntegerLiteral",
+                          "range": {
+                            "begin": {
+                              "offset": 104,
+                              "col": 33,
+                              "tokLen": 2
+                            },
+                            "end": {
+                              "offset": 104,
+                              "col": 33,
+                              "tokLen": 2
+                            }
+                          },
+                          "type": {
+                            "qualType": "int"
+                          },
+                          "valueCategory": "prvalue",
+                          "value": "10"
+                        },
+                        {
+                          "id": "0x1d1606c7c18",
+                          "kind": "IntegerLiteral",
+                          "range": {
+                            "begin": {
+                              "offset": 108,
+                              "col": 37,
+                              "tokLen": 2
+                            },
+                            "end": {
+                              "offset": 108,
+                              "col": 37,
+                              "tokLen": 2
+                            }
+                          },
+                          "type": {
+                            "qualType": "int"
+                          },
+                          "valueCategory": "prvalue",
+                          "value": "20"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "0x1d1606cb4d8",
+              "kind": "ReturnStmt",
+              "range": {
+                "begin": {
+                  "offset": 120,
+                  "line": 9,
+                  "col": 5,
+                  "tokLen": 6
+                },
+                "end": {
+                  "offset": 127,
+                  "col": 12,
+                  "tokLen": 6
+                }
+              },
+              "inner": [
+                {
+                  "id": "0x1d1606cb4c0",
+                  "kind": "ImplicitCastExpr",
+                  "range": {
+                    "begin": {
+                      "offset": 127,
+                      "col": 12,
+                      "tokLen": 6
+                    },
+                    "end": {
+                      "offset": 127,
+                      "col": 12,
+                      "tokLen": 6
+                    }
+                  },
+                  "type": {
+                    "qualType": "int"
+                  },
+                  "valueCategory": "prvalue",
+                  "castKind": "LValueToRValue",
+                  "inner": [
+                    {
+                      "id": "0x1d1606cb4a0",
+                      "kind": "DeclRefExpr",
+                      "range": {
+                        "begin": {
+                          "offset": 127,
+                          "col": 12,
+                          "tokLen": 6
+                        },
+                        "end": {
+                          "offset": 127,
+                          "col": 12,
+                          "tokLen": 6
+                        }
+                      },
+                      "type": {
+                        "qualType": "int"
+                      },
+                      "valueCategory": "lvalue",
+                      "referencedDecl": {
+                        "id": "0x1d1606c7b38",
+                        "kind": "VarDecl",
+                        "name": "result",
+                        "type": {
+                          "qualType": "int"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
