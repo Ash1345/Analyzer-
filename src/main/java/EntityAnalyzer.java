@@ -140,6 +140,43 @@ public class EntityAnalyzer {
             currentFunction = entity;
         }
 
+        // Variable
+        if ("VarDecl".equals(node.kind)
+                && node.name != null
+                && currentFunction != null) {
+
+            String variableType = null;
+
+            if (node.type != null) {
+
+                Object qualType =
+                        node.type.get("qualType");
+
+                if (qualType != null) {
+                    variableType =
+                            qualType.toString();
+                }
+            }
+
+            CodeEntity entity =
+                    new CodeEntity(
+                            node.id,
+                            "VARIABLE",
+                            node.name,
+                            currentFunction.qualifiedName
+                                    + "::"
+                                    + node.name
+                    );
+
+            entity.parentId = currentFunction.id;
+            entity.returnType = variableType;
+
+            extractLocation(node, entity);
+
+            entities.add(entity);
+        }
+
+
         // Parameter
         if ("ParmVarDecl".equals(node.kind)
                 && node.name != null
