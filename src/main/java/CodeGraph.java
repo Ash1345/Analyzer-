@@ -114,4 +114,35 @@ public class CodeGraph {
 
         return result;
     }
+    public List<CodeEntity> findEntitiesByKind(
+            String kind) {
+
+        List<CodeEntity> result =
+                new java.util.ArrayList<>();
+
+        for (CodeEntity entity : entities) {
+
+            if (kind.equals(entity.kind)) {
+                result.add(entity);
+            }
+        }
+
+        return result;
+    }
+
+    public List<CodeEntity> findEntitiesByName(
+            String name) {
+
+        List<CodeEntity> result =
+                new java.util.ArrayList<>();
+
+        for (CodeEntity entity : entities) {
+
+            if (name.equals(entity.name)) {
+                result.add(entity);
+            }
+        }
+
+        return result;
+    }
 }

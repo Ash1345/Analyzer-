@@ -10,6 +10,10 @@ public class CodeEntity {
     public String parentId;
     public String returnType;
 
+    public String file;
+    public Integer line;
+    public Integer column;
+
     public List<Parameter> parameters;
 
     public CodeEntity(

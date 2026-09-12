@@ -142,5 +142,32 @@ public class AstReader {
                             + entity.qualifiedName
             );
         }
+
+        System.out.println();
+        System.out.println("========== GRAPH QUERY TEST ==========");
+
+        System.out.println("Classes:");
+
+        for (CodeEntity entity :
+                graph.findEntitiesByKind("CLASS")) {
+
+            System.out.println(
+                    entity.kind + " : " +
+                            entity.qualifiedName
+            );
+        }
+
+        System.out.println();
+        System.out.println("Entities named Calculator:");
+
+        for (CodeEntity entity :
+                graph.findEntitiesByName("Calculator")) {
+
+            System.out.println(
+                    entity.kind + " : " +
+                            entity.qualifiedName
+            );
+        }
+
     }
 }

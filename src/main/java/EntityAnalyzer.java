@@ -185,4 +185,36 @@ public class EntityAnalyzer {
 
         return functionType;
     }
+
+    private static void extractLocation(
+            AstNode node,
+            CodeEntity entity) {
+
+        if (node.loc == null) {
+            return;
+        }
+
+        Object file =
+                node.loc.get("file");
+
+        Object line =
+                node.loc.get("line");
+
+        Object column =
+                node.loc.get("col");
+
+        if (file != null) {
+            entity.file = file.toString();
+        }
+
+        if (line != null) {
+            entity.line =
+                    Integer.valueOf(line.toString());
+        }
+
+        if (column != null) {
+            entity.column =
+                    Integer.valueOf(column.toString());
+        }
+    }
 }
