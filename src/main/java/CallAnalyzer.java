@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CallAnalyzer {
 
@@ -53,15 +52,21 @@ public class CallAnalyzer {
 
                     if ("MemberExpr".equals(child.kind)) {
 
+                        // Resolve the method being called
                         String referencedId =
                                 child.referencedMemberDecl;
 
                         CodeEntity targetEntity =
-                                index.findEntityById(referencedId);
+                                index.findEntityById(
+                                        referencedId
+                                );
 
                         if (targetEntity != null
                                 && currentFunction != null) {
 
+                            // Function-level call relationship
+                            //
+                            // main --CALLS--> Calculator::add
                             relations.add(
                                     new Relationship(
                                             currentFunction.id,
@@ -71,6 +76,61 @@ public class CallAnalyzer {
                                             "CALLS"
                                     )
                             );
+
+                            // Find the object on which
+                            // the method is being called
+                            //
+                            // calculator.add(...)
+                            //
+                            // MemberExpr
+                            //      |
+                            //      +-- DeclRefExpr
+                            //              |
+                            //              +-- calculator
+
+                            if (child.inner != null) {
+
+                                for (AstNode objectNode :
+                                        child.inner) {
+
+                                    if ("DeclRefExpr".equals(
+                                            objectNode.kind)
+                                            && objectNode.referencedDecl != null) {
+
+                                        Object objectId =
+                                                objectNode.referencedDecl
+                                                        .get("id");
+
+                                        if (objectId != null) {
+
+                                            CodeEntity objectEntity =
+                                                    index.findEntityById(
+                                                            objectId.toString()
+                                                    );
+
+                                            if (objectEntity != null
+                                                    && "VARIABLE".equals(
+                                                    objectEntity.kind)) {
+
+                                                // Object-level call relationship
+                                                //
+                                                // main::calculator
+                                                //      --OBJECT_CALLS-->
+                                                // Calculator::add
+                                                relations.add(
+                                                        new Relationship(
+                                                                objectEntity.id,
+                                                                objectEntity.qualifiedName,
+                                                                targetEntity.id,
+                                                                targetEntity.qualifiedName,
+                                                                "OBJECT_CALLS"
+                                                        )
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
