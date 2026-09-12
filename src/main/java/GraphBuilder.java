@@ -42,6 +42,10 @@ public class GraphBuilder {
                 UsesAnalyzer.analyze(root, index)
         );
 
+        relationships.addAll(
+                VariableUseAnalyzer.analyze(root, index)
+        );
+
         // Create graph
         return new CodeGraph(
                 entities,

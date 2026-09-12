@@ -13,6 +13,7 @@ public class CodeEntity {
     public String file;
     public Integer line;
     public Integer column;
+    public String type;
 
     public List<Parameter> parameters;
 

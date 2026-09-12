@@ -20,8 +20,6 @@ public class CodeGraph {
 
         System.out.println("Entities:");
 
-
-
         for (CodeEntity entity : entities) {
 
             System.out.println(
@@ -29,9 +27,7 @@ public class CodeGraph {
                             + entity.kind
                             + " : "
                             + entity.qualifiedName
-                            + (entity.returnType != null
-                            ? " -> returns " + entity.returnType
-                            : "")
+                            + getTypeInformation(entity)
             );
 
             if (entity.parameters != null
@@ -52,8 +48,6 @@ public class CodeGraph {
             }
         }
 
-
-
         System.out.println();
         System.out.println("Relationships:");
 
@@ -69,6 +63,24 @@ public class CodeGraph {
             );
         }
     }
+
+    private String getTypeInformation(
+            CodeEntity entity) {
+
+        if ("VARIABLE".equals(entity.kind)
+                && entity.type != null) {
+
+            return " -> type " + entity.type;
+        }
+
+        if (entity.returnType != null) {
+
+            return " -> returns " + entity.returnType;
+        }
+
+        return "";
+    }
+
     public List<Relationship> findRelationshipsFrom(
             String sourceId) {
 
@@ -114,6 +126,7 @@ public class CodeGraph {
 
         return result;
     }
+
     public List<CodeEntity> findEntitiesByKind(
             String kind) {
 
