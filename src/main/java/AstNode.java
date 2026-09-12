@@ -10,10 +10,11 @@ public class AstNode {
     public String kind;
     public String name;
 
-
     public Boolean isImplicit;
     public Boolean isReferenced;
+
     public String referencedMemberDecl;
+    public Map<String, Object> referencedDecl;
 
     public Map<String, Object> loc;
     public Map<String, Object> range;

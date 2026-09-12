@@ -1,14 +1,31 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class CallAnalyzer {
 
-    public static void analyze(AstNode node, AstIndex index) {
+    public static List<Relationship> analyze(
+            AstNode node,
+            AstIndex index) {
 
-        analyze(node, index, null);
+        List<Relationship> relations =
+                new ArrayList<>();
+
+        analyze(
+                node,
+                index,
+                null,
+                relations
+        );
+
+        return relations;
     }
 
     private static void analyze(
             AstNode node,
             AstIndex index,
-            String currentFunction) {
+            CodeEntity currentFunction,
+            List<Relationship> relations) {
 
         if (node == null) {
             return;
@@ -23,7 +40,8 @@ public class CallAnalyzer {
         if ("FunctionDecl".equals(node.kind)
                 && node.name != null) {
 
-            currentFunction = node.name;
+            currentFunction =
+                    index.findEntityById(node.id);
         }
 
         // Detect method call
@@ -35,38 +53,43 @@ public class CallAnalyzer {
 
                     if ("MemberExpr".equals(child.kind)) {
 
-                        AstNode target =
-                                index.findById(
-                                        child.referencedMemberDecl
-                                );
+                        String referencedId =
+                                child.referencedMemberDecl;
 
-                        System.out.println(
-                                "Caller: " + currentFunction
-                        );
+                        CodeEntity targetEntity =
+                                index.findEntityById(referencedId);
 
-                        System.out.println(
-                                "Called method: " + child.name
-                        );
+                        if (targetEntity != null
+                                && currentFunction != null) {
 
-                        if (target != null) {
-
-                            System.out.println(
-                                    "Target AST node: "
-                                            + target.kind
-                            );
-
-                            System.out.println(
-                                    "Target declaration: "
-                                            + target.name
-                            );
-
-                        } else {
-
-                            System.out.println(
-                                    "Target declaration not found"
+                            relations.add(
+                                    new Relationship(
+                                            currentFunction.id,
+                                            currentFunction.qualifiedName,
+                                            targetEntity.id,
+                                            targetEntity.qualifiedName,
+                                            "CALLS"
+                                    )
                             );
                         }
                     }
+                }
+            }
+        }
+
+        // Detect free function call
+        if ("CallExpr".equals(node.kind)) {
+
+            if (node.inner != null) {
+
+                for (AstNode child : node.inner) {
+
+                    findReferencedFunction(
+                            child,
+                            index,
+                            currentFunction,
+                            relations
+                    );
                 }
             }
         }
@@ -79,7 +102,65 @@ public class CallAnalyzer {
                 analyze(
                         child,
                         index,
-                        currentFunction
+                        currentFunction,
+                        relations
+                );
+            }
+        }
+    }
+
+    private static void findReferencedFunction(
+            AstNode node,
+            AstIndex index,
+            CodeEntity currentFunction,
+            List<Relationship> relations) {
+
+        if (node == null) {
+            return;
+        }
+
+        // We are looking for DeclRefExpr
+        if ("DeclRefExpr".equals(node.kind)
+                && node.referencedDecl != null
+                && currentFunction != null) {
+
+            Object referencedId =
+                    node.referencedDecl.get("id");
+
+            if (referencedId != null) {
+
+                CodeEntity targetEntity =
+                        index.findEntityById(
+                                referencedId.toString()
+                        );
+
+                if (targetEntity != null) {
+
+                    relations.add(
+                            new Relationship(
+                                    currentFunction.id,
+                                    currentFunction.qualifiedName,
+                                    targetEntity.id,
+                                    targetEntity.qualifiedName,
+                                    "CALLS"
+                            )
+                    );
+                }
+            }
+
+            return;
+        }
+
+        // Continue searching inside the CallExpr
+        if (node.inner != null) {
+
+            for (AstNode child : node.inner) {
+
+                findReferencedFunction(
+                        child,
+                        index,
+                        currentFunction,
+                        relations
                 );
             }
         }
