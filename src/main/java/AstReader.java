@@ -191,6 +191,68 @@ public class AstReader {
             );
         }
 
+
+        System.out.println();
+        System.out.println("========== GRAPH QUERY ENGINE ==========");
+
+        GraphQuery query =
+                new GraphQuery(graph);
+
+        System.out.println();
+        System.out.println("Who calls Calculator::add?");
+
+        for (CodeEntity entity :
+                query.findCallers("Calculator::add")) {
+
+            System.out.println(
+                    "  " + entity.qualifiedName
+            );
+        }
+
+        System.out.println();
+        System.out.println("What does main call?");
+
+        for (CodeEntity entity :
+                query.findCallees("main")) {
+
+            System.out.println(
+                    "  " + entity.qualifiedName
+            );
+        }
+
+        System.out.println();
+        System.out.println("Who produces main::result?");
+
+        for (CodeEntity entity :
+                query.findProducers("main::result")) {
+
+            System.out.println(
+                    "  " + entity.qualifiedName
+            );
+        }
+
+        System.out.println();
+        System.out.println("What does main write?");
+
+        for (CodeEntity entity :
+                query.findWriters("main")) {
+
+            System.out.println(
+                    "  " + entity.qualifiedName
+            );
+        }
+
+        System.out.println();
+        System.out.println("What does main read?");
+
+        for (CodeEntity entity :
+                query.findReaders("main")) {
+
+            System.out.println(
+                    "  " + entity.qualifiedName
+            );
+        }
+
     }
 
 }

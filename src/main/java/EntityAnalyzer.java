@@ -3,11 +3,13 @@ import java.util.List;
 
 public class EntityAnalyzer {
 
-    public static List<CodeEntity> analyze(AstNode node,String sourceFile) {
+    public static List<CodeEntity> analyze(
+            AstNode node,
+            String sourceFile) {
 
-        List<CodeEntity> entities = new ArrayList<>();
+        List<CodeEntity> entities =
+                new ArrayList<>();
 
-//        analyze(node, entities, null, null, null);
         analyze(
                 node,
                 entities,
@@ -52,7 +54,11 @@ public class EntityAnalyzer {
                             node.name
                     );
 
-            extractLocation(node, entity);
+            extractLocation(
+                    node,
+                    entity,
+                    sourceFile
+            );
 
             entities.add(entity);
         }
@@ -73,9 +79,15 @@ public class EntityAnalyzer {
                     );
 
             entity.parentId = currentClassId;
-            entity.returnType = extractReturnType(node);
 
-            extractLocation(node, entity);
+            entity.returnType =
+                    extractReturnType(node);
+
+            extractLocation(
+                    node,
+                    entity,
+                    sourceFile
+            );
 
             entities.add(entity);
 
@@ -94,9 +106,14 @@ public class EntityAnalyzer {
                             node.name
                     );
 
-            entity.returnType = extractReturnType(node);
+            entity.returnType =
+                    extractReturnType(node);
 
-            extractLocation(node, entity);
+            extractLocation(
+                    node,
+                    entity,
+                    sourceFile
+            );
 
             entities.add(entity);
 
@@ -121,7 +138,11 @@ public class EntityAnalyzer {
 
             entity.parentId = currentClassId;
 
-            extractLocation(node, entity);
+            extractLocation(
+                    node,
+                    entity,
+                    sourceFile
+            );
 
             entities.add(entity);
 
@@ -156,10 +177,17 @@ public class EntityAnalyzer {
                                     + node.name
                     );
 
-            entity.parentId = currentFunction.id;
-            entity.type = variableType;
+            entity.parentId =
+                    currentFunction.id;
 
-            extractLocation(node, entity);
+            entity.type =
+                    variableType;
+
+            extractLocation(
+                    node,
+                    entity,
+                    sourceFile
+            );
 
             entities.add(entity);
         }
@@ -232,6 +260,7 @@ public class EntityAnalyzer {
                 functionType.indexOf(" ");
 
         if (spaceIndex > 0) {
+
             return functionType.substring(
                     0,
                     spaceIndex
@@ -243,23 +272,12 @@ public class EntityAnalyzer {
 
     private static void extractLocation(
             AstNode node,
-            CodeEntity entity) {
+            CodeEntity entity,
+            String sourceFile) {
 
         if (node.loc == null) {
-            System.out.println(
-                    "DEBUG LOCATION: "
-                            + entity.qualifiedName
-                            + " -> loc is NULL"
-            );
             return;
         }
-
-        System.out.println(
-                "DEBUG LOCATION: "
-                        + entity.qualifiedName
-                        + " -> "
-                        + node.loc
-        );
 
         Object file =
                 node.loc.get("file");
@@ -270,18 +288,33 @@ public class EntityAnalyzer {
         Object column =
                 node.loc.get("col");
 
+        // Clang sometimes omits the file field.
+        // Use the source file being analyzed as a fallback.
         if (file != null) {
-            entity.file = file.toString();
+
+            entity.file =
+                    file.toString();
+
+        } else {
+
+            entity.file =
+                    sourceFile;
         }
 
         if (line != null) {
+
             entity.line =
-                    Integer.valueOf(line.toString());
+                    Integer.valueOf(
+                            line.toString()
+                    );
         }
 
         if (column != null) {
+
             entity.column =
-                    Integer.valueOf(column.toString());
+                    Integer.valueOf(
+                            column.toString()
+                    );
         }
     }
 }

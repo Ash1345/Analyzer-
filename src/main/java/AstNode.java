@@ -9,6 +9,7 @@ public class AstNode {
     public String id;
     public String kind;
     public String name;
+    public String opcode;
 
     public Boolean isImplicit;
     public Boolean isReferenced;

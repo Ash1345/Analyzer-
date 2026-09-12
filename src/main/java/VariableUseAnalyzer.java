@@ -14,6 +14,7 @@ public class VariableUseAnalyzer {
                 node,
                 index,
                 null,
+                null,
                 relationships
         );
 
@@ -23,6 +24,7 @@ public class VariableUseAnalyzer {
     private static void analyze(
             AstNode node,
             AstIndex index,
+            AstNode parent,
             CodeEntity currentFunction,
             List<Relationship> relationships) {
 
@@ -34,7 +36,7 @@ public class VariableUseAnalyzer {
             return;
         }
 
-        // Track current function
+        // Track the function we are currently inside
         if ("FunctionDecl".equals(node.kind)
                 && node.name != null) {
 
@@ -60,31 +62,60 @@ public class VariableUseAnalyzer {
                 if (variable != null
                         && "VARIABLE".equals(variable.kind)) {
 
-                    relationships.add(
-                            new Relationship(
-                                    currentFunction.id,
-                                    currentFunction.qualifiedName,
-                                    variable.id,
-                                    variable.qualifiedName,
-                                    "USES_VARIABLE"
-                            )
-                    );
+                    // If this DeclRefExpr is the left side
+                    // of an assignment, AssignmentAnalyzer
+                    // already handles it as WRITES.
+                    if (!isWriteReference(node, parent)) {
+
+                        relationships.add(
+                                new Relationship(
+                                        currentFunction.id,
+                                        currentFunction.qualifiedName,
+                                        variable.id,
+                                        variable.qualifiedName,
+                                        "READS"
+                                )
+                        );
+                    }
                 }
             }
         }
 
-        // Analyze children
         if (node.inner != null) {
 
-            for (AstNode child : node.inner) {
+            for (AstNode child :
+                    node.inner) {
 
                 analyze(
                         child,
                         index,
+                        node,
                         currentFunction,
                         relationships
                 );
             }
         }
+    }
+
+    private static boolean isWriteReference(
+            AstNode node,
+            AstNode parent) {
+
+        if (node == null || parent == null) {
+            return false;
+        }
+
+        if ("BinaryOperator".equals(parent.kind)
+                && "=".equals(parent.opcode)
+                && parent.inner != null
+                && !parent.inner.isEmpty()) {
+
+            AstNode leftSide =
+                    parent.inner.get(0);
+
+            return leftSide == node;
+        }
+
+        return false;
     }
 }

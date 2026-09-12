@@ -50,6 +50,10 @@ public class GraphBuilder {
                 DataFlowAnalyzer.analyze(root, index)
         );
 
+        relationships.addAll(
+                AssignmentAnalyzer.analyze(root, index)
+        );
+
         return new CodeGraph(
                 entities,
                 relationships
