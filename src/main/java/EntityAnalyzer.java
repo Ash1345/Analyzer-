@@ -35,14 +35,28 @@ public class EntityAnalyzer {
             currentClass = node.name;
             currentClassId = node.id;
 
-            entities.add(
+//            entities.add(
+//                    new CodeEntity(
+//                            node.id,
+//                            "CLASS",
+//                            node.name,
+//                            node.name
+//                    )
+//            );
+
+            CodeEntity entity =
                     new CodeEntity(
                             node.id,
                             "CLASS",
                             node.name,
                             node.name
-                    )
-            );
+                    );
+
+            extractLocation(node, entity);
+
+            entities.add(entity);
+
+
         }
 
         // Method
@@ -59,11 +73,13 @@ public class EntityAnalyzer {
                             node.name,
                             qualifiedName
                     );
-
             entity.parentId = currentClassId;
             entity.returnType = extractReturnType(node);
 
+            extractLocation(node, entity);
+
             entities.add(entity);
+
 
             currentFunction = entity;
         }
@@ -82,15 +98,27 @@ public class EntityAnalyzer {
 
             entity.returnType = extractReturnType(node);
 
+            extractLocation(node, entity);
+
             entities.add(entity);
 
             currentFunction = entity;
         }
 
         // Constructor
+        // Constructor
         if ("CXXConstructorDecl".equals(node.kind)
                 && node.name != null
                 && currentClass != null) {
+
+            System.out.println(
+                    "DEBUG CONSTRUCTOR: "
+                            + node.name
+                            + " | id="
+                            + node.id
+                            + " | class="
+                            + currentClass
+            );
 
             String qualifiedName =
                     currentClass + "::" + node.name;
@@ -104,6 +132,8 @@ public class EntityAnalyzer {
                     );
 
             entity.parentId = currentClassId;
+
+            extractLocation(node, entity);
 
             entities.add(entity);
 

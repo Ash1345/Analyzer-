@@ -140,8 +140,15 @@ public class AstReader {
                     entity.kind
                             + " : "
                             + entity.qualifiedName
+                            + " | "
+                            + entity.file
+                            + ":"
+                            + entity.line
+                            + ":"
+                            + entity.column
             );
         }
+
 
         System.out.println();
         System.out.println("========== GRAPH QUERY TEST ==========");
@@ -170,4 +177,5 @@ public class AstReader {
         }
 
     }
+
 }
