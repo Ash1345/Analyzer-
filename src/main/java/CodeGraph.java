@@ -158,4 +158,21 @@ public class CodeGraph {
 
         return result;
     }
+
+    public List<Relationship> findRelationshipsByType(
+            String type) {
+
+        List<Relationship> result =
+                new java.util.ArrayList<>();
+
+        for (Relationship relationship :
+                relationships) {
+
+            if (type.equals(relationship.type)) {
+                result.add(relationship);
+            }
+        }
+
+        return result;
+    }
 }

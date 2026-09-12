@@ -5,39 +5,35 @@ public class GraphBuilder {
 
     public static CodeGraph build(AstNode root) {
 
-        // Build AST index
         AstIndex index = new AstIndex();
+
         index.build(root);
 
-        // Extract entities
         List<CodeEntity> entities =
-                EntityAnalyzer.analyze(root);
+                EntityAnalyzer.analyze(
+                        root,
+                        "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp"
+                );
 
-        // Add entities to index
         for (CodeEntity entity : entities) {
             index.addEntity(entity);
         }
 
-        // Collect all relationships
         List<Relationship> relationships =
                 new ArrayList<>();
 
-        // CALLS
         relationships.addAll(
                 CallAnalyzer.analyze(root, index)
         );
 
-        // CONTAINS
         relationships.addAll(
                 ContainsAnalyzer.analyze(entities)
         );
 
-        // CONSTRUCTS
         relationships.addAll(
                 ConstructionAnalyzer.analyze(root, index)
         );
 
-        // USES
         relationships.addAll(
                 UsesAnalyzer.analyze(root, index)
         );
@@ -50,7 +46,10 @@ public class GraphBuilder {
                 TypeRelationshipAnalyzer.analyze(entities)
         );
 
-        // Create graph
+        relationships.addAll(
+                DataFlowAnalyzer.analyze(root, index)
+        );
+
         return new CodeGraph(
                 entities,
                 relationships

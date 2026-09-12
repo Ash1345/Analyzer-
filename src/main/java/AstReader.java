@@ -176,6 +176,21 @@ public class AstReader {
             );
         }
 
+        System.out.println();
+        System.out.println("========== DATA FLOW TEST ==========");
+
+        for (Relationship relationship :
+                graph.findRelationshipsByType("PRODUCES")) {
+
+            System.out.println(
+                    relationship.source
+                            + " --"
+                            + relationship.type
+                            + "--> "
+                            + relationship.target
+            );
+        }
+
     }
 
 }

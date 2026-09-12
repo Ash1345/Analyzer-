@@ -24,6 +24,8 @@ int main()
 
     int result = calculator.add(10, 20);
 
+    result = result + 5;
+
     int value = calculate();
 
     return result + value;

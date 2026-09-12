@@ -3,11 +3,19 @@ import java.util.List;
 
 public class EntityAnalyzer {
 
-    public static List<CodeEntity> analyze(AstNode node) {
+    public static List<CodeEntity> analyze(AstNode node,String sourceFile) {
 
         List<CodeEntity> entities = new ArrayList<>();
 
-        analyze(node, entities, null, null, null);
+//        analyze(node, entities, null, null, null);
+        analyze(
+                node,
+                entities,
+                null,
+                null,
+                null,
+                sourceFile
+        );
 
         return entities;
     }
@@ -17,7 +25,8 @@ public class EntityAnalyzer {
             List<CodeEntity> entities,
             String currentClass,
             String currentClassId,
-            CodeEntity currentFunction) {
+            CodeEntity currentFunction,
+            String sourceFile) {
 
         if (node == null) {
             return;
@@ -195,7 +204,8 @@ public class EntityAnalyzer {
                         entities,
                         currentClass,
                         currentClassId,
-                        currentFunction
+                        currentFunction,
+                        sourceFile
                 );
             }
         }
@@ -236,8 +246,20 @@ public class EntityAnalyzer {
             CodeEntity entity) {
 
         if (node.loc == null) {
+            System.out.println(
+                    "DEBUG LOCATION: "
+                            + entity.qualifiedName
+                            + " -> loc is NULL"
+            );
             return;
         }
+
+        System.out.println(
+                "DEBUG LOCATION: "
+                        + entity.qualifiedName
+                        + " -> "
+                        + node.loc
+        );
 
         Object file =
                 node.loc.get("file");
