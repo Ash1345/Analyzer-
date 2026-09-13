@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,13 +11,27 @@ public class EntityAnalyzer {
         List<CodeEntity> entities =
                 new ArrayList<>();
 
+        SourceLocationResolver locationResolver;
+
+        try {
+            locationResolver =
+                    new SourceLocationResolver(sourceFile);
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Failed to read source file: "
+                            + sourceFile,
+                    e
+            );
+        }
+
         analyze(
                 node,
                 entities,
                 null,
                 null,
                 null,
-                sourceFile
+                sourceFile,
+                locationResolver
         );
 
         return entities;
@@ -28,7 +43,8 @@ public class EntityAnalyzer {
             String currentClass,
             String currentClassId,
             CodeEntity currentFunction,
-            String sourceFile) {
+            String sourceFile,
+            SourceLocationResolver locationResolver) {
 
         if (node == null) {
             return;
@@ -57,7 +73,8 @@ public class EntityAnalyzer {
             extractLocation(
                     node,
                     entity,
-                    sourceFile
+                    sourceFile,
+                    locationResolver
             );
 
             entities.add(entity);
@@ -67,8 +84,56 @@ public class EntityAnalyzer {
         if ("CXXMethodDecl".equals(node.kind)
                 && node.name != null) {
 
-            String qualifiedName =
-                    currentClass + "::" + node.name;
+            String methodClass = currentClass;
+            String methodClassId = currentClassId;
+
+            /*
+             * For an out-of-class definition such as:
+             *
+             * int Calculator::add(int a, int b)
+             *
+             * Clang gives us previousDecl.
+             *
+             * We use the previous declaration to find the
+             * already-known Calculator class.
+             */
+            if (methodClass == null
+                    && node.previousDecl != null) {
+
+                for (CodeEntity existingEntity :
+                        entities) {
+
+                    if (existingEntity.id.equals(
+                            node.previousDecl)) {
+
+                        if ("METHOD".equals(
+                                existingEntity.kind)) {
+
+                            methodClass =
+                                    extractClassName(
+                                            existingEntity.qualifiedName
+                                    );
+
+                            methodClassId =
+                                    existingEntity.parentId;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            String qualifiedName;
+
+            if (methodClass != null) {
+                qualifiedName =
+                        methodClass
+                                + "::"
+                                + node.name;
+            } else {
+                qualifiedName =
+                        node.name;
+            }
 
             CodeEntity entity =
                     new CodeEntity(
@@ -78,7 +143,8 @@ public class EntityAnalyzer {
                             qualifiedName
                     );
 
-            entity.parentId = currentClassId;
+            entity.parentId =
+                    methodClassId;
 
             entity.returnType =
                     extractReturnType(node);
@@ -86,7 +152,8 @@ public class EntityAnalyzer {
             extractLocation(
                     node,
                     entity,
-                    sourceFile
+                    sourceFile,
+                    locationResolver
             );
 
             entities.add(entity);
@@ -112,7 +179,8 @@ public class EntityAnalyzer {
             extractLocation(
                     node,
                     entity,
-                    sourceFile
+                    sourceFile,
+                    locationResolver
             );
 
             entities.add(entity);
@@ -136,12 +204,14 @@ public class EntityAnalyzer {
                             qualifiedName
                     );
 
-            entity.parentId = currentClassId;
+            entity.parentId =
+                    currentClassId;
 
             extractLocation(
                     node,
                     entity,
-                    sourceFile
+                    sourceFile,
+                    locationResolver
             );
 
             entities.add(entity);
@@ -162,6 +232,7 @@ public class EntityAnalyzer {
                         node.type.get("qualType");
 
                 if (qualType != null) {
+
                     variableType =
                             qualType.toString();
                 }
@@ -186,7 +257,8 @@ public class EntityAnalyzer {
             extractLocation(
                     node,
                     entity,
-                    sourceFile
+                    sourceFile,
+                    locationResolver
             );
 
             entities.add(entity);
@@ -205,6 +277,7 @@ public class EntityAnalyzer {
                         node.type.get("qualType");
 
                 if (qualType != null) {
+
                     parameterType =
                             qualType.toString();
                 }
@@ -225,7 +298,8 @@ public class EntityAnalyzer {
         // Analyze children
         if (node.inner != null) {
 
-            for (AstNode child : node.inner) {
+            for (AstNode child :
+                    node.inner) {
 
                 analyze(
                         child,
@@ -233,10 +307,31 @@ public class EntityAnalyzer {
                         currentClass,
                         currentClassId,
                         currentFunction,
-                        sourceFile
+                        sourceFile,
+                        locationResolver
                 );
             }
         }
+    }
+
+    private static String extractClassName(
+            String qualifiedName) {
+
+        if (qualifiedName == null) {
+            return null;
+        }
+
+        int separator =
+                qualifiedName.lastIndexOf("::");
+
+        if (separator <= 0) {
+            return null;
+        }
+
+        return qualifiedName.substring(
+                0,
+                separator
+        );
     }
 
     private static String extractReturnType(
@@ -273,12 +368,40 @@ public class EntityAnalyzer {
     private static void extractLocation(
             AstNode node,
             CodeEntity entity,
-            String sourceFile) {
+            String sourceFile,
+            SourceLocationResolver locationResolver) {
 
         if (node.loc == null) {
             return;
         }
 
+        Object offsetObject =
+                node.loc.get("offset");
+
+        // Prefer Clang's byte/character offset.
+        if (offsetObject != null) {
+
+            int offset =
+                    Integer.parseInt(
+                            offsetObject.toString()
+                    );
+
+            SourceLocationResolver.Location location =
+                    locationResolver.resolve(offset);
+
+            entity.file =
+                    location.file;
+
+            entity.line =
+                    location.line;
+
+            entity.column =
+                    location.column;
+
+            return;
+        }
+
+        // Fallback when offset is unavailable.
         Object file =
                 node.loc.get("file");
 
@@ -288,8 +411,6 @@ public class EntityAnalyzer {
         Object column =
                 node.loc.get("col");
 
-        // Clang sometimes omits the file field.
-        // Use the source file being analyzed as a fallback.
         if (file != null) {
 
             entity.file =

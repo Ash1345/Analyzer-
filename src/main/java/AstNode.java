@@ -13,6 +13,8 @@ public class AstNode {
 
     public Boolean isImplicit;
     public Boolean isReferenced;
+    public String mangledName;
+    public String previousDecl;
 
     public String referencedMemberDecl;
     public Map<String, Object> referencedDecl;
