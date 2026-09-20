@@ -63,6 +63,18 @@ public class CodeGraph {
                             + "--> "
                             + relation.target
             );
+
+            if (relation.file != null) {
+
+                System.out.println(
+                        "      Location: "
+                                + relation.file
+                                + ":"
+                                + relation.line
+                                + ":"
+                                + relation.column
+                );
+            }
         }
     }
 

@@ -5,7 +5,8 @@ public class UsesAnalyzer {
 
     public static List<Relationship> analyze(
             AstNode root,
-            AstIndex index) {
+            AstIndex index,
+            SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
                 new ArrayList<>();
@@ -14,7 +15,8 @@ public class UsesAnalyzer {
                 root,
                 index,
                 relationships,
-                null
+                null,
+                locationResolver
         );
 
         return relationships;
@@ -25,7 +27,8 @@ public class UsesAnalyzer {
             AstNode node,
             AstIndex index,
             List<Relationship> relationships,
-            CodeEntity currentFunction) {
+            CodeEntity currentFunction,
+            SourceLocationResolver locationResolver) {
 
         if (node == null) {
             return;
@@ -50,7 +53,7 @@ public class UsesAnalyzer {
 
 
         // =====================================================
-        // Detect variable/type usage
+        // Detect class usage through variable declaration
         // =====================================================
 
         if ("VarDecl".equals(node.kind)
@@ -70,6 +73,10 @@ public class UsesAnalyzer {
 
                 CodeEntity targetClass = null;
 
+                // =================================================
+                // Find the corresponding class
+                // =================================================
+
                 for (CodeEntity entity :
                         index.getAllEntities()) {
 
@@ -86,23 +93,21 @@ public class UsesAnalyzer {
                 }
 
 
+                // =================================================
+                // Create USES relationship
+                // =================================================
+
                 if (targetClass != null) {
 
                     Relationship relationship =
-                            new Relationship(
-                                    currentFunction.id,
-                                    currentFunction.qualifiedName,
-                                    targetClass.id,
-                                    targetClass.qualifiedName,
-                                    "USES"
+                            createRelationship(
+                                    currentFunction,
+                                    targetClass,
+                                    "USES",
+                                    node,
+                                    locationResolver
                             );
 
-                    /*
-                     * No duplicate checking here.
-                     *
-                     * RelationshipRegistry in GraphBuilder
-                     * is responsible for deduplication.
-                     */
                     relationships.add(
                             relationship
                     );
@@ -124,9 +129,78 @@ public class UsesAnalyzer {
                         child,
                         index,
                         relationships,
-                        currentFunction
+                        currentFunction,
+                        locationResolver
                 );
             }
         }
+    }
+
+
+    // =========================================================
+    // Create relationship with source location
+    // =========================================================
+
+    private static Relationship createRelationship(
+            CodeEntity source,
+            CodeEntity target,
+            String type,
+            AstNode node,
+            SourceLocationResolver locationResolver) {
+
+        Relationship relationship =
+                new Relationship(
+                        source.id,
+                        source.qualifiedName,
+                        target.id,
+                        target.qualifiedName,
+                        type
+                );
+
+
+        // =====================================================
+        // Resolve location from range.begin.offset
+        // =====================================================
+
+        if (node != null
+                && node.range != null
+                && locationResolver != null) {
+
+            Object beginObject =
+                    node.range.get("begin");
+
+            if (beginObject instanceof java.util.Map) {
+
+                java.util.Map<?, ?> begin =
+                        (java.util.Map<?, ?>) beginObject;
+
+                Object offsetObject =
+                        begin.get("offset");
+
+                if (offsetObject != null) {
+
+                    int offset =
+                            Integer.parseInt(
+                                    offsetObject.toString()
+                            );
+
+                    SourceLocationResolver.Location location =
+                            locationResolver.resolve(
+                                    offset
+                            );
+
+                    relationship.file =
+                            location.file;
+
+                    relationship.line =
+                            location.line;
+
+                    relationship.column =
+                            location.column;
+                }
+            }
+        }
+
+        return relationship;
     }
 }

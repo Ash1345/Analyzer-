@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,10 +10,13 @@ public class GraphBuilder {
 
         index.build(root);
 
+        String sourceFile =
+                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp";
+
         List<CodeEntity> entities =
                 EntityAnalyzer.analyze(
                         root,
-                        "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp"
+                        sourceFile
                 );
 
         for (CodeEntity entity : entities) {
@@ -36,6 +40,29 @@ public class GraphBuilder {
 
 
         // =====================================================
+        // Create source-location resolver
+        // =====================================================
+
+        SourceLocationResolver locationResolver;
+
+        try {
+
+            locationResolver =
+                    new SourceLocationResolver(
+                            sourceFile
+                    );
+
+        } catch (IOException e) {
+
+            throw new RuntimeException(
+                    "Failed to create source location resolver: "
+                            + sourceFile,
+                    e
+            );
+        }
+
+
+        // =====================================================
         // Analyze relationships
         // =====================================================
 
@@ -43,7 +70,8 @@ public class GraphBuilder {
                 registry,
                 CallAnalyzer.analyze(
                         root,
-                        index
+                        index,
+                        locationResolver
                 )
         );
 
@@ -58,7 +86,8 @@ public class GraphBuilder {
                 registry,
                 ConstructionAnalyzer.analyze(
                         root,
-                        index
+                        index,
+                        locationResolver
                 )
         );
 
@@ -66,7 +95,8 @@ public class GraphBuilder {
                 registry,
                 UsesAnalyzer.analyze(
                         root,
-                        index
+                        index,
+                        locationResolver
                 )
         );
 
@@ -74,7 +104,8 @@ public class GraphBuilder {
                 registry,
                 VariableUseAnalyzer.analyze(
                         root,
-                        index
+                        index,
+                        locationResolver
                 )
         );
 
@@ -89,7 +120,8 @@ public class GraphBuilder {
                 registry,
                 DataFlowAnalyzer.analyze(
                         root,
-                        index
+                        index,
+                        locationResolver
                 )
         );
 
@@ -97,7 +129,8 @@ public class GraphBuilder {
                 registry,
                 AssignmentAnalyzer.analyze(
                         root,
-                        index
+                        index,
+                        locationResolver
                 )
         );
 
@@ -186,58 +219,120 @@ public class GraphBuilder {
         // Analyze every translation unit
         // =====================================================
 
-        for (AstNode root : roots) {
+        for (int i = 0;
+             i < roots.size();
+             i++) {
+
+            AstNode root =
+                    roots.get(i);
+
+            String sourceFile =
+                    sourceFiles.get(i);
+
+
+            // -------------------------------------------------
+            // Create resolver for this translation unit
+            // -------------------------------------------------
+
+            SourceLocationResolver locationResolver;
+
+            try {
+
+                locationResolver =
+                        new SourceLocationResolver(
+                                sourceFile
+                        );
+
+            } catch (IOException e) {
+
+                throw new RuntimeException(
+                        "Failed to create source location resolver: "
+                                + sourceFile,
+                        e
+                );
+            }
+
+
+            // -------------------------------------------------
+            // Call relationships
+            // -------------------------------------------------
 
             addRelationships(
                     registry,
                     CallAnalyzer.analyze(
                             root,
-                            index
+                            index,
+                            locationResolver
                     )
             );
 
+
+            // -------------------------------------------------
+            // Construction relationships
+            // -------------------------------------------------
 
             addRelationships(
                     registry,
                     ConstructionAnalyzer.analyze(
                             root,
-                            index
+                            index,
+                            locationResolver
                     )
             );
 
+
+            // -------------------------------------------------
+            // Uses relationships
+            // -------------------------------------------------
 
             addRelationships(
                     registry,
                     UsesAnalyzer.analyze(
                             root,
-                            index
+                            index,
+                            locationResolver
                     )
             );
 
+
+            // -------------------------------------------------
+            // Variable usage relationships
+            // -------------------------------------------------
 
             addRelationships(
                     registry,
                     VariableUseAnalyzer.analyze(
                             root,
-                            index
+                            index,
+                            locationResolver
                     )
             );
 
+
+            // -------------------------------------------------
+            // Data flow relationships
+            // -------------------------------------------------
 
             addRelationships(
                     registry,
                     DataFlowAnalyzer.analyze(
                             root,
-                            index
+                            index,
+                            locationResolver
                     )
             );
 
+
+            // -------------------------------------------------
+            // Assignment relationships
+            // -------------------------------------------------
 
             addRelationships(
                     registry,
                     AssignmentAnalyzer.analyze(
                             root,
-                            index
+                            index,
+                            locationResolver
                     )
             );
         }

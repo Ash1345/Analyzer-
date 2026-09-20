@@ -4,198 +4,385 @@ import java.util.List;
 public class CallAnalyzer {
 
     public static List<Relationship> analyze(
-            AstNode node,
-            AstIndex index) {
+            AstNode root,
+            AstIndex index,
+            SourceLocationResolver locationResolver) {
 
-        List<Relationship> relations =
+        List<Relationship> relationships =
                 new ArrayList<>();
 
-        analyze(
-                node,
+        analyzeNode(
+                root,
                 index,
+                relationships,
                 null,
-                relations
+                locationResolver
         );
 
-        return relations;
+        return relationships;
     }
 
-    private static void analyze(
+
+    private static void analyzeNode(
             AstNode node,
             AstIndex index,
+            List<Relationship> relationships,
             CodeEntity currentFunction,
-            List<Relationship> relations) {
+            SourceLocationResolver locationResolver) {
 
         if (node == null) {
             return;
         }
 
-        if (Boolean.TRUE.equals(node.isImplicit)) {
-            return;
-        }
 
-        if ("FunctionDecl".equals(node.kind)
+        // =====================================================
+        // Track current function
+        // =====================================================
+
+        if (("FunctionDecl".equals(node.kind)
+                || "CXXMethodDecl".equals(node.kind))
                 && node.name != null) {
 
-            currentFunction =
+            CodeEntity entity =
                     index.resolveEntity(node.id);
+
+            if (entity != null) {
+                currentFunction = entity;
+            }
         }
 
-        if ("CXXMemberCallExpr".equals(node.kind)) {
 
-            if (node.inner != null) {
+        // =====================================================
+        // C++ member call
+        // =====================================================
 
-                for (AstNode child : node.inner) {
+        if ("CXXMemberCallExpr".equals(node.kind)
+                && currentFunction != null) {
 
-                    if ("MemberExpr".equals(child.kind)) {
+            AstNode memberExpr =
+                    findNodeByKind(
+                            node,
+                            "MemberExpr"
+                    );
 
-                        String referencedId =
-                                child.referencedMemberDecl;
+            if (memberExpr != null
+                    && memberExpr.referencedMemberDecl != null) {
 
-                        CodeEntity targetEntity =
-                                index.resolveEntity(
-                                        referencedId
-                                );
+                CodeEntity target =
+                        index.resolveEntity(
+                                memberExpr.referencedMemberDecl
+                        );
 
-                        if (targetEntity != null
-                                && currentFunction != null) {
+                if (target != null) {
 
-                            relations.add(
-                                    new Relationship(
-                                            currentFunction.id,
-                                            currentFunction.qualifiedName,
-                                            targetEntity.id,
-                                            targetEntity.qualifiedName,
-                                            "CALLS"
-                                    )
+                    Relationship relationship =
+                            createRelationship(
+                                    currentFunction,
+                                    target,
+                                    "CALLS",
+                                    node,
+                                    locationResolver
                             );
 
-                            if (child.inner != null) {
+                    relationships.add(
+                            relationship
+                    );
 
-                                for (AstNode objectNode :
-                                        child.inner) {
 
-                                    if ("DeclRefExpr".equals(
-                                            objectNode.kind)
-                                            && objectNode.referencedDecl != null) {
+                    // =================================================
+                    // Detect object on which the method is called
+                    // =================================================
 
-                                        Object objectId =
-                                                objectNode.referencedDecl
-                                                        .get("id");
+                    CodeEntity object =
+                            findReferencedVariable(
+                                    node,
+                                    index
+                            );
 
-                                        if (objectId != null) {
+                    if (object != null) {
 
-                                            CodeEntity objectEntity =
-                                                    index.resolveEntity(
-                                                            objectId.toString()
-                                                    );
+                        Relationship objectRelationship =
+                                createRelationship(
+                                        object,
+                                        target,
+                                        "OBJECT_CALLS",
+                                        node,
+                                        locationResolver
+                                );
 
-                                            if (objectEntity != null
-                                                    && "VARIABLE".equals(
-                                                    objectEntity.kind)) {
-
-                                                relations.add(
-                                                        new Relationship(
-                                                                objectEntity.id,
-                                                                objectEntity.qualifiedName,
-                                                                targetEntity.id,
-                                                                targetEntity.qualifiedName,
-                                                                "OBJECT_CALLS"
-                                                        )
-                                                );
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        relationships.add(
+                                objectRelationship
+                        );
                     }
                 }
             }
         }
 
-        if ("CallExpr".equals(node.kind)) {
 
-            if (node.inner != null) {
+        // =====================================================
+        // Normal function call
+        // =====================================================
 
-                for (AstNode child : node.inner) {
+        if ("CallExpr".equals(node.kind)
+                && currentFunction != null) {
 
-                    findReferencedFunction(
-                            child,
-                            index,
-                            currentFunction,
-                            relations
+            AstNode referencedFunction =
+                    findReferencedDecl(
+                            node
+                    );
+
+            if (referencedFunction != null
+                    && referencedFunction.id != null) {
+
+                CodeEntity target =
+                        index.resolveEntity(
+                                referencedFunction.id
+                        );
+
+                if (target != null) {
+
+                    Relationship relationship =
+                            createRelationship(
+                                    currentFunction,
+                                    target,
+                                    "CALLS",
+                                    node,
+                                    locationResolver
+                            );
+
+                    relationships.add(
+                            relationship
                     );
                 }
             }
         }
 
+
+        // =====================================================
+        // Analyze children
+        // =====================================================
+
         if (node.inner != null) {
 
-            for (AstNode child : node.inner) {
+            for (AstNode child :
+                    node.inner) {
 
-                analyze(
+                analyzeNode(
                         child,
                         index,
+                        relationships,
                         currentFunction,
-                        relations
+                        locationResolver
                 );
             }
         }
     }
 
-    private static void findReferencedFunction(
+
+    // =========================================================
+    // Create relationship with source location
+    // =========================================================
+
+    private static Relationship createRelationship(
+            CodeEntity source,
+            CodeEntity target,
+            String type,
             AstNode node,
-            AstIndex index,
-            CodeEntity currentFunction,
-            List<Relationship> relations) {
+            SourceLocationResolver locationResolver) {
 
-        if (node == null) {
-            return;
-        }
+        Relationship relationship =
+                new Relationship(
+                        source.id,
+                        source.qualifiedName,
+                        target.id,
+                        target.qualifiedName,
+                        type
+                );
 
-        if ("DeclRefExpr".equals(node.kind)
-                && node.referencedDecl != null
-                && currentFunction != null) {
+        // =========================================================
+        // Resolve source location from AST range.begin.offset
+        // =========================================================
 
-            Object referencedId =
-                    node.referencedDecl.get("id");
+        if (node != null
+                && node.range != null
+                && locationResolver != null) {
 
-            if (referencedId != null) {
+            Object beginObject =
+                    node.range.get("begin");
 
-                CodeEntity targetEntity =
-                        index.resolveEntity(
-                                referencedId.toString()
-                        );
+            if (beginObject instanceof java.util.Map) {
 
-                if (targetEntity != null) {
+                java.util.Map<?, ?> begin =
+                        (java.util.Map<?, ?>) beginObject;
 
-                    relations.add(
-                            new Relationship(
-                                    currentFunction.id,
-                                    currentFunction.qualifiedName,
-                                    targetEntity.id,
-                                    targetEntity.qualifiedName,
-                                    "CALLS"
-                            )
-                    );
+                Object offsetObject =
+                        begin.get("offset");
+
+                if (offsetObject != null) {
+
+                    int offset =
+                            Integer.parseInt(
+                                    offsetObject.toString()
+                            );
+
+                    SourceLocationResolver.Location location =
+                            locationResolver.resolve(
+                                    offset
+                            );
+
+                    relationship.file =
+                            location.file;
+
+                    relationship.line =
+                            location.line;
+
+                    relationship.column =
+                            location.column;
                 }
             }
+        }
 
-            return;
+        return relationship;
+    }
+
+
+    // =========================================================
+    // Find node by kind
+    // =========================================================
+
+    private static AstNode findNodeByKind(
+            AstNode node,
+            String kind) {
+
+        if (node == null) {
+            return null;
+        }
+
+        if (kind.equals(node.kind)) {
+            return node;
         }
 
         if (node.inner != null) {
 
-            for (AstNode child : node.inner) {
+            for (AstNode child :
+                    node.inner) {
 
-                findReferencedFunction(
-                        child,
-                        index,
-                        currentFunction,
-                        relations
-                );
+                AstNode result =
+                        findNodeByKind(
+                                child,
+                                kind
+                        );
+
+                if (result != null) {
+                    return result;
+                }
             }
         }
+
+        return null;
+    }
+
+
+    // =========================================================
+    // Find referenced declaration
+    // =========================================================
+
+    private static AstNode findReferencedDecl(
+            AstNode node) {
+
+        if (node == null) {
+            return null;
+        }
+
+        if ("DeclRefExpr".equals(node.kind)
+                && node.referencedDecl != null) {
+
+            Object idObject =
+                    node.referencedDecl.get("id");
+
+            if (idObject != null) {
+
+                AstNode result =
+                        new AstNode();
+
+                result.id =
+                        idObject.toString();
+
+                return result;
+            }
+        }
+
+        if (node.inner != null) {
+
+            for (AstNode child :
+                    node.inner) {
+
+                AstNode result =
+                        findReferencedDecl(
+                                child
+                        );
+
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    // =========================================================
+    // Find referenced variable
+    // =========================================================
+
+    private static CodeEntity findReferencedVariable(
+            AstNode node,
+            AstIndex index) {
+
+        if (node == null) {
+            return null;
+        }
+
+        if ("DeclRefExpr".equals(node.kind)
+                && node.referencedDecl != null) {
+
+            Object idObject =
+                    node.referencedDecl.get("id");
+
+            if (idObject != null) {
+
+                CodeEntity entity =
+                        index.resolveEntity(
+                                idObject.toString()
+                        );
+
+                if (entity != null
+                        && "VARIABLE".equals(
+                        entity.kind)) {
+
+                    return entity;
+                }
+            }
+        }
+
+        if (node.inner != null) {
+
+            for (AstNode child :
+                    node.inner) {
+
+                CodeEntity result =
+                        findReferencedVariable(
+                                child,
+                                index
+                        );
+
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+
+        return null;
     }
 }

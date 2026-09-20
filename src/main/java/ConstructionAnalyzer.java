@@ -4,96 +4,208 @@ import java.util.List;
 public class ConstructionAnalyzer {
 
     public static List<Relationship> analyze(
-            AstNode node,
-            AstIndex index) {
+            AstNode root,
+            AstIndex index,
+            SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
                 new ArrayList<>();
 
-        analyze(
-                node,
+        analyzeNode(
+                root,
                 index,
+                relationships,
                 null,
-                relationships
+                locationResolver
         );
 
         return relationships;
     }
 
-    private static void analyze(
+
+    private static void analyzeNode(
             AstNode node,
             AstIndex index,
+            List<Relationship> relationships,
             CodeEntity currentFunction,
-            List<Relationship> relationships) {
+            SourceLocationResolver locationResolver) {
 
         if (node == null) {
             return;
         }
 
-        if (Boolean.TRUE.equals(node.isImplicit)) {
-            return;
-        }
 
-        if ("FunctionDecl".equals(node.kind)
+        // =====================================================
+        // Track current function
+        // =====================================================
+
+        if (("FunctionDecl".equals(node.kind)
+                || "CXXMethodDecl".equals(node.kind))
                 && node.name != null) {
 
-            currentFunction =
+            CodeEntity entity =
                     index.resolveEntity(node.id);
+
+            if (entity != null) {
+                currentFunction = entity;
+            }
         }
 
+
+        // =====================================================
+        // Detect object construction
+        // =====================================================
+
         if ("CXXConstructExpr".equals(node.kind)
-                && currentFunction != null
-                && node.type != null) {
+                && currentFunction != null) {
 
-            Object qualType =
-                    node.type.get("qualType");
+            String constructedType = null;
 
-            if (qualType != null) {
+            if (node.type != null) {
 
-                String constructedType =
-                        qualType.toString();
+                Object qualType =
+                        node.type.get("qualType");
 
-                CodeEntity targetEntity = null;
+                if (qualType != null) {
+
+                    constructedType =
+                            qualType.toString();
+                }
+            }
+
+
+            // =================================================
+            // Find the corresponding class entity
+            // =================================================
+
+            if (constructedType != null) {
+
+                CodeEntity targetClass = null;
 
                 for (CodeEntity entity :
                         index.getAllEntities()) {
 
-                    if ("CLASS".equals(entity.kind)
-                            && entity.name.equals(
+                    if (!"CLASS".equals(entity.kind)) {
+                        continue;
+                    }
+
+                    if (entity.name.equals(
                             constructedType)) {
 
-                        targetEntity = entity;
+                        targetClass = entity;
                         break;
                     }
                 }
 
-                if (targetEntity != null) {
+
+                // =============================================
+                // Create CONSTRUCTS relationship
+                // =============================================
+
+                if (targetClass != null) {
+
+                    Relationship relationship =
+                            createRelationship(
+                                    currentFunction,
+                                    targetClass,
+                                    "CONSTRUCTS",
+                                    node,
+                                    locationResolver
+                            );
 
                     relationships.add(
-                            new Relationship(
-                                    currentFunction.id,
-                                    currentFunction.qualifiedName,
-                                    targetEntity.id,
-                                    targetEntity.qualifiedName,
-                                    "CONSTRUCTS"
-                            )
+                            relationship
                     );
                 }
             }
         }
+
+
+        // =====================================================
+        // Analyze children
+        // =====================================================
 
         if (node.inner != null) {
 
             for (AstNode child :
                     node.inner) {
 
-                analyze(
+                analyzeNode(
                         child,
                         index,
+                        relationships,
                         currentFunction,
-                        relationships
+                        locationResolver
                 );
             }
         }
+    }
+
+
+    // =========================================================
+    // Create relationship with source location
+    // =========================================================
+
+    private static Relationship createRelationship(
+            CodeEntity source,
+            CodeEntity target,
+            String type,
+            AstNode node,
+            SourceLocationResolver locationResolver) {
+
+        Relationship relationship =
+                new Relationship(
+                        source.id,
+                        source.qualifiedName,
+                        target.id,
+                        target.qualifiedName,
+                        type
+                );
+
+
+        // =====================================================
+        // Resolve location from range.begin.offset
+        // =====================================================
+
+        if (node != null
+                && node.range != null
+                && locationResolver != null) {
+
+            Object beginObject =
+                    node.range.get("begin");
+
+            if (beginObject instanceof java.util.Map) {
+
+                java.util.Map<?, ?> begin =
+                        (java.util.Map<?, ?>) beginObject;
+
+                Object offsetObject =
+                        begin.get("offset");
+
+                if (offsetObject != null) {
+
+                    int offset =
+                            Integer.parseInt(
+                                    offsetObject.toString()
+                            );
+
+                    SourceLocationResolver.Location location =
+                            locationResolver.resolve(
+                                    offset
+                            );
+
+                    relationship.file =
+                            location.file;
+
+                    relationship.line =
+                            location.line;
+
+                    relationship.column =
+                            location.column;
+                }
+            }
+        }
+
+        return relationship;
     }
 }

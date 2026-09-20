@@ -5,7 +5,8 @@ public class AssignmentAnalyzer {
 
     public static List<Relationship> analyze(
             AstNode root,
-            AstIndex index) {
+            AstIndex index,
+            SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
                 new ArrayList<>();
@@ -14,7 +15,8 @@ public class AssignmentAnalyzer {
                 root,
                 index,
                 relationships,
-                null
+                null,
+                locationResolver
         );
 
         return relationships;
@@ -25,7 +27,8 @@ public class AssignmentAnalyzer {
             AstNode node,
             AstIndex index,
             List<Relationship> relationships,
-            CodeEntity currentFunction) {
+            CodeEntity currentFunction,
+            SourceLocationResolver locationResolver) {
 
         if (node == null) {
             return;
@@ -50,7 +53,7 @@ public class AssignmentAnalyzer {
 
 
         // =====================================================
-        // Assignment
+        // Detect assignment
         // =====================================================
 
         if ("BinaryOperator".equals(node.kind)
@@ -58,19 +61,6 @@ public class AssignmentAnalyzer {
                 && currentFunction != null
                 && node.inner != null
                 && !node.inner.isEmpty()) {
-
-            /*
-             * The first child of an assignment is normally
-             * the left-hand side.
-             *
-             * Example:
-             *
-             * result = result + 5;
-             *
-             * BinaryOperator (=)
-             *     DeclRefExpr result
-             *     BinaryOperator (+)
-             */
 
             AstNode leftHandSide =
                     node.inner.get(0);
@@ -84,20 +74,14 @@ public class AssignmentAnalyzer {
             if (variable != null) {
 
                 Relationship relationship =
-                        new Relationship(
-                                currentFunction.id,
-                                currentFunction.qualifiedName,
-                                variable.id,
-                                variable.qualifiedName,
-                                "WRITES"
+                        createRelationship(
+                                currentFunction,
+                                variable,
+                                "WRITES",
+                                node,
+                                locationResolver
                         );
 
-                /*
-                 * Do not perform duplicate checking here.
-                 *
-                 * RelationshipRegistry in GraphBuilder
-                 * handles relationship deduplication.
-                 */
                 relationships.add(
                         relationship
                 );
@@ -118,12 +102,17 @@ public class AssignmentAnalyzer {
                         child,
                         index,
                         relationships,
-                        currentFunction
+                        currentFunction,
+                        locationResolver
                 );
             }
         }
     }
 
+
+    // =========================================================
+    // Find referenced variable
+    // =========================================================
 
     private static CodeEntity findReferencedVariable(
             AstNode node,
@@ -133,8 +122,6 @@ public class AssignmentAnalyzer {
             return null;
         }
 
-
-        // Direct variable reference
         if ("DeclRefExpr".equals(node.kind)
                 && node.referencedDecl != null) {
 
@@ -161,7 +148,6 @@ public class AssignmentAnalyzer {
         }
 
 
-        // Search children recursively
         if (node.inner != null) {
 
             for (AstNode child :
@@ -180,5 +166,73 @@ public class AssignmentAnalyzer {
         }
 
         return null;
+    }
+
+
+    // =========================================================
+    // Create relationship with source location
+    // =========================================================
+
+    private static Relationship createRelationship(
+            CodeEntity source,
+            CodeEntity target,
+            String type,
+            AstNode node,
+            SourceLocationResolver locationResolver) {
+
+        Relationship relationship =
+                new Relationship(
+                        source.id,
+                        source.qualifiedName,
+                        target.id,
+                        target.qualifiedName,
+                        type
+                );
+
+
+        // =====================================================
+        // Resolve location from range.begin.offset
+        // =====================================================
+
+        if (node != null
+                && node.range != null
+                && locationResolver != null) {
+
+            Object beginObject =
+                    node.range.get("begin");
+
+            if (beginObject instanceof java.util.Map) {
+
+                java.util.Map<?, ?> begin =
+                        (java.util.Map<?, ?>) beginObject;
+
+                Object offsetObject =
+                        begin.get("offset");
+
+                if (offsetObject != null) {
+
+                    int offset =
+                            Integer.parseInt(
+                                    offsetObject.toString()
+                            );
+
+                    SourceLocationResolver.Location location =
+                            locationResolver.resolve(
+                                    offset
+                            );
+
+                    relationship.file =
+                            location.file;
+
+                    relationship.line =
+                            location.line;
+
+                    relationship.column =
+                            location.column;
+                }
+            }
+        }
+
+        return relationship;
     }
 }

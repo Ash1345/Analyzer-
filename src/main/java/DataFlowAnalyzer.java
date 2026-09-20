@@ -4,102 +4,161 @@ import java.util.List;
 public class DataFlowAnalyzer {
 
     public static List<Relationship> analyze(
-            AstNode node,
-            AstIndex index) {
+            AstNode root,
+            AstIndex index,
+            SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
                 new ArrayList<>();
 
-        analyze(
-                node,
+        analyzeNode(
+                root,
                 index,
+                relationships,
                 null,
-                relationships
+                locationResolver
         );
 
         return relationships;
     }
 
-    private static void analyze(
+
+    private static void analyzeNode(
             AstNode node,
             AstIndex index,
+            List<Relationship> relationships,
             CodeEntity currentFunction,
-            List<Relationship> relationships) {
+            SourceLocationResolver locationResolver) {
 
         if (node == null) {
             return;
         }
 
-        if (Boolean.TRUE.equals(node.isImplicit)) {
-            return;
-        }
 
-        if ("FunctionDecl".equals(node.kind)
+        // =====================================================
+        // Track current function
+        // =====================================================
+
+        if (("FunctionDecl".equals(node.kind)
+                || "CXXMethodDecl".equals(node.kind))
                 && node.name != null) {
 
-            currentFunction =
+            CodeEntity entity =
                     index.resolveEntity(node.id);
+
+            if (entity != null) {
+                currentFunction = entity;
+            }
         }
 
+
+        // =====================================================
+        // Detect variable initialization from a call
+        // =====================================================
+
         if ("VarDecl".equals(node.kind)
-                && node.name != null
                 && currentFunction != null
                 && node.inner != null) {
 
-            CodeEntity variable =
+            CodeEntity targetVariable =
                     index.resolveEntity(node.id);
 
-            if (variable != null
-                    && "VARIABLE".equals(variable.kind)) {
+            if (targetVariable != null
+                    && "VARIABLE".equals(
+                    targetVariable.kind)) {
 
-                for (AstNode child : node.inner) {
+                CodeEntity sourceEntity = null;
 
-                    if ("CXXMemberCallExpr".equals(
-                            child.kind)) {
+                // =================================================
+                // Search initializer for a method/function call
+                // =================================================
 
-                        CodeEntity target =
-                                findCalledMethod(
-                                        child,
-                                        index
-                                );
+                sourceEntity =
+                        findCalledMethod(
+                                node,
+                                index
+                        );
 
-                        if (target != null) {
+                if (sourceEntity == null) {
 
-                            relationships.add(
-                                    new Relationship(
-                                            target.id,
-                                            target.qualifiedName,
-                                            variable.id,
-                                            variable.qualifiedName,
-                                            "PRODUCES"
-                                    )
+                    sourceEntity =
+                            findCalledFunction(
+                                    node,
+                                    index
                             );
-                        }
-                    }
-
-                    if ("CallExpr".equals(
-                            child.kind)) {
-
-                        CodeEntity target =
-                                findCalledFunction(
-                                        child,
-                                        index
-                                );
-
-                        if (target != null) {
-
-                            relationships.add(
-                                    new Relationship(
-                                            target.id,
-                                            target.qualifiedName,
-                                            variable.id,
-                                            variable.qualifiedName,
-                                            "PRODUCES"
-                                    )
-                            );
-                        }
-                    }
                 }
+
+
+                // =================================================
+                // Create PRODUCES relationship
+                // =================================================
+
+                if (sourceEntity != null) {
+
+                    Relationship relationship =
+                            createRelationship(
+                                    sourceEntity,
+                                    targetVariable,
+                                    "PRODUCES",
+                                    node,
+                                    locationResolver
+                            );
+
+                    relationships.add(
+                            relationship
+                    );
+                }
+            }
+        }
+
+
+        // =====================================================
+        // Analyze children
+        // =====================================================
+
+        if (node.inner != null) {
+
+            for (AstNode child :
+                    node.inner) {
+
+                analyzeNode(
+                        child,
+                        index,
+                        relationships,
+                        currentFunction,
+                        locationResolver
+                );
+            }
+        }
+    }
+
+
+    // =========================================================
+    // Find called method
+    // =========================================================
+
+    private static CodeEntity findCalledMethod(
+            AstNode node,
+            AstIndex index) {
+
+        if (node == null) {
+            return null;
+        }
+
+        if ("CXXMemberCallExpr".equals(node.kind)) {
+
+            AstNode memberExpr =
+                    findNodeByKind(
+                            node,
+                            "MemberExpr"
+                    );
+
+            if (memberExpr != null
+                    && memberExpr.referencedMemberDecl != null) {
+
+                return index.resolveEntity(
+                        memberExpr.referencedMemberDecl
+                );
             }
         }
 
@@ -108,39 +167,14 @@ public class DataFlowAnalyzer {
             for (AstNode child :
                     node.inner) {
 
-                analyze(
-                        child,
-                        index,
-                        currentFunction,
-                        relationships
-                );
-            }
-        }
-    }
+                CodeEntity result =
+                        findCalledMethod(
+                                child,
+                                index
+                        );
 
-    private static CodeEntity findCalledMethod(
-            AstNode node,
-            AstIndex index) {
-
-        if (node == null
-                || node.inner == null) {
-
-            return null;
-        }
-
-        for (AstNode child : node.inner) {
-
-            if ("MemberExpr".equals(
-                    child.kind)) {
-
-                String referencedId =
-                        child.referencedMemberDecl;
-
-                if (referencedId != null) {
-
-                    return index.resolveEntity(
-                            referencedId
-                    );
+                if (result != null) {
+                    return result;
                 }
             }
         }
@@ -148,34 +182,12 @@ public class DataFlowAnalyzer {
         return null;
     }
 
+
+    // =========================================================
+    // Find called function
+    // =========================================================
+
     private static CodeEntity findCalledFunction(
-            AstNode node,
-            AstIndex index) {
-
-        if (node == null
-                || node.inner == null) {
-
-            return null;
-        }
-
-        for (AstNode child : node.inner) {
-
-            CodeEntity result =
-                    findReferencedFunction(
-                            child,
-                            index
-                    );
-
-            if (result != null) {
-
-                return result;
-            }
-        }
-
-        return null;
-    }
-
-    private static CodeEntity findReferencedFunction(
             AstNode node,
             AstIndex index) {
 
@@ -186,21 +198,19 @@ public class DataFlowAnalyzer {
         if ("DeclRefExpr".equals(node.kind)
                 && node.referencedDecl != null) {
 
-            Object referencedId =
+            Object idObject =
                     node.referencedDecl.get("id");
 
-            if (referencedId != null) {
+            if (idObject != null) {
 
                 CodeEntity entity =
                         index.resolveEntity(
-                                referencedId.toString()
+                                idObject.toString()
                         );
 
                 if (entity != null
-                        && ("FUNCTION".equals(
-                        entity.kind)
-                        || "METHOD".equals(
-                        entity.kind))) {
+                        && ("FUNCTION".equals(entity.kind)
+                        || "METHOD".equals(entity.kind))) {
 
                     return entity;
                 }
@@ -213,7 +223,7 @@ public class DataFlowAnalyzer {
                     node.inner) {
 
                 CodeEntity result =
-                        findReferencedFunction(
+                        findCalledFunction(
                                 child,
                                 index
                         );
@@ -225,5 +235,110 @@ public class DataFlowAnalyzer {
         }
 
         return null;
+    }
+
+
+    // =========================================================
+    // Find node by kind
+    // =========================================================
+
+    private static AstNode findNodeByKind(
+            AstNode node,
+            String kind) {
+
+        if (node == null) {
+            return null;
+        }
+
+        if (kind.equals(node.kind)) {
+            return node;
+        }
+
+        if (node.inner != null) {
+
+            for (AstNode child :
+                    node.inner) {
+
+                AstNode result =
+                        findNodeByKind(
+                                child,
+                                kind
+                        );
+
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    // =========================================================
+    // Create relationship with source location
+    // =========================================================
+
+    private static Relationship createRelationship(
+            CodeEntity source,
+            CodeEntity target,
+            String type,
+            AstNode node,
+            SourceLocationResolver locationResolver) {
+
+        Relationship relationship =
+                new Relationship(
+                        source.id,
+                        source.qualifiedName,
+                        target.id,
+                        target.qualifiedName,
+                        type
+                );
+
+
+        // =====================================================
+        // Resolve location from range.begin.offset
+        // =====================================================
+
+        if (node != null
+                && node.range != null
+                && locationResolver != null) {
+
+            Object beginObject =
+                    node.range.get("begin");
+
+            if (beginObject instanceof java.util.Map) {
+
+                java.util.Map<?, ?> begin =
+                        (java.util.Map<?, ?>) beginObject;
+
+                Object offsetObject =
+                        begin.get("offset");
+
+                if (offsetObject != null) {
+
+                    int offset =
+                            Integer.parseInt(
+                                    offsetObject.toString()
+                            );
+
+                    SourceLocationResolver.Location location =
+                            locationResolver.resolve(
+                                    offset
+                            );
+
+                    relationship.file =
+                            location.file;
+
+                    relationship.line =
+                            location.line;
+
+                    relationship.column =
+                            location.column;
+                }
+            }
+        }
+
+        return relationship;
     }
 }
