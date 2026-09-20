@@ -151,4 +151,14 @@ public class AstIndex {
 
         return entity;
     }
+
+    public CodeEntity resolveEntity(
+            String astId) {
+
+        if (astId == null) {
+            return null;
+        }
+
+        return entitiesById.get(astId);
+    }
 }

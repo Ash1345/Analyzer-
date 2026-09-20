@@ -34,12 +34,12 @@ public class AssignmentAnalyzer {
             return;
         }
 
-        // Track the function we are currently inside
+        // Track the function we are currently inside.
         if ("FunctionDecl".equals(node.kind)
                 && node.name != null) {
 
             currentFunction =
-                    index.findEntityById(node.id);
+                    index.resolveEntity(node.id);
         }
 
         // Assignment: lhs = rhs
@@ -60,21 +60,45 @@ public class AssignmentAnalyzer {
 
             if (targetVariable != null) {
 
-                relationships.add(
+                Relationship relationship =
                         new Relationship(
                                 currentFunction.id,
                                 currentFunction.qualifiedName,
                                 targetVariable.id,
                                 targetVariable.qualifiedName,
                                 "WRITES"
-                        )
-                );
+                        );
+
+                boolean alreadyExists = false;
+
+                for (Relationship existing :
+                        relationships) {
+
+                    if (existing.sourceId.equals(
+                            relationship.sourceId)
+                            && existing.targetId.equals(
+                            relationship.targetId)
+                            && existing.type.equals(
+                            relationship.type)) {
+
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+
+                if (!alreadyExists) {
+
+                    relationships.add(
+                            relationship
+                    );
+                }
             }
         }
 
         if (node.inner != null) {
 
-            for (AstNode child : node.inner) {
+            for (AstNode child :
+                    node.inner) {
 
                 analyze(
                         child,
@@ -86,27 +110,11 @@ public class AssignmentAnalyzer {
         }
     }
 
-//    private static String getOpcode(
-//            AstNode node) {
-//
-//        if (node == null) {
-//            return null;
-//        }
-//
-//        /*
-//         * opcode is not currently represented
-//         * directly in AstNode, so we temporarily
-//         * read it from the raw JSON fields.
-//         */
-//        return null;
-//    }
-
     private static String getOpcode(
             AstNode node) {
 
         return node.opcode;
     }
-
 
     private static CodeEntity findReferencedVariable(
             AstNode node,
@@ -125,7 +133,7 @@ public class AssignmentAnalyzer {
             if (referencedId != null) {
 
                 CodeEntity entity =
-                        index.findEntityById(
+                        index.resolveEntity(
                                 referencedId.toString()
                         );
 

@@ -14,7 +14,6 @@ public class VariableUseAnalyzer {
                 node,
                 index,
                 null,
-                null,
                 relationships
         );
 
@@ -24,7 +23,6 @@ public class VariableUseAnalyzer {
     private static void analyze(
             AstNode node,
             AstIndex index,
-            AstNode parent,
             CodeEntity currentFunction,
             List<Relationship> relationships) {
 
@@ -36,15 +34,13 @@ public class VariableUseAnalyzer {
             return;
         }
 
-        // Track the function we are currently inside
         if ("FunctionDecl".equals(node.kind)
                 && node.name != null) {
 
             currentFunction =
-                    index.findEntityById(node.id);
+                    index.resolveEntity(node.id);
         }
 
-        // Variable reference
         if ("DeclRefExpr".equals(node.kind)
                 && node.referencedDecl != null
                 && currentFunction != null) {
@@ -55,26 +51,43 @@ public class VariableUseAnalyzer {
             if (referencedId != null) {
 
                 CodeEntity variable =
-                        index.findEntityById(
+                        index.resolveEntity(
                                 referencedId.toString()
                         );
 
                 if (variable != null
                         && "VARIABLE".equals(variable.kind)) {
 
-                    // If this DeclRefExpr is the left side
-                    // of an assignment, AssignmentAnalyzer
-                    // already handles it as WRITES.
-                    if (!isWriteReference(node, parent)) {
+                    Relationship relationship =
+                            new Relationship(
+                                    currentFunction.id,
+                                    currentFunction.qualifiedName,
+                                    variable.id,
+                                    variable.qualifiedName,
+                                    "USES_VARIABLE"
+                            );
+
+                    boolean alreadyExists = false;
+
+                    for (Relationship existing :
+                            relationships) {
+
+                        if (existing.sourceId.equals(
+                                relationship.sourceId)
+                                && existing.targetId.equals(
+                                relationship.targetId)
+                                && existing.type.equals(
+                                relationship.type)) {
+
+                            alreadyExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!alreadyExists) {
 
                         relationships.add(
-                                new Relationship(
-                                        currentFunction.id,
-                                        currentFunction.qualifiedName,
-                                        variable.id,
-                                        variable.qualifiedName,
-                                        "READS"
-                                )
+                                relationship
                         );
                     }
                 }
@@ -89,33 +102,10 @@ public class VariableUseAnalyzer {
                 analyze(
                         child,
                         index,
-                        node,
                         currentFunction,
                         relationships
                 );
             }
         }
-    }
-
-    private static boolean isWriteReference(
-            AstNode node,
-            AstNode parent) {
-
-        if (node == null || parent == null) {
-            return false;
-        }
-
-        if ("BinaryOperator".equals(parent.kind)
-                && "=".equals(parent.opcode)
-                && parent.inner != null
-                && !parent.inner.isEmpty()) {
-
-            AstNode leftSide =
-                    parent.inner.get(0);
-
-            return leftSide == node;
-        }
-
-        return false;
     }
 }

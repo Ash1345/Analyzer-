@@ -30,20 +30,17 @@ public class CallAnalyzer {
             return;
         }
 
-        // Ignore implicit declarations
         if (Boolean.TRUE.equals(node.isImplicit)) {
             return;
         }
 
-        // Remember current function
         if ("FunctionDecl".equals(node.kind)
                 && node.name != null) {
 
             currentFunction =
-                    index.findEntityById(node.id);
+                    index.resolveEntity(node.id);
         }
 
-        // Detect method call
         if ("CXXMemberCallExpr".equals(node.kind)) {
 
             if (node.inner != null) {
@@ -52,21 +49,17 @@ public class CallAnalyzer {
 
                     if ("MemberExpr".equals(child.kind)) {
 
-                        // Resolve the method being called
                         String referencedId =
                                 child.referencedMemberDecl;
 
                         CodeEntity targetEntity =
-                                index.findEntityById(
+                                index.resolveEntity(
                                         referencedId
                                 );
 
                         if (targetEntity != null
                                 && currentFunction != null) {
 
-                            // Function-level call relationship
-                            //
-                            // main --CALLS--> Calculator::add
                             relations.add(
                                     new Relationship(
                                             currentFunction.id,
@@ -76,17 +69,6 @@ public class CallAnalyzer {
                                             "CALLS"
                                     )
                             );
-
-                            // Find the object on which
-                            // the method is being called
-                            //
-                            // calculator.add(...)
-                            //
-                            // MemberExpr
-                            //      |
-                            //      +-- DeclRefExpr
-                            //              |
-                            //              +-- calculator
 
                             if (child.inner != null) {
 
@@ -104,7 +86,7 @@ public class CallAnalyzer {
                                         if (objectId != null) {
 
                                             CodeEntity objectEntity =
-                                                    index.findEntityById(
+                                                    index.resolveEntity(
                                                             objectId.toString()
                                                     );
 
@@ -112,11 +94,6 @@ public class CallAnalyzer {
                                                     && "VARIABLE".equals(
                                                     objectEntity.kind)) {
 
-                                                // Object-level call relationship
-                                                //
-                                                // main::calculator
-                                                //      --OBJECT_CALLS-->
-                                                // Calculator::add
                                                 relations.add(
                                                         new Relationship(
                                                                 objectEntity.id,
@@ -137,7 +114,6 @@ public class CallAnalyzer {
             }
         }
 
-        // Detect free function call
         if ("CallExpr".equals(node.kind)) {
 
             if (node.inner != null) {
@@ -154,7 +130,6 @@ public class CallAnalyzer {
             }
         }
 
-        // Continue through children
         if (node.inner != null) {
 
             for (AstNode child : node.inner) {
@@ -179,7 +154,6 @@ public class CallAnalyzer {
             return;
         }
 
-        // We are looking for DeclRefExpr
         if ("DeclRefExpr".equals(node.kind)
                 && node.referencedDecl != null
                 && currentFunction != null) {
@@ -190,7 +164,7 @@ public class CallAnalyzer {
             if (referencedId != null) {
 
                 CodeEntity targetEntity =
-                        index.findEntityById(
+                        index.resolveEntity(
                                 referencedId.toString()
                         );
 
@@ -211,7 +185,6 @@ public class CallAnalyzer {
             return;
         }
 
-        // Continue searching inside the CallExpr
         if (node.inner != null) {
 
             for (AstNode child : node.inner) {

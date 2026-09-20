@@ -34,56 +34,26 @@ public class DataFlowAnalyzer {
             return;
         }
 
-        /*
-         * Remember current function
-         */
         if ("FunctionDecl".equals(node.kind)
                 && node.name != null) {
 
             currentFunction =
-                    index.findEntityById(node.id);
+                    index.resolveEntity(node.id);
         }
 
-        /*
-         * Detect variable declarations
-         *
-         * Example:
-         *
-         * int result = calculator.add(10, 20);
-         *
-         * AST:
-         *
-         * VarDecl
-         *   CXXMemberCallExpr
-         *
-         *
-         * Example:
-         *
-         * int value = calculate();
-         *
-         * AST:
-         *
-         * VarDecl
-         *   CallExpr
-         */
         if ("VarDecl".equals(node.kind)
                 && node.name != null
                 && currentFunction != null
                 && node.inner != null) {
 
             CodeEntity variable =
-                    index.findEntityById(node.id);
+                    index.resolveEntity(node.id);
 
             if (variable != null
                     && "VARIABLE".equals(variable.kind)) {
 
                 for (AstNode child : node.inner) {
 
-                    /*
-                     * Method call:
-                     *
-                     * calculator.add(...)
-                     */
                     if ("CXXMemberCallExpr".equals(
                             child.kind)) {
 
@@ -107,11 +77,6 @@ public class DataFlowAnalyzer {
                         }
                     }
 
-                    /*
-                     * Free function call:
-                     *
-                     * calculate()
-                     */
                     if ("CallExpr".equals(
                             child.kind)) {
 
@@ -138,12 +103,10 @@ public class DataFlowAnalyzer {
             }
         }
 
-        /*
-         * Continue recursively
-         */
         if (node.inner != null) {
 
-            for (AstNode child : node.inner) {
+            for (AstNode child :
+                    node.inner) {
 
                 analyze(
                         child,
@@ -155,16 +118,6 @@ public class DataFlowAnalyzer {
         }
     }
 
-    /*
-     * Resolve:
-     *
-     * CXXMemberCallExpr
-     *   MemberExpr : add
-     *
-     * MemberExpr contains:
-     *
-     * referencedMemberDecl
-     */
     private static CodeEntity findCalledMethod(
             AstNode node,
             AstIndex index) {
@@ -180,29 +133,14 @@ public class DataFlowAnalyzer {
             if ("MemberExpr".equals(
                     child.kind)) {
 
-                System.out.println(
-                        "DEBUG METHOD REF: "
-                                + child.referencedMemberDecl
-                );
-
                 String referencedId =
                         child.referencedMemberDecl;
 
                 if (referencedId != null) {
 
-                    CodeEntity entity =
-                            index.findEntityById(
-                                    referencedId
-                            );
-
-                    System.out.println(
-                            "DEBUG METHOD TARGET: "
-                                    + (entity == null
-                                    ? "NULL"
-                                    : entity.qualifiedName)
+                    return index.resolveEntity(
+                            referencedId
                     );
-
-                    return entity;
                 }
             }
         }
@@ -210,15 +148,6 @@ public class DataFlowAnalyzer {
         return null;
     }
 
-    /*
-     * Resolve:
-     *
-     * CallExpr
-     *   ImplicitCastExpr
-     *     DeclRefExpr
-     *
-     * The DeclRefExpr contains referencedDecl.id.
-     */
     private static CodeEntity findCalledFunction(
             AstNode node,
             AstIndex index) {
@@ -260,24 +189,12 @@ public class DataFlowAnalyzer {
             Object referencedId =
                     node.referencedDecl.get("id");
 
-            System.out.println(
-                    "DEBUG FUNCTION REF: "
-                            + referencedId
-            );
-
             if (referencedId != null) {
 
                 CodeEntity entity =
-                        index.findEntityById(
+                        index.resolveEntity(
                                 referencedId.toString()
                         );
-
-                System.out.println(
-                        "DEBUG FUNCTION TARGET: "
-                                + (entity == null
-                                ? "NULL"
-                                : entity.qualifiedName)
-                );
 
                 if (entity != null
                         && ("FUNCTION".equals(

@@ -30,20 +30,17 @@ public class ConstructionAnalyzer {
             return;
         }
 
-        // Ignore implicit declarations
         if (Boolean.TRUE.equals(node.isImplicit)) {
             return;
         }
 
-        // Remember current function
         if ("FunctionDecl".equals(node.kind)
                 && node.name != null) {
 
             currentFunction =
-                    index.findEntityById(node.id);
+                    index.resolveEntity(node.id);
         }
 
-        // Detect object construction
         if ("CXXConstructExpr".equals(node.kind)
                 && currentFunction != null
                 && node.type != null) {
@@ -59,10 +56,11 @@ public class ConstructionAnalyzer {
                 CodeEntity targetEntity = null;
 
                 for (CodeEntity entity :
-                        findAllEntities(index)) {
+                        index.getAllEntities()) {
 
                     if ("CLASS".equals(entity.kind)
-                            && entity.name.equals(constructedType)) {
+                            && entity.name.equals(
+                            constructedType)) {
 
                         targetEntity = entity;
                         break;
@@ -84,10 +82,10 @@ public class ConstructionAnalyzer {
             }
         }
 
-        // Continue through children
         if (node.inner != null) {
 
-            for (AstNode child : node.inner) {
+            for (AstNode child :
+                    node.inner) {
 
                 analyze(
                         child,
@@ -97,11 +95,5 @@ public class ConstructionAnalyzer {
                 );
             }
         }
-    }
-
-    private static List<CodeEntity> findAllEntities(
-            AstIndex index) {
-
-        return index.getAllEntities();
     }
 }

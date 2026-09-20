@@ -30,20 +30,17 @@ public class UsesAnalyzer {
             return;
         }
 
-        // Ignore implicit declarations
         if (Boolean.TRUE.equals(node.isImplicit)) {
             return;
         }
 
-        // Remember current function
         if ("FunctionDecl".equals(node.kind)
                 && node.name != null) {
 
             currentFunction =
-                    index.findEntityById(node.id);
+                    index.resolveEntity(node.id);
         }
 
-        // Detect variable declarations
         if ("VarDecl".equals(node.kind)
                 && currentFunction != null
                 && node.type != null) {
@@ -56,13 +53,11 @@ public class UsesAnalyzer {
                 String type =
                         qualType.toString();
 
-                // Remove pointer/reference symbols
                 type = type
                         .replace("*", "")
                         .replace("&", "")
                         .trim();
 
-                // Find matching class
                 for (CodeEntity entity :
                         index.getAllEntities()) {
 
@@ -83,10 +78,10 @@ public class UsesAnalyzer {
             }
         }
 
-        // Continue through children
         if (node.inner != null) {
 
-            for (AstNode child : node.inner) {
+            for (AstNode child :
+                    node.inner) {
 
                 analyze(
                         child,
