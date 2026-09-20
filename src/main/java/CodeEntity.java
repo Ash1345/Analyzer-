@@ -28,6 +28,7 @@ public class CodeEntity {
 
     public List<Parameter> parameters;
 
+
     public CodeEntity(
             String astId,
             String kind,
@@ -36,10 +37,16 @@ public class CodeEntity {
 
         this.astId = astId;
 
-        // For now, preserve old behavior.
-        // Later we will replace this with a stable
-        // Analyzer++ entity ID.
-        this.id = astId;
+        /*
+         * Analyzer++ ID will be assigned separately.
+         *
+         * For now, create a temporary ID based on the
+         * entity's semantic information.
+         */
+        this.id =
+                kind
+                        + ":"
+                        + qualifiedName;
 
         this.kind = kind;
         this.name = name;

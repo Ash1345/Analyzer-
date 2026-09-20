@@ -4,42 +4,54 @@ import java.util.List;
 public class UsesAnalyzer {
 
     public static List<Relationship> analyze(
-            AstNode node,
+            AstNode root,
             AstIndex index) {
 
         List<Relationship> relationships =
                 new ArrayList<>();
 
-        analyze(
-                node,
+        analyzeNode(
+                root,
                 index,
-                null,
-                relationships
+                relationships,
+                null
         );
 
         return relationships;
     }
 
-    private static void analyze(
+
+    private static void analyzeNode(
             AstNode node,
             AstIndex index,
-            CodeEntity currentFunction,
-            List<Relationship> relationships) {
+            List<Relationship> relationships,
+            CodeEntity currentFunction) {
 
         if (node == null) {
             return;
         }
 
-        if (Boolean.TRUE.equals(node.isImplicit)) {
-            return;
-        }
 
-        if ("FunctionDecl".equals(node.kind)
+        // =====================================================
+        // Track current function
+        // =====================================================
+
+        if (("FunctionDecl".equals(node.kind)
+                || "CXXMethodDecl".equals(node.kind))
                 && node.name != null) {
 
-            currentFunction =
+            CodeEntity entity =
                     index.resolveEntity(node.id);
+
+            if (entity != null) {
+                currentFunction = entity;
+            }
         }
+
+
+        // =====================================================
+        // Detect variable/type usage
+        // =====================================================
 
         if ("VarDecl".equals(node.kind)
                 && currentFunction != null
@@ -50,44 +62,69 @@ public class UsesAnalyzer {
 
             if (qualType != null) {
 
-                String type =
-                        qualType.toString();
+                String variableType =
+                        qualType.toString()
+                                .replace("*", "")
+                                .replace("&", "")
+                                .trim();
 
-                type = type
-                        .replace("*", "")
-                        .replace("&", "")
-                        .trim();
+                CodeEntity targetClass = null;
 
                 for (CodeEntity entity :
                         index.getAllEntities()) {
 
-                    if ("CLASS".equals(entity.kind)
-                            && entity.name.equals(type)) {
-
-                        relationships.add(
-                                new Relationship(
-                                        currentFunction.id,
-                                        currentFunction.qualifiedName,
-                                        entity.id,
-                                        entity.qualifiedName,
-                                        "USES"
-                                )
-                        );
+                    if (!"CLASS".equals(entity.kind)) {
+                        continue;
                     }
+
+                    if (entity.name.equals(
+                            variableType)) {
+
+                        targetClass = entity;
+                        break;
+                    }
+                }
+
+
+                if (targetClass != null) {
+
+                    Relationship relationship =
+                            new Relationship(
+                                    currentFunction.id,
+                                    currentFunction.qualifiedName,
+                                    targetClass.id,
+                                    targetClass.qualifiedName,
+                                    "USES"
+                            );
+
+                    /*
+                     * No duplicate checking here.
+                     *
+                     * RelationshipRegistry in GraphBuilder
+                     * is responsible for deduplication.
+                     */
+                    relationships.add(
+                            relationship
+                    );
                 }
             }
         }
+
+
+        // =====================================================
+        // Analyze children
+        // =====================================================
 
         if (node.inner != null) {
 
             for (AstNode child :
                     node.inner) {
 
-                analyze(
+                analyzeNode(
                         child,
                         index,
-                        currentFunction,
-                        relationships
+                        relationships,
+                        currentFunction
                 );
             }
         }

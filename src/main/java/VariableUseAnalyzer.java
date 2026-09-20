@@ -4,59 +4,75 @@ import java.util.List;
 public class VariableUseAnalyzer {
 
     public static List<Relationship> analyze(
-            AstNode node,
+            AstNode root,
             AstIndex index) {
 
         List<Relationship> relationships =
                 new ArrayList<>();
 
-        analyze(
-                node,
+        analyzeNode(
+                root,
                 index,
-                null,
-                relationships
+                relationships,
+                null
         );
 
         return relationships;
     }
 
-    private static void analyze(
+
+    private static void analyzeNode(
             AstNode node,
             AstIndex index,
-            CodeEntity currentFunction,
-            List<Relationship> relationships) {
+            List<Relationship> relationships,
+            CodeEntity currentFunction) {
 
         if (node == null) {
             return;
         }
 
-        if (Boolean.TRUE.equals(node.isImplicit)) {
-            return;
-        }
 
-        if ("FunctionDecl".equals(node.kind)
+        // =====================================================
+        // Track current function
+        // =====================================================
+
+        if (("FunctionDecl".equals(node.kind)
+                || "CXXMethodDecl".equals(node.kind))
                 && node.name != null) {
 
-            currentFunction =
+            CodeEntity entity =
                     index.resolveEntity(node.id);
+
+            if (entity != null) {
+                currentFunction = entity;
+            }
         }
 
-        if ("DeclRefExpr".equals(node.kind)
-                && node.referencedDecl != null
-                && currentFunction != null) {
 
-            Object referencedId =
+        // =====================================================
+        // Variable reference
+        // =====================================================
+
+        if ("DeclRefExpr".equals(node.kind)
+                && currentFunction != null
+                && node.referencedDecl != null) {
+
+            Object referencedIdObject =
                     node.referencedDecl.get("id");
 
-            if (referencedId != null) {
+            if (referencedIdObject != null) {
+
+                String referencedId =
+                        referencedIdObject.toString();
 
                 CodeEntity variable =
                         index.resolveEntity(
-                                referencedId.toString()
+                                referencedId
                         );
 
                 if (variable != null
-                        && "VARIABLE".equals(variable.kind)) {
+                        && "VARIABLE".equals(
+                        variable.kind)) {
 
                     Relationship relationship =
                             new Relationship(
@@ -67,43 +83,34 @@ public class VariableUseAnalyzer {
                                     "USES_VARIABLE"
                             );
 
-                    boolean alreadyExists = false;
-
-                    for (Relationship existing :
-                            relationships) {
-
-                        if (existing.sourceId.equals(
-                                relationship.sourceId)
-                                && existing.targetId.equals(
-                                relationship.targetId)
-                                && existing.type.equals(
-                                relationship.type)) {
-
-                            alreadyExists = true;
-                            break;
-                        }
-                    }
-
-                    if (!alreadyExists) {
-
-                        relationships.add(
-                                relationship
-                        );
-                    }
+                    /*
+                     * Do NOT perform duplicate checking here.
+                     *
+                     * RelationshipRegistry in GraphBuilder
+                     * is now responsible for deduplication.
+                     */
+                    relationships.add(
+                            relationship
+                    );
                 }
             }
         }
+
+
+        // =====================================================
+        // Analyze children
+        // =====================================================
 
         if (node.inner != null) {
 
             for (AstNode child :
                     node.inner) {
 
-                analyze(
+                analyzeNode(
                         child,
                         index,
-                        currentFunction,
-                        relationships
+                        relationships,
+                        currentFunction
                 );
             }
         }

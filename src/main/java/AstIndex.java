@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AstIndex {
 
@@ -9,14 +11,38 @@ public class AstIndex {
     private final Map<String, AstNode> nodesById =
             new HashMap<>();
 
-    // Analyzer++ entities by Analyzer++ ID
-    private final Map<String, CodeEntity> entitiesById =
+    /*
+     * Raw Clang AST ID -> canonical Analyzer++ entity
+     *
+     * Important:
+     * Multiple raw AST IDs may point to the SAME
+     * canonical CodeEntity.
+     */
+    private final Map<String, CodeEntity> entitiesByAstId =
             new HashMap<>();
 
-    // Analyzer++ entities by logical identity
+    /*
+     * Logical compiler identity -> canonical entity
+     *
+     * Example:
+     * ?add@Calculator@@QEAAHHH@Z
+     */
     private final Map<String, CodeEntity> entitiesByLogicalId =
             new HashMap<>();
 
+    /*
+     * Canonical entities only.
+     *
+     * We keep this separately because entitiesByAstId
+     * may contain multiple keys pointing to the same entity.
+     */
+    private final Set<CodeEntity> canonicalEntities =
+            new LinkedHashSet<>();
+
+
+    // =========================================================
+    // AST NODE INDEX
+    // =========================================================
 
     public void build(AstNode node) {
 
@@ -34,7 +60,6 @@ public class AstIndex {
         if (node.inner != null) {
 
             for (AstNode child : node.inner) {
-
                 build(child);
             }
         }
@@ -43,9 +68,17 @@ public class AstIndex {
 
     public AstNode findById(String id) {
 
+        if (id == null) {
+            return null;
+        }
+
         return nodesById.get(id);
     }
 
+
+    // =========================================================
+    // ENTITY REGISTRATION
+    // =========================================================
 
     public void addEntity(CodeEntity entity) {
 
@@ -53,9 +86,29 @@ public class AstIndex {
             return;
         }
 
+        canonicalEntities.add(entity);
+
+        /*
+         * Register raw AST ID as an alias
+         * to the canonical entity.
+         */
+        if (entity.astId != null) {
+
+            entitiesByAstId.put(
+                    entity.astId,
+                    entity
+            );
+        }
+
+        /*
+         * Transitional fallback.
+         *
+         * At the moment entity.id is still generally
+         * equal to the Clang AST ID.
+         */
         if (entity.id != null) {
 
-            entitiesById.put(
+            entitiesByAstId.put(
                     entity.id,
                     entity
             );
@@ -71,14 +124,32 @@ public class AstIndex {
     }
 
 
+    // =========================================================
+    // ENTITY RESOLUTION
+    // =========================================================
+
+    public CodeEntity resolveEntity(String astId) {
+
+        if (astId == null) {
+            return null;
+        }
+
+        return entitiesByAstId.get(astId);
+    }
+
+
     public CodeEntity findEntityById(String id) {
 
-        return entitiesById.get(id);
+        return resolveEntity(id);
     }
 
 
     public CodeEntity findEntityByLogicalId(
             String logicalId) {
+
+        if (logicalId == null) {
+            return null;
+        }
 
         return entitiesByLogicalId.get(
                 logicalId
@@ -86,13 +157,9 @@ public class AstIndex {
     }
 
 
-    public List<CodeEntity> getAllEntities() {
-
-        return new ArrayList<>(
-                entitiesById.values()
-        );
-    }
-
+    // =========================================================
+    // CANONICAL ENTITY REGISTRATION
+    // =========================================================
 
     public CodeEntity findOrCreateEntity(
             CodeEntity entity) {
@@ -101,16 +168,11 @@ public class AstIndex {
             return null;
         }
 
-        /*
-         * First try Analyzer++ logical identity.
-         *
-         * Example:
-         *
-         * ?add@Calculator@@QEAAHHH@Z
-         *
-         * If another AST already produced an entity
-         * with this logical ID, return that entity.
-         */
+
+        // -----------------------------------------------------
+        // 1. Try logical identity first
+        // -----------------------------------------------------
+
         if (entity.logicalId != null) {
 
             CodeEntity existing =
@@ -120,21 +182,37 @@ public class AstIndex {
 
             if (existing != null) {
 
+                /*
+                 * Very important:
+                 *
+                 * Even though this entity is a duplicate,
+                 * its raw AST ID must still resolve to the
+                 * canonical entity.
+                 */
+                registerAstAlias(
+                        entity,
+                        existing
+                );
+
                 return existing;
             }
         }
 
 
-        /*
-         * No logical match.
-         *
-         * Fall back to the raw AST identity.
-         */
-        if (entity.id != null) {
+        // -----------------------------------------------------
+        // 2. Try raw AST identity
+        // -----------------------------------------------------
+
+        String rawAstId =
+                entity.astId != null
+                        ? entity.astId
+                        : entity.id;
+
+        if (rawAstId != null) {
 
             CodeEntity existing =
-                    entitiesById.get(
-                            entity.id
+                    entitiesByAstId.get(
+                            rawAstId
                     );
 
             if (existing != null) {
@@ -144,21 +222,60 @@ public class AstIndex {
         }
 
 
-        /*
-         * This is a genuinely new entity.
-         */
+        // -----------------------------------------------------
+        // 3. This is a new canonical entity
+        // -----------------------------------------------------
+
         addEntity(entity);
 
         return entity;
     }
 
-    public CodeEntity resolveEntity(
-            String astId) {
 
-        if (astId == null) {
-            return null;
+    // =========================================================
+    // AST ALIAS REGISTRATION
+    // =========================================================
+
+    private void registerAstAlias(
+            CodeEntity duplicateEntity,
+            CodeEntity canonicalEntity) {
+
+        if (duplicateEntity == null
+                || canonicalEntity == null) {
+
+            return;
         }
 
-        return entitiesById.get(astId);
+        if (duplicateEntity.astId != null) {
+
+            entitiesByAstId.put(
+                    duplicateEntity.astId,
+                    canonicalEntity
+            );
+        }
+
+        /*
+         * Transitional support while CodeEntity.id
+         * still contains raw AST IDs.
+         */
+        if (duplicateEntity.id != null) {
+
+            entitiesByAstId.put(
+                    duplicateEntity.id,
+                    canonicalEntity
+            );
+        }
+    }
+
+
+    // =========================================================
+    // CANONICAL ENTITY COLLECTION
+    // =========================================================
+
+    public List<CodeEntity> getAllEntities() {
+
+        return new ArrayList<>(
+                canonicalEntities
+        );
     }
 }

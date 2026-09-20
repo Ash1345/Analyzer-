@@ -23,7 +23,13 @@ public class ContainsAnalyzer {
 
             for (CodeEntity candidate : entities) {
 
-                if (candidate.id.equals(entity.parentId)) {
+                /*
+                 * parentId now contains the Analyzer++
+                 * entity ID of the parent.
+                 */
+                if (candidate.id.equals(
+                        entity.parentId)) {
+
                     parentEntity = candidate;
                     break;
                 }

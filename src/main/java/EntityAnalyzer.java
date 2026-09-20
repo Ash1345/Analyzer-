@@ -55,12 +55,15 @@ public class EntityAnalyzer {
             return;
         }
 
+
+        // =========================================================
         // Class
+        // =========================================================
+
         if ("CXXRecordDecl".equals(node.kind)
                 && node.name != null) {
 
             currentClass = node.name;
-            currentClassId = node.id;
 
             CodeEntity entity =
                     new CodeEntity(
@@ -69,8 +72,15 @@ public class EntityAnalyzer {
                             node.name,
                             node.name
                     );
+
             entity.logicalId =
                     "CLASS:" + node.name;
+
+            /*
+             * currentClassId now stores the Analyzer++
+             * identity instead of the raw Clang AST ID.
+             */
+            currentClassId = entity.id;
 
             extractLocation(
                     node,
@@ -82,7 +92,11 @@ public class EntityAnalyzer {
             entities.add(entity);
         }
 
+
+        // =========================================================
         // Method
+        // =========================================================
+
         if ("CXXMethodDecl".equals(node.kind)
                 && node.name != null) {
 
@@ -105,7 +119,12 @@ public class EntityAnalyzer {
                 for (CodeEntity existingEntity :
                         entities) {
 
-                    if (existingEntity.id.equals(
+                    /*
+                     * previousDecl is still a raw Clang AST ID,
+                     * so compare it with astId rather than id.
+                     */
+                    if (existingEntity.astId != null
+                            && existingEntity.astId.equals(
                             node.previousDecl)) {
 
                         if ("METHOD".equals(
@@ -116,6 +135,10 @@ public class EntityAnalyzer {
                                             existingEntity.qualifiedName
                                     );
 
+                            /*
+                             * parentId is now already an
+                             * Analyzer++ ID.
+                             */
                             methodClassId =
                                     existingEntity.parentId;
                         }
@@ -125,17 +148,22 @@ public class EntityAnalyzer {
                 }
             }
 
+
             String qualifiedName;
 
             if (methodClass != null) {
+
                 qualifiedName =
                         methodClass
                                 + "::"
                                 + node.name;
+
             } else {
+
                 qualifiedName =
                         node.name;
             }
+
 
             CodeEntity entity =
                     new CodeEntity(
@@ -145,10 +173,22 @@ public class EntityAnalyzer {
                             qualifiedName
                     );
 
-            entity.logicalId = node.mangledName;
+            entity.logicalId =
+                    node.mangledName;
 
-            entity.parentId = methodClassId;
-            entity.returnType = extractReturnType(node);
+            /*
+             * parentId now contains the Analyzer++
+             * identity of the class.
+             *
+             * Example:
+             *
+             * CLASS:Calculator
+             */
+            entity.parentId =
+                    methodClassId;
+
+            entity.returnType =
+                    extractReturnType(node);
 
             extractLocation(
                     node,
@@ -160,11 +200,13 @@ public class EntityAnalyzer {
             entities.add(entity);
 
             currentFunction = entity;
-
-
         }
 
+
+        // =========================================================
         // Free function
+        // =========================================================
+
         if ("FunctionDecl".equals(node.kind)
                 && node.name != null) {
 
@@ -191,13 +233,19 @@ public class EntityAnalyzer {
             currentFunction = entity;
         }
 
+
+        // =========================================================
         // Constructor
+        // =========================================================
+
         if ("CXXConstructorDecl".equals(node.kind)
                 && node.name != null
                 && currentClass != null) {
 
             String qualifiedName =
-                    currentClass + "::" + node.name;
+                    currentClass
+                            + "::"
+                            + node.name;
 
             CodeEntity entity =
                     new CodeEntity(
@@ -222,7 +270,11 @@ public class EntityAnalyzer {
             currentFunction = entity;
         }
 
+
+        // =========================================================
         // Variable
+        // =========================================================
+
         if ("VarDecl".equals(node.kind)
                 && node.name != null
                 && currentFunction != null) {
@@ -241,6 +293,7 @@ public class EntityAnalyzer {
                 }
             }
 
+
             CodeEntity entity =
                     new CodeEntity(
                             node.id,
@@ -251,6 +304,10 @@ public class EntityAnalyzer {
                                     + node.name
                     );
 
+            /*
+             * currentFunction.id is already an
+             * Analyzer++ ID.
+             */
             entity.parentId =
                     currentFunction.id;
 
@@ -267,7 +324,11 @@ public class EntityAnalyzer {
             entities.add(entity);
         }
 
+
+        // =========================================================
         // Parameter
+        // =========================================================
+
         if ("ParmVarDecl".equals(node.kind)
                 && node.name != null
                 && currentFunction != null) {
@@ -286,6 +347,7 @@ public class EntityAnalyzer {
                 }
             }
 
+
             Parameter parameter =
                     new Parameter(
                             node.id,
@@ -298,7 +360,11 @@ public class EntityAnalyzer {
             );
         }
 
+
+        // =========================================================
         // Analyze children
+        // =========================================================
+
         if (node.inner != null) {
 
             for (AstNode child :

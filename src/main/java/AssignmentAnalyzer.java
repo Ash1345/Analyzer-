@@ -4,117 +4,126 @@ import java.util.List;
 public class AssignmentAnalyzer {
 
     public static List<Relationship> analyze(
-            AstNode node,
+            AstNode root,
             AstIndex index) {
 
         List<Relationship> relationships =
                 new ArrayList<>();
 
-        analyze(
-                node,
+        analyzeNode(
+                root,
                 index,
-                null,
-                relationships
+                relationships,
+                null
         );
 
         return relationships;
     }
 
-    private static void analyze(
+
+    private static void analyzeNode(
             AstNode node,
             AstIndex index,
-            CodeEntity currentFunction,
-            List<Relationship> relationships) {
+            List<Relationship> relationships,
+            CodeEntity currentFunction) {
 
         if (node == null) {
             return;
         }
 
-        if (Boolean.TRUE.equals(node.isImplicit)) {
-            return;
-        }
 
-        // Track the function we are currently inside.
-        if ("FunctionDecl".equals(node.kind)
+        // =====================================================
+        // Track current function
+        // =====================================================
+
+        if (("FunctionDecl".equals(node.kind)
+                || "CXXMethodDecl".equals(node.kind))
                 && node.name != null) {
 
-            currentFunction =
+            CodeEntity entity =
                     index.resolveEntity(node.id);
+
+            if (entity != null) {
+                currentFunction = entity;
+            }
         }
 
-        // Assignment: lhs = rhs
+
+        // =====================================================
+        // Assignment
+        // =====================================================
+
         if ("BinaryOperator".equals(node.kind)
-                && "=".equals(getOpcode(node))
+                && "=".equals(node.opcode)
                 && currentFunction != null
                 && node.inner != null
                 && !node.inner.isEmpty()) {
 
-            AstNode leftSide =
+            /*
+             * The first child of an assignment is normally
+             * the left-hand side.
+             *
+             * Example:
+             *
+             * result = result + 5;
+             *
+             * BinaryOperator (=)
+             *     DeclRefExpr result
+             *     BinaryOperator (+)
+             */
+
+            AstNode leftHandSide =
                     node.inner.get(0);
 
-            CodeEntity targetVariable =
+            CodeEntity variable =
                     findReferencedVariable(
-                            leftSide,
+                            leftHandSide,
                             index
                     );
 
-            if (targetVariable != null) {
+            if (variable != null) {
 
                 Relationship relationship =
                         new Relationship(
                                 currentFunction.id,
                                 currentFunction.qualifiedName,
-                                targetVariable.id,
-                                targetVariable.qualifiedName,
+                                variable.id,
+                                variable.qualifiedName,
                                 "WRITES"
                         );
 
-                boolean alreadyExists = false;
-
-                for (Relationship existing :
-                        relationships) {
-
-                    if (existing.sourceId.equals(
-                            relationship.sourceId)
-                            && existing.targetId.equals(
-                            relationship.targetId)
-                            && existing.type.equals(
-                            relationship.type)) {
-
-                        alreadyExists = true;
-                        break;
-                    }
-                }
-
-                if (!alreadyExists) {
-
-                    relationships.add(
-                            relationship
-                    );
-                }
+                /*
+                 * Do not perform duplicate checking here.
+                 *
+                 * RelationshipRegistry in GraphBuilder
+                 * handles relationship deduplication.
+                 */
+                relationships.add(
+                        relationship
+                );
             }
         }
+
+
+        // =====================================================
+        // Analyze children
+        // =====================================================
 
         if (node.inner != null) {
 
             for (AstNode child :
                     node.inner) {
 
-                analyze(
+                analyzeNode(
                         child,
                         index,
-                        currentFunction,
-                        relationships
+                        relationships,
+                        currentFunction
                 );
             }
         }
     }
 
-    private static String getOpcode(
-            AstNode node) {
-
-        return node.opcode;
-    }
 
     private static CodeEntity findReferencedVariable(
             AstNode node,
@@ -124,27 +133,35 @@ public class AssignmentAnalyzer {
             return null;
         }
 
+
+        // Direct variable reference
         if ("DeclRefExpr".equals(node.kind)
                 && node.referencedDecl != null) {
 
-            Object referencedId =
+            Object referencedIdObject =
                     node.referencedDecl.get("id");
 
-            if (referencedId != null) {
+            if (referencedIdObject != null) {
+
+                String referencedId =
+                        referencedIdObject.toString();
 
                 CodeEntity entity =
                         index.resolveEntity(
-                                referencedId.toString()
+                                referencedId
                         );
 
                 if (entity != null
-                        && "VARIABLE".equals(entity.kind)) {
+                        && "VARIABLE".equals(
+                        entity.kind)) {
 
                     return entity;
                 }
             }
         }
 
+
+        // Search children recursively
         if (node.inner != null) {
 
             for (AstNode child :
