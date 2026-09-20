@@ -69,6 +69,8 @@ public class EntityAnalyzer {
                             node.name,
                             node.name
                     );
+            entity.logicalId =
+                    "CLASS:" + node.name;
 
             extractLocation(
                     node,
@@ -143,11 +145,10 @@ public class EntityAnalyzer {
                             qualifiedName
                     );
 
-            entity.parentId =
-                    methodClassId;
+            entity.logicalId = node.mangledName;
 
-            entity.returnType =
-                    extractReturnType(node);
+            entity.parentId = methodClassId;
+            entity.returnType = extractReturnType(node);
 
             extractLocation(
                     node,
@@ -159,6 +160,8 @@ public class EntityAnalyzer {
             entities.add(entity);
 
             currentFunction = entity;
+
+
         }
 
         // Free function

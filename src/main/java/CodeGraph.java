@@ -27,6 +27,8 @@ public class CodeGraph {
                             + entity.kind
                             + " : "
                             + entity.qualifiedName
+                            + " | logicalId="
+                            + entity.logicalId
                             + getTypeInformation(entity)
             );
 
