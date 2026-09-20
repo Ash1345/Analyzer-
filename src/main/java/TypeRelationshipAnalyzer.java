@@ -33,14 +33,17 @@ public class TypeRelationshipAnalyzer {
 
                 if (target.name.equals(variableType)) {
 
-                    relationships.add(
+                    Relationship relationship =
                             new Relationship(
                                     variable.id,
                                     variable.qualifiedName,
                                     target.id,
                                     target.qualifiedName,
                                     "TYPE_OF"
-                            )
+                            );
+
+                    relationships.add(
+                            relationship
                     );
 
                     break;

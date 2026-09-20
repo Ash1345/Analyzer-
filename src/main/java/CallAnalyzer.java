@@ -199,48 +199,11 @@ public class CallAnalyzer {
                         type
                 );
 
-        // =========================================================
-        // Resolve source location from AST range.begin.offset
-        // =========================================================
-
-        if (node != null
-                && node.range != null
-                && locationResolver != null) {
-
-            Object beginObject =
-                    node.range.get("begin");
-
-            if (beginObject instanceof java.util.Map) {
-
-                java.util.Map<?, ?> begin =
-                        (java.util.Map<?, ?>) beginObject;
-
-                Object offsetObject =
-                        begin.get("offset");
-
-                if (offsetObject != null) {
-
-                    int offset =
-                            Integer.parseInt(
-                                    offsetObject.toString()
-                            );
-
-                    SourceLocationResolver.Location location =
-                            locationResolver.resolve(
-                                    offset
-                            );
-
-                    relationship.file =
-                            location.file;
-
-                    relationship.line =
-                            location.line;
-
-                    relationship.column =
-                            location.column;
-                }
-            }
-        }
+        RelationshipLocation.attach(
+                relationship,
+                node,
+                locationResolver
+        );
 
         return relationship;
     }
