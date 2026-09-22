@@ -5,7 +5,7 @@ public class VariableUseAnalyzer {
 
     public static List<Relationship> analyze(
             AstNode root,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
@@ -13,7 +13,7 @@ public class VariableUseAnalyzer {
 
         analyzeNode(
                 root,
-                index,
+                entityRegistry,
                 relationships,
                 null,
                 locationResolver
@@ -25,7 +25,7 @@ public class VariableUseAnalyzer {
 
     private static void analyzeNode(
             AstNode node,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             List<Relationship> relationships,
             CodeEntity currentFunction,
             SourceLocationResolver locationResolver) {
@@ -44,7 +44,9 @@ public class VariableUseAnalyzer {
                 && node.name != null) {
 
             CodeEntity entity =
-                    index.resolveEntity(node.id);
+                    entityRegistry.findByAstId(
+                            node.id
+                    );
 
             if (entity != null) {
                 currentFunction = entity;
@@ -69,7 +71,7 @@ public class VariableUseAnalyzer {
                         referencedIdObject.toString();
 
                 CodeEntity variable =
-                        index.resolveEntity(
+                        entityRegistry.findByAstId(
                                 referencedId
                         );
 
@@ -105,7 +107,7 @@ public class VariableUseAnalyzer {
 
                 analyzeNode(
                         child,
-                        index,
+                        entityRegistry,
                         relationships,
                         currentFunction,
                         locationResolver

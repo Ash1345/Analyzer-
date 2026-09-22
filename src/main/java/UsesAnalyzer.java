@@ -5,7 +5,7 @@ public class UsesAnalyzer {
 
     public static List<Relationship> analyze(
             AstNode root,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
@@ -13,7 +13,7 @@ public class UsesAnalyzer {
 
         analyzeNode(
                 root,
-                index,
+                entityRegistry,
                 relationships,
                 null,
                 locationResolver
@@ -25,7 +25,7 @@ public class UsesAnalyzer {
 
     private static void analyzeNode(
             AstNode node,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             List<Relationship> relationships,
             CodeEntity currentFunction,
             SourceLocationResolver locationResolver) {
@@ -44,7 +44,9 @@ public class UsesAnalyzer {
                 && node.name != null) {
 
             CodeEntity entity =
-                    index.resolveEntity(node.id);
+                    entityRegistry.findByAstId(
+                            node.id
+                    );
 
             if (entity != null) {
                 currentFunction = entity;
@@ -78,7 +80,7 @@ public class UsesAnalyzer {
                 // =================================================
 
                 for (CodeEntity entity :
-                        index.getAllEntities()) {
+                        entityRegistry.getAll()) {
 
                     if (!"CLASS".equals(entity.kind)) {
                         continue;
@@ -127,7 +129,7 @@ public class UsesAnalyzer {
 
                 analyzeNode(
                         child,
-                        index,
+                        entityRegistry,
                         relationships,
                         currentFunction,
                         locationResolver

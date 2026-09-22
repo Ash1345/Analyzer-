@@ -5,7 +5,7 @@ public class DataFlowAnalyzer {
 
     public static List<Relationship> analyze(
             AstNode root,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
@@ -13,7 +13,7 @@ public class DataFlowAnalyzer {
 
         analyzeNode(
                 root,
-                index,
+                entityRegistry,
                 relationships,
                 null,
                 locationResolver
@@ -25,7 +25,7 @@ public class DataFlowAnalyzer {
 
     private static void analyzeNode(
             AstNode node,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             List<Relationship> relationships,
             CodeEntity currentFunction,
             SourceLocationResolver locationResolver) {
@@ -44,7 +44,9 @@ public class DataFlowAnalyzer {
                 && node.name != null) {
 
             CodeEntity entity =
-                    index.resolveEntity(node.id);
+                    entityRegistry.findByAstId(
+                            node.id
+                    );
 
             if (entity != null) {
                 currentFunction = entity;
@@ -61,7 +63,9 @@ public class DataFlowAnalyzer {
                 && node.inner != null) {
 
             CodeEntity targetVariable =
-                    index.resolveEntity(node.id);
+                    entityRegistry.findByAstId(
+                            node.id
+                    );
 
             if (targetVariable != null
                     && "VARIABLE".equals(
@@ -76,7 +80,7 @@ public class DataFlowAnalyzer {
                 sourceEntity =
                         findCalledMethod(
                                 node,
-                                index
+                                entityRegistry
                         );
 
                 if (sourceEntity == null) {
@@ -84,7 +88,7 @@ public class DataFlowAnalyzer {
                     sourceEntity =
                             findCalledFunction(
                                     node,
-                                    index
+                                    entityRegistry
                             );
                 }
 
@@ -123,7 +127,7 @@ public class DataFlowAnalyzer {
 
                 analyzeNode(
                         child,
-                        index,
+                        entityRegistry,
                         relationships,
                         currentFunction,
                         locationResolver
@@ -139,7 +143,7 @@ public class DataFlowAnalyzer {
 
     private static CodeEntity findCalledMethod(
             AstNode node,
-            AstIndex index) {
+            EntityRegistry entityRegistry) {
 
         if (node == null) {
             return null;
@@ -156,7 +160,7 @@ public class DataFlowAnalyzer {
             if (memberExpr != null
                     && memberExpr.referencedMemberDecl != null) {
 
-                return index.resolveEntity(
+                return entityRegistry.findByAstId(
                         memberExpr.referencedMemberDecl
                 );
             }
@@ -170,7 +174,7 @@ public class DataFlowAnalyzer {
                 CodeEntity result =
                         findCalledMethod(
                                 child,
-                                index
+                                entityRegistry
                         );
 
                 if (result != null) {
@@ -189,7 +193,7 @@ public class DataFlowAnalyzer {
 
     private static CodeEntity findCalledFunction(
             AstNode node,
-            AstIndex index) {
+            EntityRegistry entityRegistry) {
 
         if (node == null) {
             return null;
@@ -204,7 +208,7 @@ public class DataFlowAnalyzer {
             if (idObject != null) {
 
                 CodeEntity entity =
-                        index.resolveEntity(
+                        entityRegistry.findByAstId(
                                 idObject.toString()
                         );
 
@@ -225,7 +229,7 @@ public class DataFlowAnalyzer {
                 CodeEntity result =
                         findCalledFunction(
                                 child,
-                                index
+                                entityRegistry
                         );
 
                 if (result != null) {

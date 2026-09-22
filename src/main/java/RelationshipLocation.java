@@ -40,6 +40,25 @@ public class RelationshipLocation {
                         offset
                 );
 
+        // =========================================================
+        // Store evidence occurrence
+        // =========================================================
+
+        RelationshipEvidence evidence =
+                new RelationshipEvidence(
+                        location.file,
+                        location.line,
+                        location.column
+                );
+
+        relationship.evidence.add(
+                evidence
+        );
+
+        // =========================================================
+        // Keep legacy fields for now
+        // =========================================================
+
         relationship.file =
                 location.file;
 

@@ -5,7 +5,7 @@ public class CallAnalyzer {
 
     public static List<Relationship> analyze(
             AstNode root,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
@@ -13,7 +13,7 @@ public class CallAnalyzer {
 
         analyzeNode(
                 root,
-                index,
+                entityRegistry,
                 relationships,
                 null,
                 locationResolver
@@ -22,10 +22,9 @@ public class CallAnalyzer {
         return relationships;
     }
 
-
     private static void analyzeNode(
             AstNode node,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             List<Relationship> relationships,
             CodeEntity currentFunction,
             SourceLocationResolver locationResolver) {
@@ -34,27 +33,30 @@ public class CallAnalyzer {
             return;
         }
 
-
-        // =====================================================
-        // Track current function
-        // =====================================================
+        // -----------------------------------------------------
+        // Detect current function or method
+        // -----------------------------------------------------
 
         if (("FunctionDecl".equals(node.kind)
                 || "CXXMethodDecl".equals(node.kind))
                 && node.name != null) {
 
             CodeEntity entity =
-                    index.resolveEntity(node.id);
+                    entityRegistry.findByAstId(
+                            node.id
+                    );
 
             if (entity != null) {
                 currentFunction = entity;
             }
         }
 
-
-        // =====================================================
-        // C++ member call
-        // =====================================================
+        // -----------------------------------------------------
+        // Member function calls
+        //
+        // Example:
+        // calculator.add(10, 20);
+        // -----------------------------------------------------
 
         if ("CXXMemberCallExpr".equals(node.kind)
                 && currentFunction != null) {
@@ -69,7 +71,7 @@ public class CallAnalyzer {
                     && memberExpr.referencedMemberDecl != null) {
 
                 CodeEntity target =
-                        index.resolveEntity(
+                        entityRegistry.findByAstId(
                                 memberExpr.referencedMemberDecl
                         );
 
@@ -88,15 +90,10 @@ public class CallAnalyzer {
                             relationship
                     );
 
-
-                    // =================================================
-                    // Detect object on which the method is called
-                    // =================================================
-
                     CodeEntity object =
                             findReferencedVariable(
                                     node,
-                                    index
+                                    entityRegistry
                             );
 
                     if (object != null) {
@@ -118,24 +115,24 @@ public class CallAnalyzer {
             }
         }
 
-
-        // =====================================================
-        // Normal function call
-        // =====================================================
+        // -----------------------------------------------------
+        // Normal function calls
+        //
+        // Example:
+        // calculate();
+        // -----------------------------------------------------
 
         if ("CallExpr".equals(node.kind)
                 && currentFunction != null) {
 
             AstNode referencedFunction =
-                    findReferencedDecl(
-                            node
-                    );
+                    findReferencedDecl(node);
 
             if (referencedFunction != null
                     && referencedFunction.id != null) {
 
                 CodeEntity target =
-                        index.resolveEntity(
+                        entityRegistry.findByAstId(
                                 referencedFunction.id
                         );
 
@@ -157,10 +154,9 @@ public class CallAnalyzer {
             }
         }
 
-
-        // =====================================================
-        // Analyze children
-        // =====================================================
+        // -----------------------------------------------------
+        // Continue walking AST
+        // -----------------------------------------------------
 
         if (node.inner != null) {
 
@@ -169,7 +165,7 @@ public class CallAnalyzer {
 
                 analyzeNode(
                         child,
-                        index,
+                        entityRegistry,
                         relationships,
                         currentFunction,
                         locationResolver
@@ -177,11 +173,6 @@ public class CallAnalyzer {
             }
         }
     }
-
-
-    // =========================================================
-    // Create relationship with source location
-    // =========================================================
 
     private static Relationship createRelationship(
             CodeEntity source,
@@ -207,11 +198,6 @@ public class CallAnalyzer {
 
         return relationship;
     }
-
-
-    // =========================================================
-    // Find node by kind
-    // =========================================================
 
     private static AstNode findNodeByKind(
             AstNode node,
@@ -245,11 +231,6 @@ public class CallAnalyzer {
         return null;
     }
 
-
-    // =========================================================
-    // Find referenced declaration
-    // =========================================================
-
     private static AstNode findReferencedDecl(
             AstNode node) {
 
@@ -257,21 +238,22 @@ public class CallAnalyzer {
             return null;
         }
 
-        if ("DeclRefExpr".equals(node.kind)
-                && node.referencedDecl != null) {
+        if (node.referencedDecl != null) {
 
-            Object idObject =
-                    node.referencedDecl.get("id");
+            Object id =
+                    node.referencedDecl.get(
+                            "id"
+                    );
 
-            if (idObject != null) {
+            if (id != null) {
 
-                AstNode result =
+                AstNode referencedNode =
                         new AstNode();
 
-                result.id =
-                        idObject.toString();
+                referencedNode.id =
+                        id.toString();
 
-                return result;
+                return referencedNode;
             }
         }
 
@@ -294,38 +276,35 @@ public class CallAnalyzer {
         return null;
     }
 
-
-    // =========================================================
-    // Find referenced variable
-    // =========================================================
-
     private static CodeEntity findReferencedVariable(
             AstNode node,
-            AstIndex index) {
+            EntityRegistry entityRegistry) {
 
         if (node == null) {
             return null;
         }
 
-        if ("DeclRefExpr".equals(node.kind)
-                && node.referencedDecl != null) {
+        if (node.referencedDecl != null) {
 
-            Object idObject =
-                    node.referencedDecl.get("id");
+            Object kind =
+                    node.referencedDecl.get(
+                            "kind"
+                    );
 
-            if (idObject != null) {
+            Object id =
+                    node.referencedDecl.get(
+                            "id"
+                    );
 
-                CodeEntity entity =
-                        index.resolveEntity(
-                                idObject.toString()
-                        );
+            if (kind != null
+                    && id != null
+                    && "VarDecl".equals(
+                    kind.toString()
+            )) {
 
-                if (entity != null
-                        && "VARIABLE".equals(
-                        entity.kind)) {
-
-                    return entity;
-                }
+                return entityRegistry.findByAstId(
+                        id.toString()
+                );
             }
         }
 
@@ -337,7 +316,7 @@ public class CallAnalyzer {
                 CodeEntity result =
                         findReferencedVariable(
                                 child,
-                                index
+                                entityRegistry
                         );
 
                 if (result != null) {

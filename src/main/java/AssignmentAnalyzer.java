@@ -5,7 +5,7 @@ public class AssignmentAnalyzer {
 
     public static List<Relationship> analyze(
             AstNode root,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
@@ -13,7 +13,7 @@ public class AssignmentAnalyzer {
 
         analyzeNode(
                 root,
-                index,
+                entityRegistry,
                 relationships,
                 null,
                 locationResolver
@@ -25,7 +25,7 @@ public class AssignmentAnalyzer {
 
     private static void analyzeNode(
             AstNode node,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             List<Relationship> relationships,
             CodeEntity currentFunction,
             SourceLocationResolver locationResolver) {
@@ -44,7 +44,9 @@ public class AssignmentAnalyzer {
                 && node.name != null) {
 
             CodeEntity entity =
-                    index.resolveEntity(node.id);
+                    entityRegistry.findByAstId(
+                            node.id
+                    );
 
             if (entity != null) {
                 currentFunction = entity;
@@ -68,7 +70,7 @@ public class AssignmentAnalyzer {
             CodeEntity variable =
                     findReferencedVariable(
                             leftHandSide,
-                            index
+                            entityRegistry
                     );
 
             if (variable != null) {
@@ -100,7 +102,7 @@ public class AssignmentAnalyzer {
 
                 analyzeNode(
                         child,
-                        index,
+                        entityRegistry,
                         relationships,
                         currentFunction,
                         locationResolver
@@ -116,7 +118,7 @@ public class AssignmentAnalyzer {
 
     private static CodeEntity findReferencedVariable(
             AstNode node,
-            AstIndex index) {
+            EntityRegistry entityRegistry) {
 
         if (node == null) {
             return null;
@@ -134,7 +136,7 @@ public class AssignmentAnalyzer {
                         referencedIdObject.toString();
 
                 CodeEntity entity =
-                        index.resolveEntity(
+                        entityRegistry.findByAstId(
                                 referencedId
                         );
 
@@ -156,7 +158,7 @@ public class AssignmentAnalyzer {
                 CodeEntity result =
                         findReferencedVariable(
                                 child,
-                                index
+                                entityRegistry
                         );
 
                 if (result != null) {

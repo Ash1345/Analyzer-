@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Relationship {
 
     // =========================================================
@@ -40,6 +43,9 @@ public class Relationship {
     // Evidence information
     // =========================================================
 
+    // Evidence occurrences
+    public List<RelationshipEvidence> evidence =
+            new ArrayList<>();
     /*
      * Source file where this relationship was discovered.
      */

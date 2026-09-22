@@ -64,16 +64,21 @@ public class CodeGraph {
                             + relation.target
             );
 
-            if (relation.file != null) {
+            if (relation.evidence != null
+                    && !relation.evidence.isEmpty()) {
 
-                System.out.println(
-                        "      Location: "
-                                + relation.file
-                                + ":"
-                                + relation.line
-                                + ":"
-                                + relation.column
-                );
+                for (RelationshipEvidence evidence :
+                        relation.evidence) {
+
+                    System.out.println(
+                            "      Evidence: "
+                                    + evidence.file
+                                    + ":"
+                                    + evidence.line
+                                    + ":"
+                                    + evidence.column
+                    );
+                }
             }
         }
     }

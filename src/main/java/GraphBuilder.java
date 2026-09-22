@@ -1,43 +1,40 @@
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class GraphBuilder {
 
     public static CodeGraph build(AstNode root) {
 
-        AstIndex index = new AstIndex();
+        AstIndex index =
+                new AstIndex();
 
         index.build(root);
 
         String sourceFile =
                 "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp";
 
-        List<CodeEntity> entities =
+        EntityRegistry entityRegistry =
+                new EntityRegistry();
+
+        List<CodeEntity> analyzedEntities =
                 EntityAnalyzer.analyze(
                         root,
                         sourceFile
                 );
 
-        for (CodeEntity entity : entities) {
+        for (CodeEntity entity :
+                analyzedEntities) {
 
-            CodeEntity registeredEntity =
-                    index.findOrCreateEntity(
-                            entity
-                    );
-
-            /*
-             * If the entity was new, it is already
-             * registered inside the index.
-             *
-             * This keeps the existing behavior.
-             */
+            entityRegistry.add(
+                    entity
+            );
         }
 
+        List<CodeEntity> entities =
+                entityRegistry.getAll();
 
         RelationshipRegistry registry =
                 new RelationshipRegistry();
-
 
         // =====================================================
         // Create source-location resolver
@@ -61,7 +58,6 @@ public class GraphBuilder {
             );
         }
 
-
         // =====================================================
         // Analyze relationships
         // =====================================================
@@ -70,7 +66,7 @@ public class GraphBuilder {
                 registry,
                 CallAnalyzer.analyze(
                         root,
-                        index,
+                        entityRegistry,
                         locationResolver
                 )
         );
@@ -86,7 +82,7 @@ public class GraphBuilder {
                 registry,
                 ConstructionAnalyzer.analyze(
                         root,
-                        index,
+                        entityRegistry,
                         locationResolver
                 )
         );
@@ -95,7 +91,7 @@ public class GraphBuilder {
                 registry,
                 UsesAnalyzer.analyze(
                         root,
-                        index,
+                        entityRegistry,
                         locationResolver
                 )
         );
@@ -104,7 +100,7 @@ public class GraphBuilder {
                 registry,
                 VariableUseAnalyzer.analyze(
                         root,
-                        index,
+                        entityRegistry,
                         locationResolver
                 )
         );
@@ -120,7 +116,7 @@ public class GraphBuilder {
                 registry,
                 DataFlowAnalyzer.analyze(
                         root,
-                        index,
+                        entityRegistry,
                         locationResolver
                 )
         );
@@ -129,11 +125,10 @@ public class GraphBuilder {
                 registry,
                 AssignmentAnalyzer.analyze(
                         root,
-                        index,
+                        entityRegistry,
                         locationResolver
                 )
         );
-
 
         return new CodeGraph(
                 entities,
@@ -149,7 +144,6 @@ public class GraphBuilder {
         AstIndex index =
                 new AstIndex();
 
-
         // =====================================================
         // First: index every translation unit
         // =====================================================
@@ -162,13 +156,12 @@ public class GraphBuilder {
             );
         }
 
-
         // =====================================================
         // Collect entities from every translation unit
         // =====================================================
 
-        List<CodeEntity> entities =
-                new ArrayList<>();
+        EntityRegistry entityRegistry =
+                new EntityRegistry();
 
         for (int i = 0;
              i < roots.size();
@@ -180,32 +173,23 @@ public class GraphBuilder {
             String sourceFile =
                     sourceFiles.get(i);
 
-
             List<CodeEntity> rootEntities =
                     EntityAnalyzer.analyze(
                             root,
                             sourceFile
                     );
 
-
             for (CodeEntity entity :
                     rootEntities) {
 
-                CodeEntity registeredEntity =
-                        index.findOrCreateEntity(
-                                entity
-                        );
-
-
-                if (registeredEntity == entity) {
-
-                    entities.add(
-                            registeredEntity
-                    );
-                }
+                entityRegistry.add(
+                        entity
+                );
             }
         }
 
+        List<CodeEntity> entities =
+                entityRegistry.getAll();
 
         // =====================================================
         // Central relationship registry
@@ -213,7 +197,6 @@ public class GraphBuilder {
 
         RelationshipRegistry registry =
                 new RelationshipRegistry();
-
 
         // =====================================================
         // Analyze every translation unit
@@ -228,7 +211,6 @@ public class GraphBuilder {
 
             String sourceFile =
                     sourceFiles.get(i);
-
 
             // -------------------------------------------------
             // Create resolver for this translation unit
@@ -252,7 +234,6 @@ public class GraphBuilder {
                 );
             }
 
-
             // -------------------------------------------------
             // Call relationships
             // -------------------------------------------------
@@ -261,11 +242,10 @@ public class GraphBuilder {
                     registry,
                     CallAnalyzer.analyze(
                             root,
-                            index,
+                            entityRegistry,
                             locationResolver
                     )
             );
-
 
             // -------------------------------------------------
             // Construction relationships
@@ -275,11 +255,10 @@ public class GraphBuilder {
                     registry,
                     ConstructionAnalyzer.analyze(
                             root,
-                            index,
+                            entityRegistry,
                             locationResolver
                     )
             );
-
 
             // -------------------------------------------------
             // Uses relationships
@@ -289,11 +268,10 @@ public class GraphBuilder {
                     registry,
                     UsesAnalyzer.analyze(
                             root,
-                            index,
+                            entityRegistry,
                             locationResolver
                     )
             );
-
 
             // -------------------------------------------------
             // Variable usage relationships
@@ -303,11 +281,10 @@ public class GraphBuilder {
                     registry,
                     VariableUseAnalyzer.analyze(
                             root,
-                            index,
+                            entityRegistry,
                             locationResolver
                     )
             );
-
 
             // -------------------------------------------------
             // Data flow relationships
@@ -317,11 +294,10 @@ public class GraphBuilder {
                     registry,
                     DataFlowAnalyzer.analyze(
                             root,
-                            index,
+                            entityRegistry,
                             locationResolver
                     )
             );
-
 
             // -------------------------------------------------
             // Assignment relationships
@@ -331,12 +307,11 @@ public class GraphBuilder {
                     registry,
                     AssignmentAnalyzer.analyze(
                             root,
-                            index,
+                            entityRegistry,
                             locationResolver
                     )
             );
         }
-
 
         // =====================================================
         // Analyze complete entity collection
@@ -349,14 +324,12 @@ public class GraphBuilder {
                 )
         );
 
-
         addRelationships(
                 registry,
                 TypeRelationshipAnalyzer.analyze(
                         entities
                 )
         );
-
 
         // =====================================================
         // Build final graph

@@ -5,7 +5,7 @@ public class ConstructionAnalyzer {
 
     public static List<Relationship> analyze(
             AstNode root,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             SourceLocationResolver locationResolver) {
 
         List<Relationship> relationships =
@@ -13,7 +13,7 @@ public class ConstructionAnalyzer {
 
         analyzeNode(
                 root,
-                index,
+                entityRegistry,
                 relationships,
                 null,
                 locationResolver
@@ -22,10 +22,9 @@ public class ConstructionAnalyzer {
         return relationships;
     }
 
-
     private static void analyzeNode(
             AstNode node,
-            AstIndex index,
+            EntityRegistry entityRegistry,
             List<Relationship> relationships,
             CodeEntity currentFunction,
             SourceLocationResolver locationResolver) {
@@ -34,73 +33,48 @@ public class ConstructionAnalyzer {
             return;
         }
 
-
-        // =====================================================
-        // Track current function
-        // =====================================================
+        // -----------------------------------------------------
+        // Identify current function/method
+        // -----------------------------------------------------
 
         if (("FunctionDecl".equals(node.kind)
                 || "CXXMethodDecl".equals(node.kind))
                 && node.name != null) {
 
             CodeEntity entity =
-                    index.resolveEntity(node.id);
+                    entityRegistry.findByAstId(
+                            node.id
+                    );
 
             if (entity != null) {
                 currentFunction = entity;
             }
         }
 
-
-        // =====================================================
-        // Detect object construction
-        // =====================================================
+        // -----------------------------------------------------
+        // Constructor expression
+        //
+        // Example:
+        //
+        // Calculator calculator;
+        //
+        // Clang represents the construction as
+        // CXXConstructExpr.
+        // -----------------------------------------------------
 
         if ("CXXConstructExpr".equals(node.kind)
                 && currentFunction != null) {
 
-            String constructedType = null;
-
-            if (node.type != null) {
-
-                Object qualType =
-                        node.type.get("qualType");
-
-                if (qualType != null) {
-
-                    constructedType =
-                            qualType.toString();
-                }
-            }
-
-
-            // =================================================
-            // Find the corresponding class entity
-            // =================================================
+            String constructedType =
+                    extractConstructedType(node);
 
             if (constructedType != null) {
 
-                CodeEntity targetClass = null;
-
-                for (CodeEntity entity :
-                        index.getAllEntities()) {
-
-                    if (!"CLASS".equals(entity.kind)) {
-                        continue;
-                    }
-
-                    if (entity.name.equals(
-                            constructedType)) {
-
-                        targetClass = entity;
-                        break;
-                    }
-                }
-
-
-                // =============================================
-                // Create CONSTRUCTS relationship
-                // =============================================
+                CodeEntity targetClass =
+                        findClassByType(
+                                constructedType,
+                                entityRegistry
+                        );
 
                 if (targetClass != null) {
 
@@ -120,10 +94,9 @@ public class ConstructionAnalyzer {
             }
         }
 
-
-        // =====================================================
-        // Analyze children
-        // =====================================================
+        // -----------------------------------------------------
+        // Continue walking AST
+        // -----------------------------------------------------
 
         if (node.inner != null) {
 
@@ -132,7 +105,7 @@ public class ConstructionAnalyzer {
 
                 analyzeNode(
                         child,
-                        index,
+                        entityRegistry,
                         relationships,
                         currentFunction,
                         locationResolver
@@ -141,9 +114,82 @@ public class ConstructionAnalyzer {
         }
     }
 
+    // =========================================================
+    // Extract constructed type from CXXConstructExpr
+    // =========================================================
+
+    private static String extractConstructedType(
+            AstNode node) {
+
+        if (node.type == null) {
+            return null;
+        }
+
+        Object qualType =
+                node.type.get(
+                        "qualType"
+                );
+
+        if (qualType == null) {
+            return null;
+        }
+
+        String type =
+                qualType.toString().trim();
+
+        if (type.isEmpty()) {
+            return null;
+        }
+
+        return type;
+    }
 
     // =========================================================
-    // Create relationship with source location
+    // Find CLASS entity matching constructed type
+    // =========================================================
+
+    private static CodeEntity findClassByType(
+            String type,
+            EntityRegistry entityRegistry) {
+
+        if (type == null
+                || entityRegistry == null) {
+
+            return null;
+        }
+
+        String normalizedType =
+                type
+                        .replace("*", "")
+                        .replace("&", "")
+                        .trim();
+
+        List<CodeEntity> entities =
+                entityRegistry.getAll();
+
+        for (CodeEntity entity :
+                entities) {
+
+            if (!"CLASS".equals(entity.kind)) {
+                continue;
+            }
+
+            if (entity.name == null) {
+                continue;
+            }
+
+            if (entity.name.equals(
+                    normalizedType)) {
+
+                return entity;
+            }
+        }
+
+        return null;
+    }
+
+    // =========================================================
+    // Create relationship
     // =========================================================
 
     private static Relationship createRelationship(

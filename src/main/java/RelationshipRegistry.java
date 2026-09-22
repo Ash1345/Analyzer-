@@ -7,6 +7,10 @@ public class RelationshipRegistry {
             new ArrayList<>();
 
 
+    // =========================================================
+    // Add relationship using individual fields
+    // =========================================================
+
     public void add(
             String sourceId,
             String source,
@@ -23,35 +27,13 @@ public class RelationshipRegistry {
                         type
                 );
 
-        /*
-         * Prevent duplicate semantic relationships.
-         *
-         * Two relationships are considered identical when
-         * they have the same:
-         *
-         * source
-         * target
-         * type
-         */
-        for (Relationship existing :
-                relationships) {
-
-            if (existing.sourceId.equals(
-                    relationship.sourceId)
-                    && existing.targetId.equals(
-                    relationship.targetId)
-                    && existing.type.equals(
-                    relationship.type)) {
-
-                return;
-            }
-        }
-
-        relationships.add(
-                relationship
-        );
+        add(relationship);
     }
 
+
+    // =========================================================
+    // Add relationship
+    // =========================================================
 
     public void add(
             Relationship relationship) {
@@ -60,9 +42,6 @@ public class RelationshipRegistry {
             return;
         }
 
-        /*
-         * Prevent duplicate semantic relationships.
-         */
         for (Relationship existing :
                 relationships) {
 
@@ -72,6 +51,11 @@ public class RelationshipRegistry {
                     relationship.targetId)
                     && existing.type.equals(
                     relationship.type)) {
+
+                mergeEvidence(
+                        existing,
+                        relationship
+                );
 
                 return;
             }
@@ -83,6 +67,88 @@ public class RelationshipRegistry {
     }
 
 
+    // =========================================================
+    // Merge evidence from duplicate relationship
+    // =========================================================
+
+    private void mergeEvidence(
+            Relationship existing,
+            Relationship incoming) {
+
+        if (incoming.evidence == null
+                || incoming.evidence.isEmpty()) {
+
+            return;
+        }
+
+        if (existing.evidence == null) {
+
+            existing.evidence =
+                    new ArrayList<>();
+        }
+
+        for (RelationshipEvidence incomingEvidence :
+                incoming.evidence) {
+
+            if (incomingEvidence == null) {
+                continue;
+            }
+
+            boolean alreadyExists = false;
+
+            for (RelationshipEvidence existingEvidence :
+                    existing.evidence) {
+
+                if (sameEvidence(
+                        existingEvidence,
+                        incomingEvidence)) {
+
+                    alreadyExists = true;
+                    break;
+                }
+            }
+
+            if (!alreadyExists) {
+
+                existing.evidence.add(
+                        incomingEvidence
+                );
+            }
+        }
+    }
+
+
+    // =========================================================
+    // Compare two evidence occurrences
+    // =========================================================
+
+    private boolean sameEvidence(
+            RelationshipEvidence first,
+            RelationshipEvidence second) {
+
+        if (first == null || second == null) {
+            return first == second;
+        }
+
+        return java.util.Objects.equals(
+                first.file,
+                second.file
+        )
+                && java.util.Objects.equals(
+                first.line,
+                second.line
+        )
+                && java.util.Objects.equals(
+                first.column,
+                second.column
+        );
+    }
+
+
+    // =========================================================
+    // Get all relationships
+    // =========================================================
+
     public List<Relationship> getRelationships() {
 
         return new ArrayList<>(
@@ -90,6 +156,10 @@ public class RelationshipRegistry {
         );
     }
 
+
+    // =========================================================
+    // Number of relationships
+    // =========================================================
 
     public int size() {
 
