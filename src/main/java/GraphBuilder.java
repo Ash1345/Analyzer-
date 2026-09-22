@@ -5,11 +5,6 @@ public class GraphBuilder {
 
     public static CodeGraph build(AstNode root) {
 
-        AstIndex index =
-                new AstIndex();
-
-        index.build(root);
-
         String sourceFile =
                 "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp";
 
@@ -140,21 +135,6 @@ public class GraphBuilder {
     public static CodeGraph build(
             List<AstNode> roots,
             List<String> sourceFiles) {
-
-        AstIndex index =
-                new AstIndex();
-
-        // =====================================================
-        // First: index every translation unit
-        // =====================================================
-
-        for (AstNode root : roots) {
-
-            addToIndex(
-                    root,
-                    index
-            );
-        }
 
         // =====================================================
         // Collect entities from every translation unit
@@ -361,23 +341,5 @@ public class GraphBuilder {
                     relationship
             );
         }
-    }
-
-
-    // =========================================================
-    // AST indexing helper
-    // =========================================================
-
-    public static void addToIndex(
-            AstNode root,
-            AstIndex index) {
-
-        if (root == null
-                || index == null) {
-
-            return;
-        }
-
-        index.build(root);
     }
 }
