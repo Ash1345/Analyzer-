@@ -147,6 +147,57 @@ public class AstReader {
                                 + entity.qualifiedName
                 );
             }
+
+            System.out.println();
+
+            System.out.println(
+                    "========== ENTITIES CALLED BY main =========="
+            );
+
+            List<CodeEntity> calledEntities =
+                    graph.findRelatedEntitiesByRelationshipType(
+                            mainFunction.id,
+                            "CALLS"
+                    );
+
+            for (CodeEntity entity :
+                    calledEntities) {
+
+                System.out.println(
+                        entity.kind
+                                + " : "
+                                + entity.qualifiedName
+                );
+            }
+            System.out.println();
+
+            System.out.println(
+                    "========== ENTITIES CALLING Calculator::add =========="
+            );
+
+            CodeEntity calculatorAdd =
+                    graph.findEntityById(
+                            "METHOD:Calculator::add"
+                    );
+
+            if (calculatorAdd != null) {
+
+                List<CodeEntity> callers =
+                        graph.findEntitiesRelatedTo(
+                                calculatorAdd.id,
+                                "CALLS"
+                        );
+
+                for (CodeEntity entity :
+                        callers) {
+
+                    System.out.println(
+                            entity.kind
+                                    + " : "
+                                    + entity.qualifiedName
+                    );
+                }
+            }
         }
     }
 }

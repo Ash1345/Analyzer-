@@ -240,4 +240,68 @@ public class CodeGraph {
 
         return result;
     }
+    public List<CodeEntity> findRelatedEntitiesByRelationshipType(
+            String sourceId,
+            String relationshipType) {
+
+        List<CodeEntity> result =
+                new ArrayList<>();
+
+        for (Relationship relationship :
+                relationships) {
+
+            if (sourceId.equals(
+                    relationship.sourceId)
+                    && relationshipType.equals(
+                    relationship.type)) {
+
+                CodeEntity target =
+                        findEntityById(
+                                relationship.targetId
+                        );
+
+                if (target != null
+                        && !containsEntity(
+                        result,
+                        target.id)) {
+
+                    result.add(target);
+                }
+            }
+        }
+
+        return result;
+    }
+    public List<CodeEntity> findEntitiesRelatedTo(
+            String targetId,
+            String relationshipType) {
+
+        List<CodeEntity> result =
+                new ArrayList<>();
+
+        for (Relationship relationship :
+                relationships) {
+
+            if (targetId.equals(
+                    relationship.targetId)
+                    && relationshipType.equals(
+                    relationship.type)) {
+
+                CodeEntity source =
+                        findEntityById(
+                                relationship.sourceId
+                        );
+
+                if (source != null
+                        && !containsEntity(
+                        result,
+                        source.id)) {
+
+                    result.add(source);
+                }
+            }
+        }
+
+        return result;
+    }
 }
