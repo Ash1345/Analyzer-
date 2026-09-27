@@ -198,6 +198,27 @@ public class AstReader {
                     );
                 }
             }
+            System.out.println();
+
+            System.out.println(
+                    "========== ENTITIES REACHABLE FROM main VIA CALLS =========="
+            );
+
+            List<CodeEntity> reachable =
+                    graph.findReachableEntities(
+                            mainFunction.id,
+                            "CALLS"
+                    );
+
+            for (CodeEntity entity :
+                    reachable) {
+
+                System.out.println(
+                        entity.kind
+                                + " : "
+                                + entity.qualifiedName
+                );
+            }
         }
     }
 }

@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CodeGraph {
 
@@ -299,6 +301,75 @@ public class CodeGraph {
 
                     result.add(source);
                 }
+            }
+        }
+
+        return result;
+    }
+    public List<CodeEntity> findReachableEntities(
+            String sourceId,
+            String relationshipType) {
+
+        List<CodeEntity> result =
+                new ArrayList<>();
+
+        List<String> queue =
+                new ArrayList<>();
+
+        Set<String> visited =
+                new HashSet<>();
+
+        queue.add(sourceId);
+        visited.add(sourceId);
+
+        int index = 0;
+
+        while (index < queue.size()) {
+
+            String currentId =
+                    queue.get(index);
+
+            index++;
+
+            for (Relationship relationship :
+                    relationships) {
+
+                if (!currentId.equals(
+                        relationship.sourceId)) {
+
+                    continue;
+                }
+
+                if (!relationshipType.equals(
+                        relationship.type)) {
+
+                    continue;
+                }
+
+                String targetId =
+                        relationship.targetId;
+
+                if (targetId == null) {
+                    continue;
+                }
+
+                if (visited.contains(targetId)) {
+                    continue;
+                }
+
+                visited.add(targetId);
+
+                CodeEntity target =
+                        findEntityById(
+                                targetId
+                        );
+
+                if (target != null) {
+
+                    result.add(target);
+                }
+
+                queue.add(targetId);
             }
         }
 
