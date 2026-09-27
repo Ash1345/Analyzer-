@@ -375,4 +375,138 @@ public class CodeGraph {
 
         return result;
     }
+    public GraphPath findPath(
+            String sourceId,
+            String targetId,
+            String relationshipType) {
+
+        List<String> queue =
+                new ArrayList<>();
+
+        Set<String> visited =
+                new HashSet<>();
+
+        java.util.Map<String, String> previousEntity =
+                new java.util.HashMap<>();
+
+        java.util.Map<String, Relationship> previousRelationship =
+                new java.util.HashMap<>();
+
+        queue.add(sourceId);
+        visited.add(sourceId);
+
+        int index = 0;
+
+        while (index < queue.size()) {
+
+            String currentId =
+                    queue.get(index);
+
+            index++;
+
+            if (currentId.equals(targetId)) {
+                break;
+            }
+
+            for (Relationship relationship :
+                    relationships) {
+
+                if (!currentId.equals(
+                        relationship.sourceId)) {
+
+                    continue;
+                }
+
+                if (!relationshipType.equals(
+                        relationship.type)) {
+
+                    continue;
+                }
+
+                String nextId =
+                        relationship.targetId;
+
+                if (nextId == null
+                        || visited.contains(nextId)) {
+
+                    continue;
+                }
+
+                visited.add(nextId);
+
+                previousEntity.put(
+                        nextId,
+                        currentId
+                );
+
+                previousRelationship.put(
+                        nextId,
+                        relationship
+                );
+
+                queue.add(nextId);
+            }
+        }
+
+        // ---------------------------------------------------------
+        // Target was not reached
+        // ---------------------------------------------------------
+
+        if (!visited.contains(targetId)) {
+
+            return null;
+        }
+
+        // ---------------------------------------------------------
+        // Reconstruct path
+        // ---------------------------------------------------------
+
+        List<CodeEntity> entities =
+                new ArrayList<>();
+
+        List<Relationship> pathRelationships =
+                new ArrayList<>();
+
+        String currentId =
+                targetId;
+
+        while (currentId != null) {
+
+            CodeEntity entity =
+                    findEntityById(
+                            currentId
+                    );
+
+            if (entity != null) {
+
+                entities.add(
+                        0,
+                        entity
+                );
+            }
+
+            Relationship relationship =
+                    previousRelationship.get(
+                            currentId
+                    );
+
+            if (relationship != null) {
+
+                pathRelationships.add(
+                        0,
+                        relationship
+                );
+            }
+
+            currentId =
+                    previousEntity.get(
+                            currentId
+                    );
+        }
+
+        return new GraphPath(
+                entities,
+                pathRelationships
+        );
+    }
 }

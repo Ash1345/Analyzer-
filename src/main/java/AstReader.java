@@ -219,6 +219,57 @@ public class AstReader {
                                 + entity.qualifiedName
                 );
             }
+
+            System.out.println();
+
+            System.out.println(
+                    "========== PATH FROM main TO helper =========="
+            );
+
+            CodeEntity helper =
+                    graph.findEntityById(
+                            "FUNCTION:helper"
+                    );
+
+            if (mainFunction != null
+                    && helper != null) {
+
+                GraphPath path =
+                        graph.findPath(
+                                mainFunction.id,
+                                helper.id,
+                                "CALLS"
+                        );
+
+                if (path != null) {
+
+                    for (int i = 0;
+                         i < path.entities.size();
+                         i++) {
+
+                        CodeEntity entity =
+                                path.entities.get(i);
+
+                        System.out.print(
+                                entity.qualifiedName
+                        );
+
+                        if (i < path.relationships.size()) {
+
+                            Relationship relationship =
+                                    path.relationships.get(i);
+
+                            System.out.print(
+                                    " --"
+                                            + relationship.type
+                                            + "--> "
+                            );
+                        }
+                    }
+
+                    System.out.println();
+                }
+            }
         }
     }
 }
