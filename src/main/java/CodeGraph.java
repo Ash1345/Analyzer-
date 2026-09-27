@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class CodeGraph {
@@ -104,7 +105,7 @@ public class CodeGraph {
             String sourceId) {
 
         List<Relationship> result =
-                new java.util.ArrayList<>();
+                new ArrayList<>();
 
         for (Relationship relationship :
                 relationships) {
@@ -117,7 +118,8 @@ public class CodeGraph {
         return result;
     }
 
-    public CodeEntity findEntityById(String id) {
+    public CodeEntity findEntityById(
+            String id) {
 
         for (CodeEntity entity : entities) {
 
@@ -133,7 +135,7 @@ public class CodeGraph {
             String targetId) {
 
         List<Relationship> result =
-                new java.util.ArrayList<>();
+                new ArrayList<>();
 
         for (Relationship relationship :
                 relationships) {
@@ -150,7 +152,7 @@ public class CodeGraph {
             String kind) {
 
         List<CodeEntity> result =
-                new java.util.ArrayList<>();
+                new ArrayList<>();
 
         for (CodeEntity entity : entities) {
 
@@ -166,7 +168,7 @@ public class CodeGraph {
             String name) {
 
         List<CodeEntity> result =
-                new java.util.ArrayList<>();
+                new ArrayList<>();
 
         for (CodeEntity entity : entities) {
 
@@ -182,13 +184,57 @@ public class CodeGraph {
             String type) {
 
         List<Relationship> result =
-                new java.util.ArrayList<>();
+                new ArrayList<>();
 
         for (Relationship relationship :
                 relationships) {
 
             if (type.equals(relationship.type)) {
                 result.add(relationship);
+            }
+        }
+
+        return result;
+    }
+    private boolean containsEntity(
+            List<CodeEntity> entities,
+            String entityId) {
+
+        for (CodeEntity entity :
+                entities) {
+
+            if (entityId.equals(entity.id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public List<CodeEntity> findRelatedEntities(
+            String sourceId) {
+
+        List<CodeEntity> result =
+                new ArrayList<>();
+
+        for (Relationship relationship :
+                relationships) {
+
+            if (sourceId.equals(
+                    relationship.sourceId)) {
+
+                CodeEntity target =
+                        findEntityById(
+                                relationship.targetId
+                        );
+
+                if (target != null
+                        && !containsEntity(
+                        result,
+                        target.id)) {
+
+                    result.add(target);
+                }
             }
         }
 

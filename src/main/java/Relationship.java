@@ -43,27 +43,23 @@ public class Relationship {
     // Evidence information
     // =========================================================
 
-    // Evidence occurrences
+    /*
+     * A relationship can occur multiple times in the source code.
+     *
+     * Example:
+     *
+     * main --CALLS--> Calculator::add
+     *
+     * Evidence:
+     *     main.cpp:25:18
+     *     main.cpp:27:14
+     */
     public List<RelationshipEvidence> evidence =
             new ArrayList<>();
-    /*
-     * Source file where this relationship was discovered.
-     */
-    public String file;
-
-    /*
-     * Source-code line where the relationship was discovered.
-     */
-    public Integer line;
-
-    /*
-     * Source-code column where the relationship was discovered.
-     */
-    public Integer column;
 
 
     // =========================================================
-    // Existing constructor
+    // Constructor
     // =========================================================
 
     public Relationship(
@@ -78,7 +74,7 @@ public class Relationship {
 
 
     // =========================================================
-    // Existing constructor with IDs
+    // Constructor with entity IDs
     // =========================================================
 
     public Relationship(
@@ -93,31 +89,5 @@ public class Relationship {
         this.targetId = targetId;
         this.target = target;
         this.type = type;
-    }
-
-
-    // =========================================================
-    // Evidence constructor
-    // =========================================================
-
-    public Relationship(
-            String sourceId,
-            String source,
-            String targetId,
-            String target,
-            String type,
-            String file,
-            Integer line,
-            Integer column) {
-
-        this.sourceId = sourceId;
-        this.source = source;
-        this.targetId = targetId;
-        this.target = target;
-        this.type = type;
-
-        this.file = file;
-        this.line = line;
-        this.column = column;
     }
 }

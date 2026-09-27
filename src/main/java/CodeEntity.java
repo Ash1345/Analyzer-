@@ -38,10 +38,11 @@ public class CodeEntity {
         this.astId = astId;
 
         /*
-         * Analyzer++ ID will be assigned separately.
+         * Analyzer++ identity.
          *
-         * For now, create a temporary ID based on the
-         * entity's semantic information.
+         * The identity is derived from the entity kind and
+         * qualified name so that relationships can reference
+         * entities independently of their raw Clang AST IDs.
          */
         this.id =
                 kind

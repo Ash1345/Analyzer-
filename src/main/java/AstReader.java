@@ -86,5 +86,67 @@ public class AstReader {
         );
 
         graph.printGraph();
+
+
+        // =========================================================
+        // Test graph query: relationships originating from main
+        // =========================================================
+
+        CodeEntity mainFunction =
+                graph.findEntityById(
+                        "FUNCTION:main"
+                );
+
+        if (mainFunction != null) {
+
+            System.out.println();
+
+            System.out.println(
+                    "========== OUTGOING RELATIONSHIPS FROM main =========="
+            );
+
+            List<Relationship> outgoing =
+                    graph.findRelationshipsFrom(
+                            mainFunction.id
+                    );
+
+            for (Relationship relationship :
+                    outgoing) {
+
+                System.out.println(
+                        relationship.source
+                                + " --"
+                                + relationship.type
+                                + "--> "
+                                + relationship.target
+                );
+            }
+
+
+            // =====================================================
+            // Test graph query: related entities from main
+            // =====================================================
+
+            List<CodeEntity> relatedEntities =
+                    graph.findRelatedEntities(
+                            mainFunction.id
+                    );
+
+            System.out.println();
+
+            System.out.println(
+                    "========== ENTITIES RELATED TO main =========="
+            );
+
+            for (CodeEntity entity :
+                    relatedEntities) {
+
+                System.out.println(
+                        entity.kind
+                                + " : "
+                                + entity.qualifiedName
+                );
+            }
+        }
     }
 }

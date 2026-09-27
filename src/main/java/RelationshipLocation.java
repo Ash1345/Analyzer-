@@ -54,18 +54,5 @@ public class RelationshipLocation {
         relationship.evidence.add(
                 evidence
         );
-
-        // =========================================================
-        // Keep legacy fields for now
-        // =========================================================
-
-        relationship.file =
-                location.file;
-
-        relationship.line =
-                location.line;
-
-        relationship.column =
-                location.column;
     }
 }
