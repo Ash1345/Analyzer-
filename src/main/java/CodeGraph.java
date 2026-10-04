@@ -21,6 +21,10 @@ public class CodeGraph {
         System.out.println();
         System.out.println("========== CODE GRAPH ==========");
 
+        // ---------------------------------------------------------
+        // Entities
+        // ---------------------------------------------------------
+
         System.out.println("Entities:");
 
         for (CodeEntity entity : entities) {
@@ -30,10 +34,20 @@ public class CodeGraph {
                             + entity.kind
                             + " : "
                             + entity.qualifiedName
+                            + " | id="
+                            + entity.id
                             + " | logicalId="
                             + entity.logicalId
                             + getTypeInformation(entity)
             );
+
+            if (entity.signature != null) {
+
+                System.out.println(
+                        "      Signature: "
+                                + entity.signature
+                );
+            }
 
             if (entity.parameters != null
                     && !entity.parameters.isEmpty()) {
@@ -53,6 +67,10 @@ public class CodeGraph {
             }
         }
 
+        // ---------------------------------------------------------
+        // Relationships
+        // ---------------------------------------------------------
+
         System.out.println();
         System.out.println("Relationships:");
 
@@ -61,10 +79,15 @@ public class CodeGraph {
             System.out.println(
                     "  "
                             + relation.source
-                            + " --"
+                            + " ["
+                            + relation.sourceId
+                            + "] --"
                             + relation.type
                             + "--> "
                             + relation.target
+                            + " ["
+                            + relation.targetId
+                            + "]"
             );
 
             if (relation.evidence != null

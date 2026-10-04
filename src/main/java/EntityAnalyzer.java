@@ -55,7 +55,6 @@ public class EntityAnalyzer {
             return;
         }
 
-
         // =========================================================
         // Class
         // =========================================================
@@ -91,7 +90,6 @@ public class EntityAnalyzer {
 
             entities.add(entity);
         }
-
 
         // =========================================================
         // Method
@@ -148,7 +146,6 @@ public class EntityAnalyzer {
                 }
             }
 
-
             String qualifiedName;
 
             if (methodClass != null) {
@@ -163,7 +160,6 @@ public class EntityAnalyzer {
                 qualifiedName =
                         node.name;
             }
-
 
             CodeEntity entity =
                     new CodeEntity(
@@ -202,7 +198,6 @@ public class EntityAnalyzer {
             currentFunction = entity;
         }
 
-
         // =========================================================
         // Free function
         // =========================================================
@@ -232,7 +227,6 @@ public class EntityAnalyzer {
 
             currentFunction = entity;
         }
-
 
         // =========================================================
         // Constructor
@@ -270,7 +264,6 @@ public class EntityAnalyzer {
             currentFunction = entity;
         }
 
-
         // =========================================================
         // Variable
         // =========================================================
@@ -292,7 +285,6 @@ public class EntityAnalyzer {
                             qualType.toString();
                 }
             }
-
 
             CodeEntity entity =
                     new CodeEntity(
@@ -324,7 +316,6 @@ public class EntityAnalyzer {
             entities.add(entity);
         }
 
-
         // =========================================================
         // Parameter
         // =========================================================
@@ -347,7 +338,6 @@ public class EntityAnalyzer {
                 }
             }
 
-
             Parameter parameter =
                     new Parameter(
                             node.id,
@@ -359,7 +349,6 @@ public class EntityAnalyzer {
                     parameter
             );
         }
-
 
         // =========================================================
         // Analyze children
@@ -380,6 +369,22 @@ public class EntityAnalyzer {
                         locationResolver
                 );
             }
+        }
+
+        // =========================================================
+        // Build function/method signature
+        // =========================================================
+
+        if (currentFunction != null
+                && ("METHOD".equals(currentFunction.kind)
+                || "FUNCTION".equals(currentFunction.kind))) {
+
+            currentFunction.signature =
+                    buildSignature(
+                            currentFunction
+                    );
+
+            currentFunction.updateIdentity();
         }
     }
 
@@ -506,5 +511,50 @@ public class EntityAnalyzer {
                             column.toString()
                     );
         }
+    }
+
+    private static String buildSignature(
+            CodeEntity entity) {
+
+        if (entity == null
+                || entity.qualifiedName == null) {
+
+            return null;
+        }
+
+        StringBuilder signature =
+                new StringBuilder();
+
+        signature.append(
+                entity.qualifiedName
+        );
+
+        signature.append("(");
+
+        if (entity.parameters != null) {
+
+            for (int i = 0;
+                 i < entity.parameters.size();
+                 i++) {
+
+                Parameter parameter =
+                        entity.parameters.get(i);
+
+                if (i > 0) {
+                    signature.append(",");
+                }
+
+                if (parameter.type != null) {
+
+                    signature.append(
+                            parameter.type
+                    );
+                }
+            }
+        }
+
+        signature.append(")");
+
+        return signature.toString();
     }
 }

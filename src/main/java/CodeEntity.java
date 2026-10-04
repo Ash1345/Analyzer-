@@ -17,6 +17,11 @@ public class CodeEntity {
     public String name;
     public String qualifiedName;
 
+    // Function/method signature
+    // Example:
+    // Calculator::add(int,int)
+    public String signature;
+
     public String parentId;
 
     public String returnType;
@@ -54,5 +59,25 @@ public class CodeEntity {
         this.qualifiedName = qualifiedName;
 
         this.parameters = new ArrayList<>();
+
+    }
+    public void updateIdentity() {
+
+        if (("METHOD".equals(kind)
+                || "FUNCTION".equals(kind))
+                && signature != null) {
+
+            this.id =
+                    kind
+                            + ":"
+                            + signature;
+
+            return;
+        }
+
+        this.id =
+                kind
+                        + ":"
+                        + qualifiedName;
     }
 }
