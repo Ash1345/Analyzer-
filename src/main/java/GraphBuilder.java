@@ -4,10 +4,9 @@ import java.util.ArrayList;
 
 public class GraphBuilder {
 
-    public static CodeGraph build(AstNode root) {
-
-        String sourceFile =
-                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp";
+    public static CodeGraph build(
+            AstNode root,
+            SourceFile sourceFile) {
 
         EntityRegistry entityRegistry =
                 new EntityRegistry();
@@ -15,7 +14,7 @@ public class GraphBuilder {
         List<CodeEntity> analyzedEntities =
                 EntityAnalyzer.analyze(
                         root,
-                        sourceFile
+                        sourceFile.getPath()
                 );
 
         for (CodeEntity entity :
@@ -42,14 +41,14 @@ public class GraphBuilder {
 
             locationResolver =
                     new SourceLocationResolver(
-                            sourceFile
+                            sourceFile.getPath()
                     );
 
         } catch (IOException e) {
 
             throw new RuntimeException(
                     "Failed to create source location resolver: "
-                            + sourceFile,
+                            + sourceFile.getPath(),
                     e
             );
         }
@@ -104,7 +103,7 @@ public class GraphBuilder {
 
     public static CodeGraph build(
             List<AstNode> roots,
-            List<String> sourceFiles) {
+            List<SourceFile> sourceFiles) {
 
         // =====================================================
         // Collect entities from every translation unit
@@ -120,13 +119,13 @@ public class GraphBuilder {
             AstNode root =
                     roots.get(i);
 
-            String sourceFile =
+            SourceFile sourceFile =
                     sourceFiles.get(i);
 
             List<CodeEntity> rootEntities =
                     EntityAnalyzer.analyze(
                             root,
-                            sourceFile
+                            sourceFile.getPath()
                     );
 
             for (CodeEntity entity :
@@ -166,7 +165,7 @@ public class GraphBuilder {
             AstNode root =
                     roots.get(i);
 
-            String sourceFile =
+            SourceFile sourceFile =
                     sourceFiles.get(i);
 
             // -------------------------------------------------
@@ -179,14 +178,14 @@ public class GraphBuilder {
 
                 locationResolver =
                         new SourceLocationResolver(
-                                sourceFile
+                                sourceFile.getPath()
                         );
 
             } catch (IOException e) {
 
                 throw new RuntimeException(
                         "Failed to create source location resolver: "
-                                + sourceFile,
+                                + sourceFile.getPath(),
                         e
                 );
             }

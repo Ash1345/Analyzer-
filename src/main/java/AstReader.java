@@ -58,10 +58,14 @@ public class AstReader {
                 );
 
         // Corresponding source files
-        List<String> sourceFiles =
+        List<SourceFile> sourceFiles =
                 Arrays.asList(
-                        "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp",
-                        "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                        new SourceFile(
+                                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp"
+                        ),
+                        new SourceFile(
+                                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                        )
                 );
 
 
@@ -169,6 +173,7 @@ public class AstReader {
                                 + entity.qualifiedName
                 );
             }
+
             System.out.println();
 
             System.out.println(
@@ -198,6 +203,7 @@ public class AstReader {
                     );
                 }
             }
+
             System.out.println();
 
             System.out.println(
