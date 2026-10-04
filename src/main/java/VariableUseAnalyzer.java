@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class VariableUseAnalyzer {
+public class VariableUseAnalyzer implements GraphAnalyzer {
 
-    public static List<Relationship> analyze(
+    @Override
+    public List<Relationship> analyze(
             AstNode root,
             EntityRegistry entityRegistry,
             SourceLocationResolver locationResolver) {

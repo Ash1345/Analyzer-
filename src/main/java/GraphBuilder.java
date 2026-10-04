@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.List;
+import java.util.ArrayList;
 
 public class GraphBuilder {
 
@@ -54,17 +55,27 @@ public class GraphBuilder {
         }
 
         // =====================================================
-        // Analyze relationships
+        // Create AST-based analyzers
         // =====================================================
 
-        addRelationships(
+        List<GraphAnalyzer> analyzers =
+                createAnalyzers();
+
+        // =====================================================
+        // Run all AST-based analyzers
+        // =====================================================
+
+        analyzeAst(
+                root,
+                entityRegistry,
+                locationResolver,
                 registry,
-                CallAnalyzer.analyze(
-                        root,
-                        entityRegistry,
-                        locationResolver
-                )
+                analyzers
         );
+
+        // =====================================================
+        // Analyze complete entity collection
+        // =====================================================
 
         addRelationships(
                 registry,
@@ -75,55 +86,14 @@ public class GraphBuilder {
 
         addRelationships(
                 registry,
-                ConstructionAnalyzer.analyze(
-                        root,
-                        entityRegistry,
-                        locationResolver
-                )
-        );
-
-        addRelationships(
-                registry,
-                UsesAnalyzer.analyze(
-                        root,
-                        entityRegistry,
-                        locationResolver
-                )
-        );
-
-        addRelationships(
-                registry,
-                VariableUseAnalyzer.analyze(
-                        root,
-                        entityRegistry,
-                        locationResolver
-                )
-        );
-
-        addRelationships(
-                registry,
                 TypeRelationshipAnalyzer.analyze(
                         entities
                 )
         );
 
-        addRelationships(
-                registry,
-                DataFlowAnalyzer.analyze(
-                        root,
-                        entityRegistry,
-                        locationResolver
-                )
-        );
-
-        addRelationships(
-                registry,
-                AssignmentAnalyzer.analyze(
-                        root,
-                        entityRegistry,
-                        locationResolver
-                )
-        );
+        // =====================================================
+        // Build final graph
+        // =====================================================
 
         return new CodeGraph(
                 entities,
@@ -179,6 +149,13 @@ public class GraphBuilder {
                 new RelationshipRegistry();
 
         // =====================================================
+        // Create AST-based analyzers
+        // =====================================================
+
+        List<GraphAnalyzer> analyzers =
+                createAnalyzers();
+
+        // =====================================================
         // Analyze every translation unit
         // =====================================================
 
@@ -215,81 +192,15 @@ public class GraphBuilder {
             }
 
             // -------------------------------------------------
-            // Call relationships
+            // Run all AST-based analyzers
             // -------------------------------------------------
 
-            addRelationships(
+            analyzeAst(
+                    root,
+                    entityRegistry,
+                    locationResolver,
                     registry,
-                    CallAnalyzer.analyze(
-                            root,
-                            entityRegistry,
-                            locationResolver
-                    )
-            );
-
-            // -------------------------------------------------
-            // Construction relationships
-            // -------------------------------------------------
-
-            addRelationships(
-                    registry,
-                    ConstructionAnalyzer.analyze(
-                            root,
-                            entityRegistry,
-                            locationResolver
-                    )
-            );
-
-            // -------------------------------------------------
-            // Uses relationships
-            // -------------------------------------------------
-
-            addRelationships(
-                    registry,
-                    UsesAnalyzer.analyze(
-                            root,
-                            entityRegistry,
-                            locationResolver
-                    )
-            );
-
-            // -------------------------------------------------
-            // Variable usage relationships
-            // -------------------------------------------------
-
-            addRelationships(
-                    registry,
-                    VariableUseAnalyzer.analyze(
-                            root,
-                            entityRegistry,
-                            locationResolver
-                    )
-            );
-
-            // -------------------------------------------------
-            // Data flow relationships
-            // -------------------------------------------------
-
-            addRelationships(
-                    registry,
-                    DataFlowAnalyzer.analyze(
-                            root,
-                            entityRegistry,
-                            locationResolver
-                    )
-            );
-
-            // -------------------------------------------------
-            // Assignment relationships
-            // -------------------------------------------------
-
-            addRelationships(
-                    registry,
-                    AssignmentAnalyzer.analyze(
-                            root,
-                            entityRegistry,
-                            locationResolver
-                    )
+                    analyzers
             );
         }
 
@@ -323,6 +234,32 @@ public class GraphBuilder {
 
 
     // =========================================================
+    // Analyze AST using all graph analyzers
+    // =========================================================
+
+    private static void analyzeAst(
+            AstNode root,
+            EntityRegistry entityRegistry,
+            SourceLocationResolver locationResolver,
+            RelationshipRegistry registry,
+            List<GraphAnalyzer> analyzers) {
+
+        for (GraphAnalyzer analyzer :
+                analyzers) {
+
+            addRelationships(
+                    registry,
+                    analyzer.analyze(
+                            root,
+                            entityRegistry,
+                            locationResolver
+                    )
+            );
+        }
+    }
+
+
+    // =========================================================
     // Add relationships to central registry
     // =========================================================
 
@@ -341,5 +278,38 @@ public class GraphBuilder {
                     relationship
             );
         }
+    }
+
+
+    private static List<GraphAnalyzer> createAnalyzers() {
+
+        List<GraphAnalyzer> analyzers =
+                new ArrayList<>();
+
+        analyzers.add(
+                new CallAnalyzer()
+        );
+
+        analyzers.add(
+                new ConstructionAnalyzer()
+        );
+
+        analyzers.add(
+                new UsesAnalyzer()
+        );
+
+        analyzers.add(
+                new VariableUseAnalyzer()
+        );
+
+        analyzers.add(
+                new DataFlowAnalyzer()
+        );
+
+        analyzers.add(
+                new AssignmentAnalyzer()
+        );
+
+        return analyzers;
     }
 }
