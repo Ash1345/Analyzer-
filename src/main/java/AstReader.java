@@ -1,105 +1,43 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class AstReader {
 
     public static void main(String[] args) throws Exception {
 
-        ObjectMapper mapper =
-                new ObjectMapper();
+        // =====================================================
+        // Load project
+        // =====================================================
 
-        File mainAstFile =
-                new File(
-                        "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\ast.json"
-                );
-
-        File calculatorAstFile =
-                new File(
-                        "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\calculator_ast.json"
-                );
-
-        // Read main.cpp AST
-        AstNode mainRoot =
-                mapper.readValue(
-                        mainAstFile,
-                        AstNode.class
-                );
-
-        // Read Calculator.cpp AST
-        AstNode calculatorRoot =
-                mapper.readValue(
-                        calculatorAstFile,
-                        AstNode.class
-                );
-
-        System.out.println(
-                "Both AST files loaded successfully!"
-        );
-
-        System.out.println(
-                "Main AST root: "
-                        + mainRoot.kind
-        );
-
-        System.out.println(
-                "Calculator AST root: "
-                        + calculatorRoot.kind
-        );
-
-
-        // =========================================================
-        // Create project
-        // =========================================================
+        ProjectLoader loader =
+                new ProjectLoader();
 
         Project project =
-                new Project();
-
-
-        // =========================================================
-        // Create translation units
-        // =========================================================
-
-        TranslationUnit mainTranslationUnit =
-                new TranslationUnit(
-                        new SourceFile(
-                                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp"
+                loader.load(
+                        Arrays.asList(
+                                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\ast.json",
+                                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\calculator_ast.json"
                         ),
-                        mainRoot
-                );
-
-        TranslationUnit calculatorTranslationUnit =
-                new TranslationUnit(
-                        new SourceFile(
+                        Arrays.asList(
+                                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp",
                                 "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
-                        ),
-                        calculatorRoot
+                        )
                 );
 
 
-        // =========================================================
-        // Add translation units to project
-        // =========================================================
-
-        project.addTranslationUnit(
-                mainTranslationUnit
-        );
-
-        project.addTranslationUnit(
-                calculatorTranslationUnit
-        );
-
-
-        // =========================================================
-        // Build one graph from the project
-        // =========================================================
+        // =====================================================
+        // Build graph from project
+        // =====================================================
 
         CodeGraph graph =
                 GraphBuilder.build(
                         project
                 );
 
+
+        // =====================================================
+        // Print graph statistics
+        // =====================================================
 
         System.out.println();
 
@@ -116,81 +54,134 @@ public class AstReader {
         graph.printGraph();
 
 
-        // =========================================================
-        // Test graph query: relationships originating from main
-        // =========================================================
+        // =====================================================
+        // Find main function
+        // =====================================================
 
         CodeEntity mainFunction =
                 graph.findEntityById(
-                        "FUNCTION:main"
+                        "FUNCTION:main()"
                 );
 
-        if (mainFunction != null) {
-
+        if (mainFunction == null) {
             System.out.println();
-
             System.out.println(
-                    "========== OUTGOING RELATIONSHIPS FROM main =========="
+                    "Could not find main function."
             );
+            return;
+        }
 
-            List<Relationship> outgoing =
-                    graph.findRelationshipsFrom(
-                            mainFunction.id
-                    );
 
-            for (Relationship relationship :
-                    outgoing) {
+        // =====================================================
+        // Test graph query:
+        // relationships originating from main
+        // =====================================================
 
-                System.out.println(
-                        relationship.source
-                                + " --"
-                                + relationship.type
-                                + "--> "
-                                + relationship.target
+        System.out.println();
+
+        System.out.println(
+                "========== OUTGOING RELATIONSHIPS FROM main =========="
+        );
+
+        List<Relationship> outgoing =
+                graph.findRelationshipsFrom(
+                        mainFunction.id
                 );
-            }
 
-
-            // =====================================================
-            // Test graph query: related entities from main
-            // =====================================================
-
-            List<CodeEntity> relatedEntities =
-                    graph.findRelatedEntities(
-                            mainFunction.id
-                    );
-
-            System.out.println();
+        for (Relationship relationship :
+                outgoing) {
 
             System.out.println(
-                    "========== ENTITIES RELATED TO main =========="
+                    relationship.source
+                            + " --"
+                            + relationship.type
+                            + "--> "
+                            + relationship.target
             );
+        }
 
-            for (CodeEntity entity :
-                    relatedEntities) {
 
-                System.out.println(
-                        entity.kind
-                                + " : "
-                                + entity.qualifiedName
+        // =====================================================
+        // Test graph query:
+        // entities related to main
+        // =====================================================
+
+        System.out.println();
+
+        System.out.println(
+                "========== ENTITIES RELATED TO main =========="
+        );
+
+        List<CodeEntity> relatedEntities =
+                graph.findRelatedEntities(
+                        mainFunction.id
                 );
-            }
 
-
-            System.out.println();
+        for (CodeEntity entity :
+                relatedEntities) {
 
             System.out.println(
-                    "========== ENTITIES CALLED BY main =========="
+                    entity.kind
+                            + " : "
+                            + entity.qualifiedName
             );
+        }
 
-            List<CodeEntity> calledEntities =
-                    graph.findRelatedEntitiesByRelationshipType(
-                            mainFunction.id,
+
+        // =====================================================
+        // Test graph query:
+        // entities called by main
+        // =====================================================
+
+        System.out.println();
+
+        System.out.println(
+                "========== ENTITIES CALLED BY main =========="
+        );
+
+        List<CodeEntity> calledEntities =
+                graph.findRelatedEntitiesByRelationshipType(
+                        mainFunction.id,
+                        "CALLS"
+                );
+
+        for (CodeEntity entity :
+                calledEntities) {
+
+            System.out.println(
+                    entity.kind
+                            + " : "
+                            + entity.qualifiedName
+            );
+        }
+
+
+        // =====================================================
+        // Test graph query:
+        // entities calling Calculator::add(int,int)
+        // =====================================================
+
+        System.out.println();
+
+        System.out.println(
+                "========== ENTITIES CALLING Calculator::add(int,int) =========="
+        );
+
+        CodeEntity calculatorAdd =
+                graph.findEntityById(
+                        "METHOD:Calculator::add(int,int)"
+                );
+
+        if (calculatorAdd != null) {
+
+            List<CodeEntity> callers =
+                    graph.findEntitiesRelatedTo(
+                            calculatorAdd.id,
                             "CALLS"
                     );
 
             for (CodeEntity entity :
-                    calledEntities) {
+                    callers) {
 
                 System.out.println(
                         entity.kind
@@ -198,112 +189,102 @@ public class AstReader {
                                 + entity.qualifiedName
                 );
             }
+        }
 
 
-            System.out.println();
+        // =====================================================
+        // Test graph query:
+        // entities reachable from main
+        // =====================================================
 
-            System.out.println(
-                    "========== ENTITIES CALLING Calculator::add =========="
-            );
+        System.out.println();
 
-            CodeEntity calculatorAdd =
-                    graph.findEntityById(
-                            "METHOD:Calculator::add"
-                    );
+        System.out.println(
+                "========== ENTITIES REACHABLE FROM main VIA CALLS =========="
+        );
 
-            if (calculatorAdd != null) {
+        List<CodeEntity> reachable =
+                graph.findReachableEntities(
+                        mainFunction.id,
+                        "CALLS"
+                );
 
-                List<CodeEntity> callers =
-                        graph.findEntitiesRelatedTo(
-                                calculatorAdd.id,
-                                "CALLS"
-                        );
-
-                for (CodeEntity entity :
-                        callers) {
-
-                    System.out.println(
-                            entity.kind
-                                    + " : "
-                                    + entity.qualifiedName
-                    );
-                }
-            }
-
-
-            System.out.println();
+        for (CodeEntity entity :
+                reachable) {
 
             System.out.println(
-                    "========== ENTITIES REACHABLE FROM main VIA CALLS =========="
+                    entity.kind
+                            + " : "
+                            + entity.qualifiedName
             );
+        }
 
-            List<CodeEntity> reachable =
-                    graph.findReachableEntities(
+
+        // =====================================================
+        // Test graph query:
+        // path from main to helper
+        // =====================================================
+
+        System.out.println();
+
+        System.out.println(
+                "========== PATH FROM main TO helper =========="
+        );
+
+        CodeEntity helper =
+                graph.findEntityById(
+                        "FUNCTION:helper()"
+                );
+
+        if (helper != null) {
+
+            GraphPath path =
+                    graph.findPath(
                             mainFunction.id,
+                            helper.id,
                             "CALLS"
                     );
 
-            for (CodeEntity entity :
-                    reachable) {
+            if (path != null) {
 
-                System.out.println(
-                        entity.kind
-                                + " : "
-                                + entity.qualifiedName
-                );
-            }
+                for (int i = 0;
+                     i < path.entities.size();
+                     i++) {
 
+                    CodeEntity entity =
+                            path.entities.get(i);
 
-            System.out.println();
-
-            System.out.println(
-                    "========== PATH FROM main TO helper =========="
-            );
-
-            CodeEntity helper =
-                    graph.findEntityById(
-                            "FUNCTION:helper"
+                    System.out.print(
+                            entity.qualifiedName
                     );
 
-            if (mainFunction != null
-                    && helper != null) {
+                    if (i < path.relationships.size()) {
 
-                GraphPath path =
-                        graph.findPath(
-                                mainFunction.id,
-                                helper.id,
-                                "CALLS"
-                        );
-
-                if (path != null) {
-
-                    for (int i = 0;
-                         i < path.entities.size();
-                         i++) {
-
-                        CodeEntity entity =
-                                path.entities.get(i);
+                        Relationship relationship =
+                                path.relationships.get(i);
 
                         System.out.print(
-                                entity.qualifiedName
+                                " --"
+                                        + relationship.type
+                                        + "--> "
                         );
-
-                        if (i < path.relationships.size()) {
-
-                            Relationship relationship =
-                                    path.relationships.get(i);
-
-                            System.out.print(
-                                    " --"
-                                            + relationship.type
-                                            + "--> "
-                            );
-                        }
                     }
-
-                    System.out.println();
                 }
+
+                System.out.println();
+
+            } else {
+
+                System.out.println(
+                        "No CALLS path found."
+                );
             }
+
+        } else {
+
+            System.out.println(
+                    "Could not find helper function."
+            );
         }
     }
 }
