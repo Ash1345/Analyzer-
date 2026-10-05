@@ -4,234 +4,6 @@ import java.util.ArrayList;
 
 public class GraphBuilder {
 
-    public static CodeGraph build(
-            AstNode root,
-            SourceFile sourceFile) {
-
-        EntityRegistry entityRegistry =
-                new EntityRegistry();
-
-        List<CodeEntity> analyzedEntities =
-                EntityAnalyzer.analyze(
-                        root,
-                        sourceFile.getPath()
-                );
-
-        for (CodeEntity entity :
-                analyzedEntities) {
-
-            entityRegistry.add(
-                    entity
-            );
-        }
-
-        List<CodeEntity> entities =
-                entityRegistry.getAll();
-
-        RelationshipRegistry registry =
-                new RelationshipRegistry();
-
-        // =====================================================
-        // Create source-location resolver
-        // =====================================================
-
-        SourceLocationResolver locationResolver;
-
-        try {
-
-            locationResolver =
-                    new SourceLocationResolver(
-                            sourceFile.getPath()
-                    );
-
-        } catch (IOException e) {
-
-            throw new RuntimeException(
-                    "Failed to create source location resolver: "
-                            + sourceFile.getPath(),
-                    e
-            );
-        }
-
-        // =====================================================
-        // Create AST-based analyzers
-        // =====================================================
-
-        List<GraphAnalyzer> analyzers =
-                createAnalyzers();
-
-        // =====================================================
-        // Run all AST-based analyzers
-        // =====================================================
-
-        analyzeAst(
-                root,
-                entityRegistry,
-                locationResolver,
-                registry,
-                analyzers
-        );
-
-        // =====================================================
-        // Analyze complete entity collection
-        // =====================================================
-
-        addRelationships(
-                registry,
-                ContainsAnalyzer.analyze(
-                        entities
-                )
-        );
-
-        addRelationships(
-                registry,
-                TypeRelationshipAnalyzer.analyze(
-                        entities
-                )
-        );
-
-        // =====================================================
-        // Build final graph
-        // =====================================================
-
-        return new CodeGraph(
-                entities,
-                registry.getRelationships()
-        );
-    }
-
-
-    public static CodeGraph build(
-            List<AstNode> roots,
-            List<SourceFile> sourceFiles) {
-
-        // =====================================================
-        // Collect entities from every translation unit
-        // =====================================================
-
-        EntityRegistry entityRegistry =
-                new EntityRegistry();
-
-        for (int i = 0;
-             i < roots.size();
-             i++) {
-
-            AstNode root =
-                    roots.get(i);
-
-            SourceFile sourceFile =
-                    sourceFiles.get(i);
-
-            List<CodeEntity> rootEntities =
-                    EntityAnalyzer.analyze(
-                            root,
-                            sourceFile.getPath()
-                    );
-
-            for (CodeEntity entity :
-                    rootEntities) {
-
-                entityRegistry.add(
-                        entity
-                );
-            }
-        }
-
-        List<CodeEntity> entities =
-                entityRegistry.getAll();
-
-        // =====================================================
-        // Central relationship registry
-        // =====================================================
-
-        RelationshipRegistry registry =
-                new RelationshipRegistry();
-
-        // =====================================================
-        // Create AST-based analyzers
-        // =====================================================
-
-        List<GraphAnalyzer> analyzers =
-                createAnalyzers();
-
-        // =====================================================
-        // Analyze every translation unit
-        // =====================================================
-
-        for (int i = 0;
-             i < roots.size();
-             i++) {
-
-            AstNode root =
-                    roots.get(i);
-
-            SourceFile sourceFile =
-                    sourceFiles.get(i);
-
-            // -------------------------------------------------
-            // Create resolver for this translation unit
-            // -------------------------------------------------
-
-            SourceLocationResolver locationResolver;
-
-            try {
-
-                locationResolver =
-                        new SourceLocationResolver(
-                                sourceFile.getPath()
-                        );
-
-            } catch (IOException e) {
-
-                throw new RuntimeException(
-                        "Failed to create source location resolver: "
-                                + sourceFile.getPath(),
-                        e
-                );
-            }
-
-            // -------------------------------------------------
-            // Run all AST-based analyzers
-            // -------------------------------------------------
-
-            analyzeAst(
-                    root,
-                    entityRegistry,
-                    locationResolver,
-                    registry,
-                    analyzers
-            );
-        }
-
-        // =====================================================
-        // Analyze complete entity collection
-        // =====================================================
-
-        addRelationships(
-                registry,
-                ContainsAnalyzer.analyze(
-                        entities
-                )
-        );
-
-        addRelationships(
-                registry,
-                TypeRelationshipAnalyzer.analyze(
-                        entities
-                )
-        );
-
-        // =====================================================
-        // Build final graph
-        // =====================================================
-
-        return new CodeGraph(
-                entities,
-                registry.getRelationships()
-        );
-    }
-
-
     // =========================================================
     // Analyze AST using all graph analyzers
     // =========================================================
@@ -310,5 +82,146 @@ public class GraphBuilder {
         );
 
         return analyzers;
+    }
+
+    public static CodeGraph build(
+            Project project) {
+
+        if (project == null) {
+
+            throw new IllegalArgumentException(
+                    "Project cannot be null"
+            );
+        }
+
+        // =====================================================
+        // Get translation units from project
+        // =====================================================
+
+        List<TranslationUnit> translationUnits =
+                project.getTranslationUnits();
+
+        // =====================================================
+        // Collect entities from every translation unit
+        // =====================================================
+
+        EntityRegistry entityRegistry =
+                new EntityRegistry();
+
+        for (TranslationUnit translationUnit :
+                translationUnits) {
+
+            AstNode root =
+                    translationUnit.getAst();
+
+            SourceFile sourceFile =
+                    translationUnit.getSourceFile();
+
+            List<CodeEntity> rootEntities =
+                    EntityAnalyzer.analyze(
+                            root,
+                            sourceFile.getPath()
+                    );
+
+            for (CodeEntity entity :
+                    rootEntities) {
+
+                entityRegistry.add(
+                        entity
+                );
+            }
+        }
+
+        List<CodeEntity> entities =
+                entityRegistry.getAll();
+
+        // =====================================================
+        // Central relationship registry
+        // =====================================================
+
+        RelationshipRegistry registry =
+                new RelationshipRegistry();
+
+        // =====================================================
+        // Create AST-based analyzers
+        // =====================================================
+
+        List<GraphAnalyzer> analyzers =
+                createAnalyzers();
+
+        // =====================================================
+        // Analyze every translation unit
+        // =====================================================
+
+        for (TranslationUnit translationUnit :
+                translationUnits) {
+
+            AstNode root =
+                    translationUnit.getAst();
+
+            SourceFile sourceFile =
+                    translationUnit.getSourceFile();
+
+            // -------------------------------------------------
+            // Create resolver for this translation unit
+            // -------------------------------------------------
+
+            SourceLocationResolver locationResolver;
+
+            try {
+
+                locationResolver =
+                        new SourceLocationResolver(
+                                sourceFile.getPath()
+                        );
+
+            } catch (IOException e) {
+
+                throw new RuntimeException(
+                        "Failed to create source location resolver: "
+                                + sourceFile.getPath(),
+                        e
+                );
+            }
+
+            // -------------------------------------------------
+            // Run all AST-based analyzers
+            // -------------------------------------------------
+
+            analyzeAst(
+                    root,
+                    entityRegistry,
+                    locationResolver,
+                    registry,
+                    analyzers
+            );
+        }
+
+        // =====================================================
+        // Analyze complete entity collection
+        // =====================================================
+
+        addRelationships(
+                registry,
+                ContainsAnalyzer.analyze(
+                        entities
+                )
+        );
+
+        addRelationships(
+                registry,
+                TypeRelationshipAnalyzer.analyze(
+                        entities
+                )
+        );
+
+        // =====================================================
+        // Build final graph
+        // =====================================================
+
+        return new CodeGraph(
+                entities,
+                registry.getRelationships()
+        );
     }
 }

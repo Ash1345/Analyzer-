@@ -1,7 +1,6 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
 public class AstReader {
@@ -50,30 +49,55 @@ public class AstReader {
         );
 
 
-        // All translation units
-        List<AstNode> roots =
-                Arrays.asList(
-                        mainRoot,
-                        calculatorRoot
-                );
+        // =========================================================
+        // Create project
+        // =========================================================
 
-        // Corresponding source files
-        List<SourceFile> sourceFiles =
-                Arrays.asList(
+        Project project =
+                new Project();
+
+
+        // =========================================================
+        // Create translation units
+        // =========================================================
+
+        TranslationUnit mainTranslationUnit =
+                new TranslationUnit(
                         new SourceFile(
                                 "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\main.cpp"
                         ),
+                        mainRoot
+                );
+
+        TranslationUnit calculatorTranslationUnit =
+                new TranslationUnit(
                         new SourceFile(
                                 "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
-                        )
+                        ),
+                        calculatorRoot
                 );
 
 
-        // Build one graph from both ASTs
+        // =========================================================
+        // Add translation units to project
+        // =========================================================
+
+        project.addTranslationUnit(
+                mainTranslationUnit
+        );
+
+        project.addTranslationUnit(
+                calculatorTranslationUnit
+        );
+
+
+        // =========================================================
+        // Build one graph from the project
+        // =========================================================
+
         CodeGraph graph =
                 GraphBuilder.build(
-                        roots,
-                        sourceFiles
+                        project
                 );
 
 
@@ -152,6 +176,7 @@ public class AstReader {
                 );
             }
 
+
             System.out.println();
 
             System.out.println(
@@ -173,6 +198,7 @@ public class AstReader {
                                 + entity.qualifiedName
                 );
             }
+
 
             System.out.println();
 
@@ -204,6 +230,7 @@ public class AstReader {
                 }
             }
 
+
             System.out.println();
 
             System.out.println(
@@ -225,6 +252,7 @@ public class AstReader {
                                 + entity.qualifiedName
                 );
             }
+
 
             System.out.println();
 
