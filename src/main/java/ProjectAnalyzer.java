@@ -7,7 +7,7 @@ public class ProjectAnalyzer {
     // Analyze project
     // =========================================================
 
-    public CodeGraph analyze(
+    public AnalysisResult analyze(
             String projectDirectory)
             throws Exception {
 
@@ -126,6 +126,17 @@ public class ProjectAnalyzer {
 
 
         // =====================================================
+        // Calculate analysis statistics
+        // =====================================================
+
+        AnalysisStatistics statistics =
+                AnalysisStatisticsCalculator.calculate(
+                        project,
+                        graph
+                );
+
+
+        // =====================================================
         // Print graph statistics
         // =====================================================
 
@@ -141,6 +152,11 @@ public class ProjectAnalyzer {
                         + graph.relationships.size()
         );
 
+        System.out.println(
+                "Number of evidence items: "
+                        + statistics.getEvidenceCount()
+        );
+
 
         // =====================================================
         // Print complete graph
@@ -150,10 +166,14 @@ public class ProjectAnalyzer {
 
 
         // =====================================================
-        // Return analyzed graph
+        // Return analysis result
         // =====================================================
 
-        return graph;
+        return new AnalysisResult(
+                project,
+                graph,
+                statistics
+        );
     }
 
 
@@ -184,10 +204,26 @@ public class ProjectAnalyzer {
         // Analyze project
         // =====================================================
 
-        CodeGraph graph =
+        AnalysisResult result =
                 analyzer.analyze(
                         projectDirectory
                 );
+
+
+        // =====================================================
+        // Get graph from analysis result
+        // =====================================================
+
+        CodeGraph graph =
+                result.getGraph();
+
+
+        // =====================================================
+        // Get statistics
+        // =====================================================
+
+        AnalysisStatistics statistics =
+                result.getStatistics();
 
 
         // =====================================================
@@ -196,6 +232,42 @@ public class ProjectAnalyzer {
 
         GraphVerifier.verify(
                 graph
+        );
+
+
+        // =====================================================
+        // Print analysis statistics
+        // =====================================================
+
+        System.out.println();
+
+        System.out.println(
+                "========== ANALYSIS STATISTICS =========="
+        );
+
+        System.out.println(
+                "Source files: "
+                        + statistics.getSourceFileCount()
+        );
+
+        System.out.println(
+                "Translation units: "
+                        + statistics.getTranslationUnitCount()
+        );
+
+        System.out.println(
+                "Entities: "
+                        + statistics.getEntityCount()
+        );
+
+        System.out.println(
+                "Relationships: "
+                        + statistics.getRelationshipCount()
+        );
+
+        System.out.println(
+                "Evidence items: "
+                        + statistics.getEvidenceCount()
         );
 
 
