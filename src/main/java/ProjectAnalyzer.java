@@ -1,22 +1,34 @@
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectAnalyzer {
 
-    public static void main(String[] args)
+    // =========================================================
+    // Analyze project
+    // =========================================================
+
+    public CodeGraph analyze(
+            String projectDirectory)
             throws Exception {
 
-        String projectDirectory =
-                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project";
+        // =====================================================
+        // AST output directory
+        // =====================================================
 
-        ObjectMapper mapper =
-                new ObjectMapper();
+        String astOutputDirectory =
+                projectDirectory
+                        + "\\generated-ast";
+
+
+        // =====================================================
+        // Find source files
+        // =====================================================
 
         List<String> sourceFiles =
                 ProjectScanner.findSourceFiles(
                         projectDirectory
                 );
+
 
         System.out.println(
                 "========== PROJECT ANALYSIS =========="
@@ -27,10 +39,20 @@ public class ProjectAnalyzer {
                         + sourceFiles.size()
         );
 
+
+        // =====================================================
+        // Generate AST for every source file
+        // =====================================================
+
+        List<String> astPaths =
+                new ArrayList<>();
+
+
         for (String sourceFile :
                 sourceFiles) {
 
             System.out.println();
+
             System.out.println(
                     "--------------------------------------"
             );
@@ -40,56 +62,149 @@ public class ProjectAnalyzer {
                             + sourceFile
             );
 
-            String astJson =
-                    CLangRunner.run(
-                            sourceFile
+
+            // -------------------------------------------------
+            // Generate AST
+            // -------------------------------------------------
+
+            String astPath =
+                    ClangRunner.generateAst(
+                            sourceFile,
+                            astOutputDirectory
                     );
 
-            AstNode root =
-                    mapper.readValue(
-                            astJson,
-                            AstNode.class
-                    );
 
-            System.out.println(
-                    "AST loaded successfully"
+            astPaths.add(
+                    astPath
             );
 
-            System.out.println(
-                    "Root kind: "
-                            + root.kind
-            );
-
-            List<CodeEntity> entities =
-                    EntityAnalyzer.analyze(
-                            root,
-                            sourceFile
-                    );
 
             System.out.println(
-                    "Entities found: "
-                            + entities.size()
+                    "AST generated: "
+                            + astPath
             );
-
-            for (CodeEntity entity :
-                    entities) {
-
-                System.out.println(
-                        "  "
-                                + entity.kind
-                                + " : "
-                                + entity.qualifiedName
-                                + " | "
-                                + entity.file
-                                + ":"
-                                + entity.line
-                                + ":"
-                                + entity.column
-                );
-            }
         }
 
+
+        // =====================================================
+        // Load project
+        // =====================================================
+
+        ProjectLoader loader =
+                new ProjectLoader();
+
+
+        Project project =
+                loader.load(
+                        astPaths,
+                        sourceFiles
+                );
+
+
         System.out.println();
+
+        System.out.println(
+                "Project loaded successfully."
+        );
+
+        System.out.println(
+                "Translation units: "
+                        + project
+                        .getTranslationUnits()
+                        .size()
+        );
+
+
+        // =====================================================
+        // Build graph
+        // =====================================================
+
+        CodeGraph graph =
+                GraphBuilder.build(
+                        project
+                );
+
+
+        // =====================================================
+        // Print graph statistics
+        // =====================================================
+
+        System.out.println();
+
+        System.out.println(
+                "Number of entities: "
+                        + graph.entities.size()
+        );
+
+        System.out.println(
+                "Number of relationships: "
+                        + graph.relationships.size()
+        );
+
+
+        // =====================================================
+        // Print complete graph
+        // =====================================================
+
+        graph.printGraph();
+
+
+        // =====================================================
+        // Return analyzed graph
+        // =====================================================
+
+        return graph;
+    }
+
+
+    // =========================================================
+    // Main method
+    // =========================================================
+
+    public static void main(String[] args)
+            throws Exception {
+
+        // =====================================================
+        // Project directory
+        // =====================================================
+
+        String projectDirectory =
+                "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project";
+
+
+        // =====================================================
+        // Create analyzer
+        // =====================================================
+
+        ProjectAnalyzer analyzer =
+                new ProjectAnalyzer();
+
+
+        // =====================================================
+        // Analyze project
+        // =====================================================
+
+        CodeGraph graph =
+                analyzer.analyze(
+                        projectDirectory
+                );
+
+
+        // =====================================================
+        // Verify graph
+        // =====================================================
+
+        GraphVerifier.verify(
+                graph
+        );
+
+
+        // =====================================================
+        // Analysis complete
+        // =====================================================
+
+        System.out.println();
+
         System.out.println(
                 "========== PROJECT ANALYSIS COMPLETE =========="
         );
