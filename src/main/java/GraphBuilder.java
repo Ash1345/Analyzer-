@@ -80,6 +80,9 @@ public class GraphBuilder {
         analyzers.add(
                 new AssignmentAnalyzer()
         );
+        analyzers.add(
+                new InheritanceAnalyzer()
+        );
 
         return analyzers;
     }
@@ -213,6 +216,7 @@ public class GraphBuilder {
                 TypeRelationshipAnalyzer.analyze(
                         entities
                 )
+
         );
 
         // =====================================================

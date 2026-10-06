@@ -24,4 +24,5 @@ public class AstNode {
     public Map<String, Object> type;
 
     public List<AstNode> inner;
+    public List<BaseSpecifier> bases;
 }

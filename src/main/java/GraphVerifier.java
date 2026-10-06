@@ -287,6 +287,17 @@ public class GraphVerifier {
                 "CALLS"
         );
 
+        // -----------------------------------------------------
+        // Verify inheritance
+        // -----------------------------------------------------
+
+        verifyRelationship(
+                graph,
+                "CLASS:Car",
+                "CLASS:Vehicle",
+                "INHERITS"
+        );
+
         verifyReachability(
                 graph,
                 "FUNCTION:main()",

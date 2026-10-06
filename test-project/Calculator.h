@@ -1,5 +1,13 @@
 #pragma once
 
+class Vehicle
+{
+};
+
+class Car : public Vehicle
+{
+};
+
 class Calculator
 {
 public:
