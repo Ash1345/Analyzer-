@@ -52,6 +52,7 @@ public class GraphBuilder {
     }
 
 
+
     private static List<GraphAnalyzer> createAnalyzers() {
 
         List<GraphAnalyzer> analyzers =
@@ -59,6 +60,10 @@ public class GraphBuilder {
 
         analyzers.add(
                 new CallAnalyzer()
+        );
+
+        analyzers.add(
+                new VirtualDispatchAnalyzer()
         );
 
         analyzers.add(
@@ -80,12 +85,18 @@ public class GraphBuilder {
         analyzers.add(
                 new AssignmentAnalyzer()
         );
+
         analyzers.add(
                 new InheritanceAnalyzer()
         );
 
+        analyzers.add(
+                new OverrideAnalyzer()
+        );
+
         return analyzers;
     }
+
 
     public static CodeGraph build(
             Project project) {

@@ -25,4 +25,5 @@ public class AstNode {
 
     public List<AstNode> inner;
     public List<BaseSpecifier> bases;
+    public String parentDeclContextId;
 }

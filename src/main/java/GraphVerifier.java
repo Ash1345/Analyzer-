@@ -248,7 +248,45 @@ public class GraphVerifier {
                         + " (" + evidenceCount + " checked)"
         );
     }
+    private static void verifyIncomingRelationship(
+            CodeGraph graph,
+            String targetId,
+            String expectedSourceId,
+            String relationshipType) {
 
+        List<CodeEntity> entities =
+                graph.findEntitiesRelatedTo(
+                        targetId,
+                        relationshipType
+                );
+
+        for (CodeEntity entity :
+                entities) {
+
+            if (entity.id.equals(expectedSourceId)) {
+
+                System.out.println(
+                        "PASS: "
+                                + expectedSourceId
+                                + " is related to "
+                                + targetId
+                                + " via "
+                                + relationshipType
+                );
+
+                return;
+            }
+        }
+
+        throw new RuntimeException(
+                "VERIFICATION FAILED: "
+                        + expectedSourceId
+                        + " is not related to "
+                        + targetId
+                        + " via "
+                        + relationshipType
+        );
+    }
 
     // =========================================================
     // Functional verification
@@ -298,6 +336,35 @@ public class GraphVerifier {
                 "INHERITS"
         );
 
+        verifyIncomingRelationship(
+                graph,
+                "CLASS:Vehicle",
+                "CLASS:Car",
+                "INHERITS"
+        );
+
+        verifyReachability(
+                graph,
+                "CLASS:Car",
+                "CLASS:Vehicle",
+                "INHERITS"
+        );
+
+        // -----------------------------------------------------
+        // Verify method override
+        // -----------------------------------------------------
+
+        verifyRelationship(
+                graph,
+                "METHOD:Car::start()",
+                "METHOD:Vehicle::start()",
+                "OVERRIDES"
+        );
+
+        // -----------------------------------------------------
+        // Verify call graph reachability
+        // -----------------------------------------------------
+
         verifyReachability(
                 graph,
                 "FUNCTION:main()",
@@ -310,6 +377,21 @@ public class GraphVerifier {
                 "FUNCTION:main()",
                 "FUNCTION:helper()",
                 "CALLS"
+        );
+
+
+        verifyRelationship(
+                graph,
+                "FUNCTION:main()",
+                "METHOD:Car::start()",
+                "VIRTUAL_DISPATCHES_TO"
+        );
+
+        verifyRelationship(
+                graph,
+                "METHOD:Truck::start()",
+                "METHOD:Vehicle::start()",
+                "OVERRIDES"
         );
     }
 

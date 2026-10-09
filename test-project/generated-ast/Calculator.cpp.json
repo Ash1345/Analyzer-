@@ -1,5 +1,5 @@
 {
-  "id": "0x267aea23690",
+  "id": "0x1dd0cb23690",
   "kind": "TranslationUnitDecl",
   "loc": {},
   "range": {
@@ -8,7 +8,7 @@
   },
   "inner": [
     {
-      "id": "0x267aea23f10",
+      "id": "0x1dd0cb23f10",
       "kind": "CXXRecordDecl",
       "loc": {},
       "range": {
@@ -20,7 +20,7 @@
       "tagUsed": "struct",
       "inner": [
         {
-          "id": "0x267aea23fa0",
+          "id": "0x1dd0cb23fa0",
           "kind": "TypeVisibilityAttr",
           "range": {
             "begin": {},
@@ -31,7 +31,7 @@
       ]
     },
     {
-      "id": "0x267aea24138",
+      "id": "0x1dd0cb24138",
       "kind": "TypedefDecl",
       "loc": {},
       "range": {
@@ -45,7 +45,7 @@
       },
       "inner": [
         {
-          "id": "0x267aea23c60",
+          "id": "0x1dd0cb23c60",
           "kind": "BuiltinType",
           "type": {
             "qualType": "__int128"
@@ -54,7 +54,7 @@
       ]
     },
     {
-      "id": "0x267aea241a8",
+      "id": "0x1dd0cb241a8",
       "kind": "TypedefDecl",
       "loc": {},
       "range": {
@@ -68,7 +68,7 @@
       },
       "inner": [
         {
-          "id": "0x267aea23c80",
+          "id": "0x1dd0cb23c80",
           "kind": "BuiltinType",
           "type": {
             "qualType": "unsigned __int128"
@@ -77,7 +77,7 @@
       ]
     },
     {
-      "id": "0x267aea24568",
+      "id": "0x1dd0cb24568",
       "kind": "TypedefDecl",
       "loc": {},
       "range": {
@@ -91,13 +91,13 @@
       },
       "inner": [
         {
-          "id": "0x267aea24520",
+          "id": "0x1dd0cb24520",
           "kind": "RecordType",
           "type": {
             "qualType": "__NSConstantString_tag"
           },
           "decl": {
-            "id": "0x267aea24200",
+            "id": "0x1dd0cb24200",
             "kind": "CXXRecordDecl",
             "name": "__NSConstantString_tag"
           }
@@ -105,7 +105,7 @@
       ]
     },
     {
-      "id": "0x267aea245c0",
+      "id": "0x1dd0cb245c0",
       "kind": "CXXRecordDecl",
       "loc": {},
       "range": {
@@ -117,7 +117,7 @@
       "tagUsed": "class",
       "inner": [
         {
-          "id": "0x267aea24650",
+          "id": "0x1dd0cb24650",
           "kind": "TypeVisibilityAttr",
           "range": {
             "begin": {},
@@ -128,7 +128,7 @@
       ]
     },
     {
-      "id": "0x267aea86cf0",
+      "id": "0x1dd0cb86cf0",
       "kind": "TypedefDecl",
       "loc": {},
       "range": {
@@ -143,14 +143,14 @@
       },
       "inner": [
         {
-          "id": "0x267aea86cc0",
+          "id": "0x1dd0cb86cc0",
           "kind": "PredefinedSugarType",
           "type": {
             "qualType": "__size_t"
           },
           "inner": [
             {
-              "id": "0x267aea23880",
+              "id": "0x1dd0cb23880",
               "kind": "BuiltinType",
               "type": {
                 "qualType": "unsigned long long"
@@ -161,7 +161,7 @@
       ]
     },
     {
-      "id": "0x267aea24058",
+      "id": "0x1dd0cb24058",
       "kind": "TypedefDecl",
       "loc": {},
       "range": {
@@ -175,14 +175,14 @@
       },
       "inner": [
         {
-          "id": "0x267aea24010",
+          "id": "0x1dd0cb24010",
           "kind": "PointerType",
           "type": {
             "qualType": "char *"
           },
           "inner": [
             {
-              "id": "0x267aea23740",
+              "id": "0x1dd0cb23740",
               "kind": "BuiltinType",
               "type": {
                 "qualType": "char"
@@ -193,7 +193,7 @@
       ]
     },
     {
-      "id": "0x267aea240c8",
+      "id": "0x1dd0cb240c8",
       "kind": "TypedefDecl",
       "loc": {},
       "range": {
@@ -207,14 +207,14 @@
       },
       "inner": [
         {
-          "id": "0x267aea24010",
+          "id": "0x1dd0cb24010",
           "kind": "PointerType",
           "type": {
             "qualType": "char *"
           },
           "inner": [
             {
-              "id": "0x267aea23740",
+              "id": "0x1dd0cb23740",
               "kind": "BuiltinType",
               "type": {
                 "qualType": "char"
@@ -225,7 +225,7 @@
       ]
     },
     {
-      "id": "0x267aea86d48",
+      "id": "0x1dd0cb86d48",
       "kind": "CXXRecordDecl",
       "loc": {
         "offset": 22,
@@ -247,8 +247,8 @@
           }
         },
         "end": {
-          "offset": 34,
-          "line": 5,
+          "offset": 70,
+          "line": 7,
           "col": 1,
           "tokLen": 1,
           "includedFrom": {
@@ -262,58 +262,49 @@
       "completeDefinition": true,
       "definitionData": {
         "canConstDefaultInit": true,
-        "canPassInRegisters": true,
         "copyAssign": {
           "hasConstParam": true,
           "implicitHasConstParam": true,
-          "needsImplicit": true,
-          "simple": true,
-          "trivial": true
+          "nonTrivial": true,
+          "simple": true
         },
         "copyCtor": {
           "hasConstParam": true,
           "implicitHasConstParam": true,
           "needsImplicit": true,
-          "simple": true,
-          "trivial": true
+          "nonTrivial": true,
+          "simple": true
         },
         "defaultCtor": {
           "defaultedIsConstexpr": true,
           "exists": true,
           "isConstexpr": true,
           "needsImplicit": true,
-          "trivial": true
+          "nonTrivial": true
         },
         "dtor": {
           "irrelevant": true,
-          "needsImplicit": true,
           "simple": true,
           "trivial": true
         },
         "hasConstexprNonCopyMoveConstructor": true,
-        "isAggregate": true,
-        "isEmpty": true,
         "isLiteral": true,
-        "isPOD": true,
-        "isStandardLayout": true,
-        "isTrivial": true,
-        "isTriviallyCopyable": true,
+        "isPolymorphic": true,
         "moveAssign": {
           "exists": true,
-          "needsImplicit": true,
-          "simple": true,
-          "trivial": true
+          "nonTrivial": true,
+          "simple": true
         },
         "moveCtor": {
           "exists": true,
           "needsImplicit": true,
-          "simple": true,
-          "trivial": true
+          "nonTrivial": true,
+          "simple": true
         }
       },
       "inner": [
         {
-          "id": "0x267aea86e40",
+          "id": "0x1dd0cb86e40",
           "kind": "CXXRecordDecl",
           "loc": {
             "offset": 22,
@@ -345,15 +336,271 @@
           "isImplicit": true,
           "name": "Vehicle",
           "tagUsed": "class"
+        },
+        {
+          "id": "0x1dd0cb86ed0",
+          "kind": "AccessSpecDecl",
+          "loc": {
+            "offset": 34,
+            "line": 5,
+            "col": 1,
+            "tokLen": 6,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 34,
+              "col": 1,
+              "tokLen": 6,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 40,
+              "col": 7,
+              "tokLen": 1,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "access": "public"
+        },
+        {
+          "id": "0x1dd0cb86fb0",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 60,
+            "line": 6,
+            "col": 18,
+            "tokLen": 5,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 47,
+              "col": 5,
+              "tokLen": 7,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 66,
+              "col": 24,
+              "tokLen": 1,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "name": "start",
+          "mangledName": "?start@Vehicle@@UEAAXXZ",
+          "type": {
+            "qualType": "void ()"
+          },
+          "virtual": true
+        },
+        {
+          "id": "0x1dd0cb87150",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 22,
+            "line": 3,
+            "col": 7,
+            "tokLen": 7,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 7,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 7,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "operator=",
+          "mangledName": "??4Vehicle@@QEAAAEAV0@AEBV0@@Z",
+          "type": {
+            "qualType": "Vehicle &(const Vehicle &)"
+          },
+          "inline": true,
+          "constexpr": true,
+          "explicitlyDefaulted": "default",
+          "inner": [
+            {
+              "id": "0x1dd0cb87280",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 22,
+                "col": 7,
+                "tokLen": 7,
+                "includedFrom": {
+                  "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 7,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 7,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                }
+              },
+              "type": {
+                "qualType": "const Vehicle &"
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1dd0cb87360",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 22,
+            "col": 7,
+            "tokLen": 7,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 7,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 7,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "operator=",
+          "mangledName": "??4Vehicle@@QEAAAEAV0@$$QEAV0@@Z",
+          "type": {
+            "qualType": "Vehicle &(Vehicle &&)"
+          },
+          "inline": true,
+          "constexpr": true,
+          "explicitlyDefaulted": "default",
+          "inner": [
+            {
+              "id": "0x1dd0cb87490",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 22,
+                "col": 7,
+                "tokLen": 7,
+                "includedFrom": {
+                  "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 7,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 22,
+                  "col": 7,
+                  "tokLen": 7,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                }
+              },
+              "type": {
+                "qualType": "Vehicle &&"
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1dd0cb87530",
+          "kind": "CXXDestructorDecl",
+          "loc": {
+            "offset": 22,
+            "col": 7,
+            "tokLen": 7,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 7,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 22,
+              "col": 7,
+              "tokLen": 7,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "~Vehicle",
+          "mangledName": "??_DVehicle@@QEAAXXZ",
+          "type": {
+            "qualType": "void ()"
+          },
+          "inline": true,
+          "explicitlyDefaulted": "default"
         }
       ]
     },
     {
-      "id": "0x267aea86f18",
+      "id": "0x1dd0cb87618",
       "kind": "CXXRecordDecl",
       "loc": {
-        "offset": 46,
-        "line": 7,
+        "offset": 82,
+        "line": 9,
         "col": 7,
         "tokLen": 3,
         "includedFrom": {
@@ -362,7 +609,7 @@
       },
       "range": {
         "begin": {
-          "offset": 40,
+          "offset": 76,
           "col": 1,
           "tokLen": 5,
           "includedFrom": {
@@ -370,8 +617,8 @@
           }
         },
         "end": {
-          "offset": 71,
-          "line": 9,
+          "offset": 144,
+          "line": 13,
           "col": 1,
           "tokLen": 1,
           "includedFrom": {
@@ -379,56 +626,50 @@
           }
         }
       },
+      "isReferenced": true,
       "name": "Car",
       "tagUsed": "class",
       "completeDefinition": true,
       "definitionData": {
         "canConstDefaultInit": true,
-        "canPassInRegisters": true,
         "copyAssign": {
           "hasConstParam": true,
           "implicitHasConstParam": true,
-          "needsImplicit": true,
-          "simple": true,
-          "trivial": true
+          "nonTrivial": true,
+          "simple": true
         },
         "copyCtor": {
           "hasConstParam": true,
           "implicitHasConstParam": true,
           "needsImplicit": true,
-          "simple": true,
-          "trivial": true
+          "nonTrivial": true,
+          "simple": true
         },
         "defaultCtor": {
           "defaultedIsConstexpr": true,
           "exists": true,
           "isConstexpr": true,
           "needsImplicit": true,
-          "trivial": true
+          "nonTrivial": true
         },
         "dtor": {
           "irrelevant": true,
-          "needsImplicit": true,
           "simple": true,
           "trivial": true
         },
         "hasConstexprNonCopyMoveConstructor": true,
-        "isEmpty": true,
         "isLiteral": true,
-        "isStandardLayout": true,
-        "isTrivial": true,
-        "isTriviallyCopyable": true,
+        "isPolymorphic": true,
         "moveAssign": {
           "exists": true,
-          "needsImplicit": true,
-          "simple": true,
-          "trivial": true
+          "nonTrivial": true,
+          "simple": true
         },
         "moveCtor": {
           "exists": true,
           "needsImplicit": true,
-          "simple": true,
-          "trivial": true
+          "nonTrivial": true,
+          "simple": true
         }
       },
       "bases": [
@@ -442,11 +683,11 @@
       ],
       "inner": [
         {
-          "id": "0x267aea870a0",
+          "id": "0x1dd0cb87770",
           "kind": "CXXRecordDecl",
           "loc": {
-            "offset": 46,
-            "line": 7,
+            "offset": 82,
+            "line": 9,
             "col": 7,
             "tokLen": 3,
             "includedFrom": {
@@ -455,7 +696,7 @@
           },
           "range": {
             "begin": {
-              "offset": 40,
+              "offset": 76,
               "col": 1,
               "tokLen": 5,
               "includedFrom": {
@@ -463,7 +704,7 @@
               }
             },
             "end": {
-              "offset": 46,
+              "offset": 82,
               "col": 7,
               "tokLen": 3,
               "includedFrom": {
@@ -474,15 +715,695 @@
           "isImplicit": true,
           "name": "Car",
           "tagUsed": "class"
+        },
+        {
+          "id": "0x1dd0cb87800",
+          "kind": "AccessSpecDecl",
+          "loc": {
+            "offset": 107,
+            "line": 11,
+            "col": 1,
+            "tokLen": 6,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 107,
+              "col": 1,
+              "tokLen": 6,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 113,
+              "col": 7,
+              "tokLen": 1,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "access": "public"
+        },
+        {
+          "id": "0x1dd0cb878b0",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 125,
+            "line": 12,
+            "col": 10,
+            "tokLen": 5,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 120,
+              "col": 5,
+              "tokLen": 4,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 133,
+              "col": 18,
+              "tokLen": 8,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "name": "start",
+          "mangledName": "?start@Car@@UEAAXXZ",
+          "type": {
+            "qualType": "void ()"
+          },
+          "inner": [
+            {
+              "id": "0x1dd0cb87990",
+              "kind": "OverrideAttr",
+              "range": {
+                "begin": {
+                  "offset": 133,
+                  "col": 18,
+                  "tokLen": 8,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 133,
+                  "col": 18,
+                  "tokLen": 8,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1dd0cb87ab0",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 82,
+            "line": 9,
+            "col": 7,
+            "tokLen": 3,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 82,
+              "col": 7,
+              "tokLen": 3,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 82,
+              "col": 7,
+              "tokLen": 3,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "operator=",
+          "mangledName": "??4Car@@QEAAAEAV0@AEBV0@@Z",
+          "type": {
+            "qualType": "Car &(const Car &)"
+          },
+          "inline": true,
+          "constexpr": true,
+          "explicitlyDefaulted": "default",
+          "inner": [
+            {
+              "id": "0x1dd0cb87be0",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 82,
+                "col": 7,
+                "tokLen": 3,
+                "includedFrom": {
+                  "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 82,
+                  "col": 7,
+                  "tokLen": 3,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 82,
+                  "col": 7,
+                  "tokLen": 3,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                }
+              },
+              "type": {
+                "qualType": "const Car &"
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1dd0cb8b4f0",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 82,
+            "col": 7,
+            "tokLen": 3,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 82,
+              "col": 7,
+              "tokLen": 3,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 82,
+              "col": 7,
+              "tokLen": 3,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "operator=",
+          "mangledName": "??4Car@@QEAAAEAV0@$$QEAV0@@Z",
+          "type": {
+            "qualType": "Car &(Car &&)"
+          },
+          "inline": true,
+          "constexpr": true,
+          "explicitlyDefaulted": "default",
+          "inner": [
+            {
+              "id": "0x1dd0cb8b620",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 82,
+                "col": 7,
+                "tokLen": 3,
+                "includedFrom": {
+                  "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 82,
+                  "col": 7,
+                  "tokLen": 3,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 82,
+                  "col": 7,
+                  "tokLen": 3,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                }
+              },
+              "type": {
+                "qualType": "Car &&"
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1dd0cb8b6c0",
+          "kind": "CXXDestructorDecl",
+          "loc": {
+            "offset": 82,
+            "col": 7,
+            "tokLen": 3,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 82,
+              "col": 7,
+              "tokLen": 3,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 82,
+              "col": 7,
+              "tokLen": 3,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "~Car",
+          "mangledName": "??_DCar@@QEAAXXZ",
+          "type": {
+            "qualType": "void ()"
+          },
+          "inline": true,
+          "explicitlyDefaulted": "default"
         }
       ]
     },
     {
-      "id": "0x267aea87178",
+      "id": "0x1dd0cb8b7a8",
       "kind": "CXXRecordDecl",
       "loc": {
-        "offset": 83,
-        "line": 11,
+        "offset": 158,
+        "line": 16,
+        "col": 7,
+        "tokLen": 5,
+        "includedFrom": {
+          "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+        }
+      },
+      "range": {
+        "begin": {
+          "offset": 152,
+          "col": 1,
+          "tokLen": 5,
+          "includedFrom": {
+            "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+          }
+        },
+        "end": {
+          "offset": 222,
+          "line": 20,
+          "col": 1,
+          "tokLen": 1,
+          "includedFrom": {
+            "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+          }
+        }
+      },
+      "name": "Truck",
+      "tagUsed": "class",
+      "completeDefinition": true,
+      "definitionData": {
+        "canConstDefaultInit": true,
+        "copyAssign": {
+          "hasConstParam": true,
+          "implicitHasConstParam": true,
+          "nonTrivial": true,
+          "simple": true
+        },
+        "copyCtor": {
+          "hasConstParam": true,
+          "implicitHasConstParam": true,
+          "needsImplicit": true,
+          "nonTrivial": true,
+          "simple": true
+        },
+        "defaultCtor": {
+          "defaultedIsConstexpr": true,
+          "exists": true,
+          "isConstexpr": true,
+          "needsImplicit": true,
+          "nonTrivial": true
+        },
+        "dtor": {
+          "irrelevant": true,
+          "simple": true,
+          "trivial": true
+        },
+        "hasConstexprNonCopyMoveConstructor": true,
+        "isLiteral": true,
+        "isPolymorphic": true,
+        "moveAssign": {
+          "exists": true,
+          "nonTrivial": true,
+          "simple": true
+        },
+        "moveCtor": {
+          "exists": true,
+          "needsImplicit": true,
+          "nonTrivial": true,
+          "simple": true
+        }
+      },
+      "bases": [
+        {
+          "access": "public",
+          "type": {
+            "qualType": "Vehicle"
+          },
+          "writtenAccess": "public"
+        }
+      ],
+      "inner": [
+        {
+          "id": "0x1dd0cb8b900",
+          "kind": "CXXRecordDecl",
+          "loc": {
+            "offset": 158,
+            "line": 16,
+            "col": 7,
+            "tokLen": 5,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 152,
+              "col": 1,
+              "tokLen": 5,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 158,
+              "col": 7,
+              "tokLen": 5,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "Truck",
+          "tagUsed": "class"
+        },
+        {
+          "id": "0x1dd0cb8b990",
+          "kind": "AccessSpecDecl",
+          "loc": {
+            "offset": 185,
+            "line": 18,
+            "col": 1,
+            "tokLen": 6,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 185,
+              "col": 1,
+              "tokLen": 6,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 191,
+              "col": 7,
+              "tokLen": 1,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "access": "public"
+        },
+        {
+          "id": "0x1dd0cb8ba40",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 203,
+            "line": 19,
+            "col": 10,
+            "tokLen": 5,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 198,
+              "col": 5,
+              "tokLen": 4,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 211,
+              "col": 18,
+              "tokLen": 8,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "name": "start",
+          "mangledName": "?start@Truck@@UEAAXXZ",
+          "type": {
+            "qualType": "void ()"
+          },
+          "inner": [
+            {
+              "id": "0x1dd0cb8bb20",
+              "kind": "OverrideAttr",
+              "range": {
+                "begin": {
+                  "offset": 211,
+                  "col": 18,
+                  "tokLen": 8,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 211,
+                  "col": 18,
+                  "tokLen": 8,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1dd0cb8bc40",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 158,
+            "line": 16,
+            "col": 7,
+            "tokLen": 5,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 158,
+              "col": 7,
+              "tokLen": 5,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 158,
+              "col": 7,
+              "tokLen": 5,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "operator=",
+          "mangledName": "??4Truck@@QEAAAEAV0@AEBV0@@Z",
+          "type": {
+            "qualType": "Truck &(const Truck &)"
+          },
+          "inline": true,
+          "constexpr": true,
+          "explicitlyDefaulted": "default",
+          "inner": [
+            {
+              "id": "0x1dd0cb8bd70",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 158,
+                "col": 7,
+                "tokLen": 5,
+                "includedFrom": {
+                  "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 158,
+                  "col": 7,
+                  "tokLen": 5,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 158,
+                  "col": 7,
+                  "tokLen": 5,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                }
+              },
+              "type": {
+                "qualType": "const Truck &"
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1dd0cb8be50",
+          "kind": "CXXMethodDecl",
+          "loc": {
+            "offset": 158,
+            "col": 7,
+            "tokLen": 5,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 158,
+              "col": 7,
+              "tokLen": 5,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 158,
+              "col": 7,
+              "tokLen": 5,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "operator=",
+          "mangledName": "??4Truck@@QEAAAEAV0@$$QEAV0@@Z",
+          "type": {
+            "qualType": "Truck &(Truck &&)"
+          },
+          "inline": true,
+          "constexpr": true,
+          "explicitlyDefaulted": "default",
+          "inner": [
+            {
+              "id": "0x1dd0cb8bf80",
+              "kind": "ParmVarDecl",
+              "loc": {
+                "offset": 158,
+                "col": 7,
+                "tokLen": 5,
+                "includedFrom": {
+                  "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                }
+              },
+              "range": {
+                "begin": {
+                  "offset": 158,
+                  "col": 7,
+                  "tokLen": 5,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                },
+                "end": {
+                  "offset": 158,
+                  "col": 7,
+                  "tokLen": 5,
+                  "includedFrom": {
+                    "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+                  }
+                }
+              },
+              "type": {
+                "qualType": "Truck &&"
+              }
+            }
+          ]
+        },
+        {
+          "id": "0x1dd0cb8c020",
+          "kind": "CXXDestructorDecl",
+          "loc": {
+            "offset": 158,
+            "col": 7,
+            "tokLen": 5,
+            "includedFrom": {
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+            }
+          },
+          "range": {
+            "begin": {
+              "offset": 158,
+              "col": 7,
+              "tokLen": 5,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 158,
+              "col": 7,
+              "tokLen": 5,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "isImplicit": true,
+          "name": "~Truck",
+          "mangledName": "??_DTruck@@QEAAXXZ",
+          "type": {
+            "qualType": "void ()"
+          },
+          "inline": true,
+          "explicitlyDefaulted": "default"
+        }
+      ]
+    },
+    {
+      "id": "0x1dd0cb8c108",
+      "kind": "CXXRecordDecl",
+      "loc": {
+        "offset": 236,
+        "line": 23,
         "col": 7,
         "tokLen": 10,
         "includedFrom": {
@@ -491,7 +1412,7 @@
       },
       "range": {
         "begin": {
-          "offset": 77,
+          "offset": 230,
           "col": 1,
           "tokLen": 5,
           "includedFrom": {
@@ -499,8 +1420,8 @@
           }
         },
         "end": {
-          "offset": 172,
-          "line": 16,
+          "offset": 325,
+          "line": 28,
           "col": 1,
           "tokLen": 1,
           "includedFrom": {
@@ -565,11 +1486,11 @@
       },
       "inner": [
         {
-          "id": "0x267aea87270",
+          "id": "0x1dd0cb8c200",
           "kind": "CXXRecordDecl",
           "loc": {
-            "offset": 83,
-            "line": 11,
+            "offset": 236,
+            "line": 23,
             "col": 7,
             "tokLen": 10,
             "includedFrom": {
@@ -578,7 +1499,7 @@
           },
           "range": {
             "begin": {
-              "offset": 77,
+              "offset": 230,
               "col": 1,
               "tokLen": 5,
               "includedFrom": {
@@ -586,7 +1507,7 @@
               }
             },
             "end": {
-              "offset": 83,
+              "offset": 236,
               "col": 7,
               "tokLen": 10,
               "includedFrom": {
@@ -599,11 +1520,11 @@
           "tagUsed": "class"
         },
         {
-          "id": "0x267aea87300",
+          "id": "0x1dd0cb8c290",
           "kind": "AccessSpecDecl",
           "loc": {
-            "offset": 98,
-            "line": 13,
+            "offset": 251,
+            "line": 25,
             "col": 1,
             "tokLen": 6,
             "includedFrom": {
@@ -612,7 +1533,7 @@
           },
           "range": {
             "begin": {
-              "offset": 98,
+              "offset": 251,
               "col": 1,
               "tokLen": 6,
               "includedFrom": {
@@ -620,7 +1541,7 @@
               }
             },
             "end": {
-              "offset": 104,
+              "offset": 257,
               "col": 7,
               "tokLen": 1,
               "includedFrom": {
@@ -631,11 +1552,11 @@
           "access": "public"
         },
         {
-          "id": "0x267aea87518",
+          "id": "0x1dd0cbe00c0",
           "kind": "CXXMethodDecl",
           "loc": {
-            "offset": 115,
-            "line": 14,
+            "offset": 268,
+            "line": 26,
             "col": 9,
             "tokLen": 3,
             "includedFrom": {
@@ -644,7 +1565,7 @@
           },
           "range": {
             "begin": {
-              "offset": 111,
+              "offset": 264,
               "col": 5,
               "tokLen": 3,
               "includedFrom": {
@@ -652,7 +1573,7 @@
               }
             },
             "end": {
-              "offset": 131,
+              "offset": 284,
               "col": 25,
               "tokLen": 1,
               "includedFrom": {
@@ -667,10 +1588,10 @@
           },
           "inner": [
             {
-              "id": "0x267aea87348",
+              "id": "0x1dd0cb8c2d8",
               "kind": "ParmVarDecl",
               "loc": {
-                "offset": 123,
+                "offset": 276,
                 "col": 17,
                 "tokLen": 1,
                 "includedFrom": {
@@ -679,7 +1600,7 @@
               },
               "range": {
                 "begin": {
-                  "offset": 119,
+                  "offset": 272,
                   "col": 13,
                   "tokLen": 3,
                   "includedFrom": {
@@ -687,7 +1608,7 @@
                   }
                 },
                 "end": {
-                  "offset": 123,
+                  "offset": 276,
                   "col": 17,
                   "tokLen": 1,
                   "includedFrom": {
@@ -701,10 +1622,10 @@
               }
             },
             {
-              "id": "0x267aea873d0",
+              "id": "0x1dd0cb8c360",
               "kind": "ParmVarDecl",
               "loc": {
-                "offset": 130,
+                "offset": 283,
                 "col": 24,
                 "tokLen": 1,
                 "includedFrom": {
@@ -713,7 +1634,7 @@
               },
               "range": {
                 "begin": {
-                  "offset": 126,
+                  "offset": 279,
                   "col": 20,
                   "tokLen": 3,
                   "includedFrom": {
@@ -721,7 +1642,7 @@
                   }
                 },
                 "end": {
-                  "offset": 130,
+                  "offset": 283,
                   "col": 24,
                   "tokLen": 1,
                   "includedFrom": {
@@ -737,11 +1658,11 @@
           ]
         },
         {
-          "id": "0x267aea87758",
+          "id": "0x1dd0cbe0308",
           "kind": "CXXMethodDecl",
           "loc": {
-            "offset": 146,
-            "line": 15,
+            "offset": 299,
+            "line": 27,
             "col": 12,
             "tokLen": 3,
             "includedFrom": {
@@ -750,7 +1671,7 @@
           },
           "range": {
             "begin": {
-              "offset": 139,
+              "offset": 292,
               "col": 5,
               "tokLen": 6,
               "includedFrom": {
@@ -758,7 +1679,7 @@
               }
             },
             "end": {
-              "offset": 168,
+              "offset": 321,
               "col": 34,
               "tokLen": 1,
               "includedFrom": {
@@ -773,10 +1694,10 @@
           },
           "inner": [
             {
-              "id": "0x267aea875e8",
+              "id": "0x1dd0cbe0190",
               "kind": "ParmVarDecl",
               "loc": {
-                "offset": 157,
+                "offset": 310,
                 "col": 23,
                 "tokLen": 1,
                 "includedFrom": {
@@ -785,7 +1706,7 @@
               },
               "range": {
                 "begin": {
-                  "offset": 150,
+                  "offset": 303,
                   "col": 16,
                   "tokLen": 6,
                   "includedFrom": {
@@ -793,7 +1714,7 @@
                   }
                 },
                 "end": {
-                  "offset": 157,
+                  "offset": 310,
                   "col": 23,
                   "tokLen": 1,
                   "includedFrom": {
@@ -807,10 +1728,10 @@
               }
             },
             {
-              "id": "0x267aea87670",
+              "id": "0x1dd0cbe0218",
               "kind": "ParmVarDecl",
               "loc": {
-                "offset": 167,
+                "offset": 320,
                 "col": 33,
                 "tokLen": 1,
                 "includedFrom": {
@@ -819,7 +1740,7 @@
               },
               "range": {
                 "begin": {
-                  "offset": 160,
+                  "offset": 313,
                   "col": 26,
                   "tokLen": 6,
                   "includedFrom": {
@@ -827,7 +1748,7 @@
                   }
                 },
                 "end": {
-                  "offset": 167,
+                  "offset": 320,
                   "col": 33,
                   "tokLen": 1,
                   "includedFrom": {
@@ -845,7 +1766,7 @@
       ]
     },
     {
-      "id": "0x267aea87898",
+      "id": "0x1dd0cbe0448",
       "kind": "FunctionDecl",
       "loc": {
         "offset": 31,
@@ -875,7 +1796,7 @@
       },
       "inner": [
         {
-          "id": "0x267aea879c0",
+          "id": "0x1dd0cbe0570",
           "kind": "CompoundStmt",
           "range": {
             "begin": {
@@ -893,7 +1814,7 @@
           },
           "inner": [
             {
-              "id": "0x267aea879b0",
+              "id": "0x1dd0cbe0560",
               "kind": "ReturnStmt",
               "range": {
                 "begin": {
@@ -910,7 +1831,7 @@
               },
               "inner": [
                 {
-                  "id": "0x267aea87988",
+                  "id": "0x1dd0cbe0538",
                   "kind": "IntegerLiteral",
                   "range": {
                     "begin": {
@@ -937,29 +1858,155 @@
       ]
     },
     {
-      "id": "0x267aea87b78",
+      "id": "0x1dd0cbe05c8",
       "kind": "CXXMethodDecl",
       "loc": {
-        "offset": 82,
+        "offset": 80,
         "line": 8,
-        "col": 17,
-        "tokLen": 3
+        "col": 15,
+        "tokLen": 5
       },
       "range": {
         "begin": {
           "offset": 66,
           "col": 1,
-          "tokLen": 3
+          "tokLen": 4
         },
         "end": {
-          "offset": 134,
-          "line": 11,
+          "offset": 92,
+          "line": 10,
           "col": 1,
           "tokLen": 1
         }
       },
-      "parentDeclContextId": "0x267aea87178",
-      "previousDecl": "0x267aea87518",
+      "parentDeclContextId": "0x1dd0cb86d48",
+      "previousDecl": "0x1dd0cb86fb0",
+      "name": "start",
+      "mangledName": "?start@Vehicle@@UEAAXXZ",
+      "type": {
+        "qualType": "void ()"
+      },
+      "inner": [
+        {
+          "id": "0x1dd0cbe06c8",
+          "kind": "CompoundStmt",
+          "range": {
+            "begin": {
+              "offset": 89,
+              "line": 9,
+              "col": 1,
+              "tokLen": 1
+            },
+            "end": {
+              "offset": 92,
+              "line": 10,
+              "col": 1,
+              "tokLen": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "0x1dd0cbe0718",
+      "kind": "CXXMethodDecl",
+      "loc": {
+        "offset": 107,
+        "line": 12,
+        "col": 11,
+        "tokLen": 5
+      },
+      "range": {
+        "begin": {
+          "offset": 97,
+          "col": 1,
+          "tokLen": 4
+        },
+        "end": {
+          "offset": 119,
+          "line": 14,
+          "col": 1,
+          "tokLen": 1
+        }
+      },
+      "parentDeclContextId": "0x1dd0cb87618",
+      "previousDecl": "0x1dd0cb878b0",
+      "name": "start",
+      "mangledName": "?start@Car@@UEAAXXZ",
+      "type": {
+        "qualType": "void ()"
+      },
+      "inner": [
+        {
+          "id": "0x1dd0cbe0878",
+          "kind": "CompoundStmt",
+          "range": {
+            "begin": {
+              "offset": 116,
+              "line": 13,
+              "col": 1,
+              "tokLen": 1
+            },
+            "end": {
+              "offset": 119,
+              "line": 14,
+              "col": 1,
+              "tokLen": 1
+            }
+          }
+        },
+        {
+          "id": "0x1dd0cbe0848",
+          "kind": "OverrideAttr",
+          "range": {
+            "begin": {
+              "offset": 133,
+              "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.h",
+              "line": 12,
+              "col": 18,
+              "tokLen": 8,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            },
+            "end": {
+              "offset": 133,
+              "col": 18,
+              "tokLen": 8,
+              "includedFrom": {
+                "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp"
+              }
+            }
+          },
+          "inherited": true
+        }
+      ]
+    },
+    {
+      "id": "0x1dd0cbe0a28",
+      "kind": "CXXMethodDecl",
+      "loc": {
+        "offset": 140,
+        "file": "C:\\Users\\ACER\\IdeaProjects\\AnalyzerPP\\test-project\\Calculator.cpp",
+        "line": 16,
+        "col": 17,
+        "tokLen": 3
+      },
+      "range": {
+        "begin": {
+          "offset": 124,
+          "col": 1,
+          "tokLen": 3
+        },
+        "end": {
+          "offset": 192,
+          "line": 19,
+          "col": 1,
+          "tokLen": 1
+        }
+      },
+      "parentDeclContextId": "0x1dd0cb8c108",
+      "previousDecl": "0x1dd0cbe00c0",
       "name": "add",
       "mangledName": "?add@Calculator@@QEAAHHH@Z",
       "type": {
@@ -967,22 +2014,22 @@
       },
       "inner": [
         {
-          "id": "0x267aea87a48",
+          "id": "0x1dd0cbe08f8",
           "kind": "ParmVarDecl",
           "loc": {
-            "offset": 90,
-            "line": 8,
+            "offset": 148,
+            "line": 16,
             "col": 25,
             "tokLen": 1
           },
           "range": {
             "begin": {
-              "offset": 86,
+              "offset": 144,
               "col": 21,
               "tokLen": 3
             },
             "end": {
-              "offset": 90,
+              "offset": 148,
               "col": 25,
               "tokLen": 1
             }
@@ -994,21 +2041,21 @@
           }
         },
         {
-          "id": "0x267aea87ad0",
+          "id": "0x1dd0cbe0980",
           "kind": "ParmVarDecl",
           "loc": {
-            "offset": 97,
+            "offset": 155,
             "col": 32,
             "tokLen": 1
           },
           "range": {
             "begin": {
-              "offset": 93,
+              "offset": 151,
               "col": 28,
               "tokLen": 3
             },
             "end": {
-              "offset": 97,
+              "offset": 155,
               "col": 32,
               "tokLen": 1
             }
@@ -1020,51 +2067,51 @@
           }
         },
         {
-          "id": "0x267aea8b660",
+          "id": "0x1dd0cbe0d10",
           "kind": "CompoundStmt",
           "range": {
             "begin": {
-              "offset": 101,
-              "line": 9,
+              "offset": 159,
+              "line": 17,
               "col": 1,
               "tokLen": 1
             },
             "end": {
-              "offset": 134,
-              "line": 11,
+              "offset": 192,
+              "line": 19,
               "col": 1,
               "tokLen": 1
             }
           },
           "inner": [
             {
-              "id": "0x267aea8b650",
+              "id": "0x1dd0cbe0d00",
               "kind": "ReturnStmt",
               "range": {
                 "begin": {
-                  "offset": 108,
-                  "line": 10,
+                  "offset": 166,
+                  "line": 18,
                   "col": 5,
                   "tokLen": 6
                 },
                 "end": {
-                  "offset": 130,
+                  "offset": 188,
                   "col": 27,
                   "tokLen": 1
                 }
               },
               "inner": [
                 {
-                  "id": "0x267aea8b630",
+                  "id": "0x1dd0cbe0ce0",
                   "kind": "BinaryOperator",
                   "range": {
                     "begin": {
-                      "offset": 115,
+                      "offset": 173,
                       "col": 12,
                       "tokLen": 6
                     },
                     "end": {
-                      "offset": 130,
+                      "offset": 188,
                       "col": 27,
                       "tokLen": 1
                     }
@@ -1076,16 +2123,16 @@
                   "opcode": "+",
                   "inner": [
                     {
-                      "id": "0x267aea8b5d8",
+                      "id": "0x1dd0cbe0c88",
                       "kind": "BinaryOperator",
                       "range": {
                         "begin": {
-                          "offset": 115,
+                          "offset": 173,
                           "col": 12,
                           "tokLen": 6
                         },
                         "end": {
-                          "offset": 126,
+                          "offset": 184,
                           "col": 23,
                           "tokLen": 1
                         }
@@ -1097,16 +2144,16 @@
                       "opcode": "+",
                       "inner": [
                         {
-                          "id": "0x267aea8b578",
+                          "id": "0x1dd0cbe0c28",
                           "kind": "CallExpr",
                           "range": {
                             "begin": {
-                              "offset": 115,
+                              "offset": 173,
                               "col": 12,
                               "tokLen": 6
                             },
                             "end": {
-                              "offset": 122,
+                              "offset": 180,
                               "col": 19,
                               "tokLen": 1
                             }
@@ -1117,16 +2164,16 @@
                           "valueCategory": "prvalue",
                           "inner": [
                             {
-                              "id": "0x267aea8b560",
+                              "id": "0x1dd0cbe0c10",
                               "kind": "ImplicitCastExpr",
                               "range": {
                                 "begin": {
-                                  "offset": 115,
+                                  "offset": 173,
                                   "col": 12,
                                   "tokLen": 6
                                 },
                                 "end": {
-                                  "offset": 115,
+                                  "offset": 173,
                                   "col": 12,
                                   "tokLen": 6
                                 }
@@ -1138,16 +2185,16 @@
                               "castKind": "FunctionToPointerDecay",
                               "inner": [
                                 {
-                                  "id": "0x267aea8b508",
+                                  "id": "0x1dd0cbe0bb8",
                                   "kind": "DeclRefExpr",
                                   "range": {
                                     "begin": {
-                                      "offset": 115,
+                                      "offset": 173,
                                       "col": 12,
                                       "tokLen": 6
                                     },
                                     "end": {
-                                      "offset": 115,
+                                      "offset": 173,
                                       "col": 12,
                                       "tokLen": 6
                                     }
@@ -1157,7 +2204,7 @@
                                   },
                                   "valueCategory": "lvalue",
                                   "referencedDecl": {
-                                    "id": "0x267aea87898",
+                                    "id": "0x1dd0cbe0448",
                                     "kind": "FunctionDecl",
                                     "name": "helper",
                                     "type": {
@@ -1170,16 +2217,16 @@
                           ]
                         },
                         {
-                          "id": "0x267aea8b5c0",
+                          "id": "0x1dd0cbe0c70",
                           "kind": "ImplicitCastExpr",
                           "range": {
                             "begin": {
-                              "offset": 126,
+                              "offset": 184,
                               "col": 23,
                               "tokLen": 1
                             },
                             "end": {
-                              "offset": 126,
+                              "offset": 184,
                               "col": 23,
                               "tokLen": 1
                             }
@@ -1191,16 +2238,16 @@
                           "castKind": "LValueToRValue",
                           "inner": [
                             {
-                              "id": "0x267aea8b5a0",
+                              "id": "0x1dd0cbe0c50",
                               "kind": "DeclRefExpr",
                               "range": {
                                 "begin": {
-                                  "offset": 126,
+                                  "offset": 184,
                                   "col": 23,
                                   "tokLen": 1
                                 },
                                 "end": {
-                                  "offset": 126,
+                                  "offset": 184,
                                   "col": 23,
                                   "tokLen": 1
                                 }
@@ -1210,7 +2257,7 @@
                               },
                               "valueCategory": "lvalue",
                               "referencedDecl": {
-                                "id": "0x267aea87a48",
+                                "id": "0x1dd0cbe08f8",
                                 "kind": "ParmVarDecl",
                                 "name": "a",
                                 "type": {
@@ -1223,16 +2270,16 @@
                       ]
                     },
                     {
-                      "id": "0x267aea8b618",
+                      "id": "0x1dd0cbe0cc8",
                       "kind": "ImplicitCastExpr",
                       "range": {
                         "begin": {
-                          "offset": 130,
+                          "offset": 188,
                           "col": 27,
                           "tokLen": 1
                         },
                         "end": {
-                          "offset": 130,
+                          "offset": 188,
                           "col": 27,
                           "tokLen": 1
                         }
@@ -1244,16 +2291,16 @@
                       "castKind": "LValueToRValue",
                       "inner": [
                         {
-                          "id": "0x267aea8b5f8",
+                          "id": "0x1dd0cbe0ca8",
                           "kind": "DeclRefExpr",
                           "range": {
                             "begin": {
-                              "offset": 130,
+                              "offset": 188,
                               "col": 27,
                               "tokLen": 1
                             },
                             "end": {
-                              "offset": 130,
+                              "offset": 188,
                               "col": 27,
                               "tokLen": 1
                             }
@@ -1263,7 +2310,7 @@
                           },
                           "valueCategory": "lvalue",
                           "referencedDecl": {
-                            "id": "0x267aea87ad0",
+                            "id": "0x1dd0cbe0980",
                             "kind": "ParmVarDecl",
                             "name": "b",
                             "type": {
@@ -1282,29 +2329,29 @@
       ]
     },
     {
-      "id": "0x267aea8b7e0",
+      "id": "0x1dd0cbe0e90",
       "kind": "CXXMethodDecl",
       "loc": {
-        "offset": 158,
-        "line": 13,
+        "offset": 216,
+        "line": 21,
         "col": 20,
         "tokLen": 3
       },
       "range": {
         "begin": {
-          "offset": 139,
+          "offset": 197,
           "col": 1,
           "tokLen": 6
         },
         "end": {
-          "offset": 205,
-          "line": 16,
+          "offset": 263,
+          "line": 24,
           "col": 1,
           "tokLen": 1
         }
       },
-      "parentDeclContextId": "0x267aea87178",
-      "previousDecl": "0x267aea87758",
+      "parentDeclContextId": "0x1dd0cb8c108",
+      "previousDecl": "0x1dd0cbe0308",
       "name": "add",
       "mangledName": "?add@Calculator@@QEAANNN@Z",
       "type": {
@@ -1312,22 +2359,22 @@
       },
       "inner": [
         {
-          "id": "0x267aea8b6b0",
+          "id": "0x1dd0cbe0d60",
           "kind": "ParmVarDecl",
           "loc": {
-            "offset": 169,
-            "line": 13,
+            "offset": 227,
+            "line": 21,
             "col": 31,
             "tokLen": 1
           },
           "range": {
             "begin": {
-              "offset": 162,
+              "offset": 220,
               "col": 24,
               "tokLen": 6
             },
             "end": {
-              "offset": 169,
+              "offset": 227,
               "col": 31,
               "tokLen": 1
             }
@@ -1339,21 +2386,21 @@
           }
         },
         {
-          "id": "0x267aea8b738",
+          "id": "0x1dd0cbe0de8",
           "kind": "ParmVarDecl",
           "loc": {
-            "offset": 179,
+            "offset": 237,
             "col": 41,
             "tokLen": 1
           },
           "range": {
             "begin": {
-              "offset": 172,
+              "offset": 230,
               "col": 34,
               "tokLen": 6
             },
             "end": {
-              "offset": 179,
+              "offset": 237,
               "col": 41,
               "tokLen": 1
             }
@@ -1365,51 +2412,51 @@
           }
         },
         {
-          "id": "0x267aea8b990",
+          "id": "0x1dd0cbe1040",
           "kind": "CompoundStmt",
           "range": {
             "begin": {
-              "offset": 183,
-              "line": 14,
+              "offset": 241,
+              "line": 22,
               "col": 1,
               "tokLen": 1
             },
             "end": {
-              "offset": 205,
-              "line": 16,
+              "offset": 263,
+              "line": 24,
               "col": 1,
               "tokLen": 1
             }
           },
           "inner": [
             {
-              "id": "0x267aea8b980",
+              "id": "0x1dd0cbe1030",
               "kind": "ReturnStmt",
               "range": {
                 "begin": {
-                  "offset": 190,
-                  "line": 15,
+                  "offset": 248,
+                  "line": 23,
                   "col": 5,
                   "tokLen": 6
                 },
                 "end": {
-                  "offset": 201,
+                  "offset": 259,
                   "col": 16,
                   "tokLen": 1
                 }
               },
               "inner": [
                 {
-                  "id": "0x267aea8b960",
+                  "id": "0x1dd0cbe1010",
                   "kind": "BinaryOperator",
                   "range": {
                     "begin": {
-                      "offset": 197,
+                      "offset": 255,
                       "col": 12,
                       "tokLen": 1
                     },
                     "end": {
-                      "offset": 201,
+                      "offset": 259,
                       "col": 16,
                       "tokLen": 1
                     }
@@ -1421,16 +2468,16 @@
                   "opcode": "+",
                   "inner": [
                     {
-                      "id": "0x267aea8b930",
+                      "id": "0x1dd0cbe0fe0",
                       "kind": "ImplicitCastExpr",
                       "range": {
                         "begin": {
-                          "offset": 197,
+                          "offset": 255,
                           "col": 12,
                           "tokLen": 1
                         },
                         "end": {
-                          "offset": 197,
+                          "offset": 255,
                           "col": 12,
                           "tokLen": 1
                         }
@@ -1442,16 +2489,16 @@
                       "castKind": "LValueToRValue",
                       "inner": [
                         {
-                          "id": "0x267aea8b8f0",
+                          "id": "0x1dd0cbe0fa0",
                           "kind": "DeclRefExpr",
                           "range": {
                             "begin": {
-                              "offset": 197,
+                              "offset": 255,
                               "col": 12,
                               "tokLen": 1
                             },
                             "end": {
-                              "offset": 197,
+                              "offset": 255,
                               "col": 12,
                               "tokLen": 1
                             }
@@ -1461,7 +2508,7 @@
                           },
                           "valueCategory": "lvalue",
                           "referencedDecl": {
-                            "id": "0x267aea8b6b0",
+                            "id": "0x1dd0cbe0d60",
                             "kind": "ParmVarDecl",
                             "name": "a",
                             "type": {
@@ -1472,16 +2519,16 @@
                       ]
                     },
                     {
-                      "id": "0x267aea8b948",
+                      "id": "0x1dd0cbe0ff8",
                       "kind": "ImplicitCastExpr",
                       "range": {
                         "begin": {
-                          "offset": 201,
+                          "offset": 259,
                           "col": 16,
                           "tokLen": 1
                         },
                         "end": {
-                          "offset": 201,
+                          "offset": 259,
                           "col": 16,
                           "tokLen": 1
                         }
@@ -1493,16 +2540,16 @@
                       "castKind": "LValueToRValue",
                       "inner": [
                         {
-                          "id": "0x267aea8b910",
+                          "id": "0x1dd0cbe0fc0",
                           "kind": "DeclRefExpr",
                           "range": {
                             "begin": {
-                              "offset": 201,
+                              "offset": 259,
                               "col": 16,
                               "tokLen": 1
                             },
                             "end": {
-                              "offset": 201,
+                              "offset": 259,
                               "col": 16,
                               "tokLen": 1
                             }
@@ -1512,7 +2559,7 @@
                           },
                           "valueCategory": "lvalue",
                           "referencedDecl": {
-                            "id": "0x267aea8b738",
+                            "id": "0x1dd0cbe0de8",
                             "kind": "ParmVarDecl",
                             "name": "b",
                             "type": {

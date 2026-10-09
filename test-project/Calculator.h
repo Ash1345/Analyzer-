@@ -2,11 +2,23 @@
 
 class Vehicle
 {
+public:
+    virtual void start();
 };
 
 class Car : public Vehicle
 {
+public:
+    void start() override;
 };
+
+
+class Truck : public Vehicle
+{
+public:
+    void start() override;
+};
+
 
 class Calculator
 {
