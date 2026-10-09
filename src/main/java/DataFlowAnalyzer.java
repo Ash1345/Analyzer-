@@ -2,6 +2,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class DataFlowAnalyzer implements GraphAnalyzer {
 
@@ -24,6 +25,7 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
 
         return relationships;
     }
+
 
     private static void analyzeNode(
             AstNode node,
@@ -52,8 +54,10 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
         // -----------------------------------------------------
         // 1. Variable initialization
         // -----------------------------------------------------
-        // Example:
+        // Examples:
         // int y = x;       -> x FLOWS_TO y
+        // int a = x + 1;   -> x FLOWS_TO a
+        // int c = x + a;   -> x FLOWS_TO c, a FLOWS_TO c
         // int result = foo(); -> foo PRODUCES result
 
         if ("VarDecl".equals(node.kind)
@@ -67,40 +71,35 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
             if (targetVariable != null
                     && "VARIABLE".equals(targetVariable.kind)) {
 
-                // Direct variable copy, e.g. int y = x;
-                CodeEntity sourceVariable =
-                        findDirectReferencedVariable(
-                                node.inner.get(node.inner.size() - 1),
-                                entityRegistry
+                AstNode initializer =
+                        node.inner.get(node.inner.size() - 1);
+
+                // Collect all variable references in the initializer.
+                for (CodeEntity sourceVariable :
+                        findReferencedVariables(
+                                initializer,
+                                entityRegistry)) {
+
+                    if (!sourceVariable.id.equals(targetVariable.id)) {
+                        relationships.add(
+                                createRelationship(
+                                        sourceVariable,
+                                        targetVariable,
+                                        "FLOWS_TO",
+                                        node,
+                                        locationResolver
+                                )
                         );
-
-                if (sourceVariable != null
-                        && !sourceVariable.id.equals(targetVariable.id)) {
-
-                    relationships.add(
-                            createRelationship(
-                                    sourceVariable,
-                                    targetVariable,
-                                    "FLOWS_TO",
-                                    node,
-                                    locationResolver
-                            )
-                    );
+                    }
                 }
 
                 // Preserve existing function/method call tracking.
                 CodeEntity sourceEntity =
-                        findCalledMethod(
-                                node,
-                                entityRegistry
-                        );
+                        findCalledMethod(node, entityRegistry);
 
                 if (sourceEntity == null) {
                     sourceEntity =
-                            findCalledFunction(
-                                    node,
-                                    entityRegistry
-                            );
+                            findCalledFunction(node, entityRegistry);
                 }
 
                 if (sourceEntity != null) {
@@ -120,8 +119,10 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
         // -----------------------------------------------------
         // 2. Assignment between existing variables
         // -----------------------------------------------------
-        // Example:
-        // y = x;  -> x FLOWS_TO y
+        // Examples:
+        // y = x;       -> x FLOWS_TO y
+        // a = x + 1;   -> x FLOWS_TO a
+        // c = x + a;   -> x FLOWS_TO c, a FLOWS_TO c
 
         if ("BinaryOperator".equals(node.kind)
                 && "=".equals(node.opcode)
@@ -132,31 +133,33 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
             AstNode leftHandSide = node.inner.get(0);
             AstNode rightHandSide = node.inner.get(1);
 
+            // The target must be a direct variable reference.
             CodeEntity targetVariable =
                     findDirectReferencedVariable(
                             leftHandSide,
                             entityRegistry
                     );
 
-            CodeEntity sourceVariable =
-                    findDirectReferencedVariable(
-                            rightHandSide,
-                            entityRegistry
-                    );
+            if (targetVariable != null) {
 
-            if (sourceVariable != null
-                    && targetVariable != null
-                    && !sourceVariable.id.equals(targetVariable.id)) {
+                // Collect every variable used by the RHS expression.
+                for (CodeEntity sourceVariable :
+                        findReferencedVariables(
+                                rightHandSide,
+                                entityRegistry)) {
 
-                relationships.add(
-                        createRelationship(
-                                sourceVariable,
-                                targetVariable,
-                                "FLOWS_TO",
-                                node,
-                                locationResolver
-                        )
-                );
+                    if (!sourceVariable.id.equals(targetVariable.id)) {
+                        relationships.add(
+                                createRelationship(
+                                        sourceVariable,
+                                        targetVariable,
+                                        "FLOWS_TO",
+                                        node,
+                                        locationResolver
+                                )
+                        );
+                    }
+                }
             }
         }
 
@@ -173,6 +176,7 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
             }
         }
     }
+
 
     // =========================================================
     // Find a direct variable reference
@@ -229,6 +233,76 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
 
         return null;
     }
+
+
+    private static List<CodeEntity> findReferencedVariables(
+            AstNode node,
+            EntityRegistry entityRegistry) {
+
+        Map<String, CodeEntity> variables = new LinkedHashMap<>();
+        collectReferencedVariables(node, entityRegistry, variables);
+        return new ArrayList<>(variables.values());
+    }
+
+
+    private static void collectReferencedVariables(
+            AstNode node,
+            EntityRegistry entityRegistry,
+            Map<String, CodeEntity> variables) {
+
+        if (node == null) {
+            return;
+        }
+
+        // For a method call such as calculator.add(x, a),
+        // skip the object receiver "calculator".
+        if ("CXXMemberCallExpr".equals(node.kind)) {
+
+            if (node.inner != null && node.inner.size() > 1) {
+
+                // Child 0 represents the method expression/receiver.
+                // Skip it and traverse the remaining argument expressions.
+                for (int i = 1; i < node.inner.size(); i++) {
+                    collectReferencedVariables(
+                            node.inner.get(i),
+                            entityRegistry,
+                            variables
+                    );
+                }
+            }
+
+            return;
+        }
+
+        // Collect references to variables.
+        if ("DeclRefExpr".equals(node.kind)
+                && node.referencedDecl != null) {
+
+            Object idObject = node.referencedDecl.get("id");
+
+            if (idObject != null) {
+                CodeEntity entity =
+                        entityRegistry.findByAstId(idObject.toString());
+
+                if (entity != null && "VARIABLE".equals(entity.kind)) {
+                    variables.putIfAbsent(entity.id, entity);
+                }
+            }
+        }
+
+        // Continue traversing the AST.
+        if (node.inner != null) {
+            for (AstNode child : node.inner) {
+                collectReferencedVariables(
+                        child,
+                        entityRegistry,
+                        variables
+                );
+            }
+        }
+    }
+
+
 
     private static boolean isTransparentExpression(String kind) {
 
