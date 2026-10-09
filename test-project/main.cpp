@@ -11,7 +11,11 @@ int main()
     // =====================================================
     // Existing Calculator test cases
     // =====================================================
+    int x = 10;
+    int y = x;
+    int z = y;
 
+    y = z;
     Calculator calculator;
 
     Calculator* ptr = &calculator;

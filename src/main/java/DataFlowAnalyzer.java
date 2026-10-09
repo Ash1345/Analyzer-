@@ -1,5 +1,7 @@
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DataFlowAnalyzer implements GraphAnalyzer {
 
@@ -23,7 +25,6 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
         return relationships;
     }
 
-
     private static void analyzeNode(
             AstNode node,
             EntityRegistry entityRegistry,
@@ -35,57 +36,66 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
             return;
         }
 
-
-        // =====================================================
-        // Track current function
-        // =====================================================
-
+        // Track the current function or method.
         if (("FunctionDecl".equals(node.kind)
                 || "CXXMethodDecl".equals(node.kind))
                 && node.name != null) {
 
             CodeEntity entity =
-                    entityRegistry.findByAstId(
-                            node.id
-                    );
+                    entityRegistry.findByAstId(node.id);
 
             if (entity != null) {
                 currentFunction = entity;
             }
         }
 
-
-        // =====================================================
-        // Detect variable initialization from a call
-        // =====================================================
+        // -----------------------------------------------------
+        // 1. Variable initialization
+        // -----------------------------------------------------
+        // Example:
+        // int y = x;       -> x FLOWS_TO y
+        // int result = foo(); -> foo PRODUCES result
 
         if ("VarDecl".equals(node.kind)
                 && currentFunction != null
-                && node.inner != null) {
+                && node.inner != null
+                && !node.inner.isEmpty()) {
 
             CodeEntity targetVariable =
-                    entityRegistry.findByAstId(
-                            node.id
-                    );
+                    entityRegistry.findByAstId(node.id);
 
             if (targetVariable != null
-                    && "VARIABLE".equals(
-                    targetVariable.kind)) {
+                    && "VARIABLE".equals(targetVariable.kind)) {
 
-                CodeEntity sourceEntity = null;
+                // Direct variable copy, e.g. int y = x;
+                CodeEntity sourceVariable =
+                        findDirectReferencedVariable(
+                                node.inner.get(node.inner.size() - 1),
+                                entityRegistry
+                        );
 
-                // =================================================
-                // Search initializer for a method/function call
-                // =================================================
+                if (sourceVariable != null
+                        && !sourceVariable.id.equals(targetVariable.id)) {
 
-                sourceEntity =
+                    relationships.add(
+                            createRelationship(
+                                    sourceVariable,
+                                    targetVariable,
+                                    "FLOWS_TO",
+                                    node,
+                                    locationResolver
+                            )
+                    );
+                }
+
+                // Preserve existing function/method call tracking.
+                CodeEntity sourceEntity =
                         findCalledMethod(
                                 node,
                                 entityRegistry
                         );
 
                 if (sourceEntity == null) {
-
                     sourceEntity =
                             findCalledFunction(
                                     node,
@@ -93,39 +103,66 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
                             );
                 }
 
-
-                // =================================================
-                // Create PRODUCES relationship
-                // =================================================
-
                 if (sourceEntity != null) {
-
-                    Relationship relationship =
+                    relationships.add(
                             createRelationship(
                                     sourceEntity,
                                     targetVariable,
                                     "PRODUCES",
                                     node,
                                     locationResolver
-                            );
-
-                    relationships.add(
-                            relationship
+                            )
                     );
                 }
             }
         }
 
+        // -----------------------------------------------------
+        // 2. Assignment between existing variables
+        // -----------------------------------------------------
+        // Example:
+        // y = x;  -> x FLOWS_TO y
 
-        // =====================================================
-        // Analyze children
-        // =====================================================
+        if ("BinaryOperator".equals(node.kind)
+                && "=".equals(node.opcode)
+                && currentFunction != null
+                && node.inner != null
+                && node.inner.size() >= 2) {
 
+            AstNode leftHandSide = node.inner.get(0);
+            AstNode rightHandSide = node.inner.get(1);
+
+            CodeEntity targetVariable =
+                    findDirectReferencedVariable(
+                            leftHandSide,
+                            entityRegistry
+                    );
+
+            CodeEntity sourceVariable =
+                    findDirectReferencedVariable(
+                            rightHandSide,
+                            entityRegistry
+                    );
+
+            if (sourceVariable != null
+                    && targetVariable != null
+                    && !sourceVariable.id.equals(targetVariable.id)) {
+
+                relationships.add(
+                        createRelationship(
+                                sourceVariable,
+                                targetVariable,
+                                "FLOWS_TO",
+                                node,
+                                locationResolver
+                        )
+                );
+            }
+        }
+
+        // Analyze children while preserving the current function.
         if (node.inner != null) {
-
-            for (AstNode child :
-                    node.inner) {
-
+            for (AstNode child : node.inner) {
                 analyzeNode(
                         child,
                         entityRegistry,
@@ -137,6 +174,84 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
         }
     }
 
+    // =========================================================
+    // Find a direct variable reference
+    // =========================================================
+    // Supports DeclRefExpr and transparent AST wrappers such as
+    // ImplicitCastExpr and ParenExpr.
+    //
+    // Does not search arbitrary expression descendants, avoiding
+    // false direct-copy edges for expressions such as x + 1 or foo(x).
+
+    private static CodeEntity findDirectReferencedVariable(
+            AstNode node,
+            EntityRegistry entityRegistry) {
+
+        if (node == null) {
+            return null;
+        }
+
+        if ("DeclRefExpr".equals(node.kind)) {
+
+            if (node.referencedDecl == null) {
+                return null;
+            }
+
+            Object idObject =
+                    node.referencedDecl.get("id");
+
+            if (idObject == null) {
+                return null;
+            }
+
+            CodeEntity entity =
+                    entityRegistry.findByAstId(
+                            idObject.toString()
+                    );
+
+            if (entity != null
+                    && "VARIABLE".equals(entity.kind)) {
+                return entity;
+            }
+
+            return null;
+        }
+
+        if (isTransparentExpression(node.kind)
+                && node.inner != null
+                && node.inner.size() == 1) {
+
+            return findDirectReferencedVariable(
+                    node.inner.get(0),
+                    entityRegistry
+            );
+        }
+
+        return null;
+    }
+
+    private static boolean isTransparentExpression(String kind) {
+
+        if (kind == null) {
+            return false;
+        }
+
+        return switch (kind) {
+            case "ImplicitCastExpr",
+                 "ParenExpr",
+                 "ExprWithCleanups",
+                 "MaterializeTemporaryExpr",
+                 "CXXBindTemporaryExpr",
+                 "ConstantExpr",
+                 "CStyleCastExpr",
+                 "CXXStaticCastExpr",
+                 "CXXFunctionalCastExpr",
+                 "CXXReinterpretCastExpr",
+                 "CXXConstCastExpr",
+                 "CXXDynamicCastExpr" -> true;
+            default -> false;
+        };
+    }
 
     // =========================================================
     // Find called method
@@ -153,10 +268,7 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
         if ("CXXMemberCallExpr".equals(node.kind)) {
 
             AstNode memberExpr =
-                    findNodeByKind(
-                            node,
-                            "MemberExpr"
-                    );
+                    findNodeByKind(node, "MemberExpr");
 
             if (memberExpr != null
                     && memberExpr.referencedMemberDecl != null) {
@@ -168,9 +280,7 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
         }
 
         if (node.inner != null) {
-
-            for (AstNode child :
-                    node.inner) {
+            for (AstNode child : node.inner) {
 
                 CodeEntity result =
                         findCalledMethod(
@@ -186,7 +296,6 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
 
         return null;
     }
-
 
     // =========================================================
     // Find called function
@@ -223,9 +332,7 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
         }
 
         if (node.inner != null) {
-
-            for (AstNode child :
-                    node.inner) {
+            for (AstNode child : node.inner) {
 
                 CodeEntity result =
                         findCalledFunction(
@@ -241,7 +348,6 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
 
         return null;
     }
-
 
     // =========================================================
     // Find node by kind
@@ -260,9 +366,7 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
         }
 
         if (node.inner != null) {
-
-            for (AstNode child :
-                    node.inner) {
+            for (AstNode child : node.inner) {
 
                 AstNode result =
                         findNodeByKind(
@@ -278,7 +382,6 @@ public class DataFlowAnalyzer implements GraphAnalyzer {
 
         return null;
     }
-
 
     // =========================================================
     // Create relationship with source location
